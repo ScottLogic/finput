@@ -55,6 +55,7 @@ class Finput {
     this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('input', (e) => this.onInput(e));
     this.element.addEventListener('blur', (e) => this.onFocusout(e));
+    this.element.addEventListener('focus', (e) => this.onFocusin(e));
   }
 
   // GETTERS
@@ -89,10 +90,11 @@ class Finput {
     const zeros = this.languageData.shortcuts[keyInfo.char];
     if (zeros) {
       keyInfo.charsToAdd = Array(zeros + 1).join('0');
-      keyInfo.potentialVal = this.addCharacters(
+      keyInfo.potentialVal = this.editString(
         keyInfo.originalVal,
         keyInfo.charsToAdd,
-        keyInfo.caretPos
+        keyInfo.caretStart,
+        keyInfo.caretEnd
       );
     }
   }
@@ -117,10 +119,11 @@ class Finput {
     }
   }
   setValue(keyInfo) {
-    const finalValue = this.addCharacters(
+    const finalValue = this.editString(
       keyInfo.originalVal,
       keyInfo.charsToAdd,
-      keyInfo.caretPos
+      keyInfo.caretStart,
+      keyInfo.caretEnd
     );
     keyInfo.event.preventDefault();
 
@@ -130,9 +133,9 @@ class Finput {
     const offset = this.calculateOffset(
       finalValue,
       this.element.value,
-      keyInfo.caretPos + keyInfo.charsToAdd.length
+      keyInfo.caretStart + keyInfo.charsToAdd.length
     );
-    this.setCaret(keyInfo.caretPos + keyInfo.charsToAdd.length + offset);
+    this.setCaret(keyInfo.caretStart + keyInfo.charsToAdd.length + offset);
   }
   /**
    * Fully format the value using numeral (Done on focus out)
@@ -155,7 +158,7 @@ class Finput {
     for (i, j; i > 0; i--, j++) {
       // Every 3 characers, add a comma
       if (j % 3 === 0) {
-        str = this.addCharacters(str, ',', i);
+        str = this.editString(str, ',', i);
       }
     }
     return str;
@@ -163,9 +166,9 @@ class Finput {
   setCaret(pos) {
     this.element.setSelectionRange(pos, pos);
   }
-  addCharacters(str, toAdd, pos) {
-    const firstHalf = str.slice(0, pos);
-    const secondHalf = str.slice(pos, str.length);
+  editString(str, toAdd, caretStart, caretEnd = caretStart) {
+    const firstHalf = str.slice(0, caretStart);
+    const secondHalf = str.slice(caretEnd, str.length);
     return `${firstHalf}${toAdd}${secondHalf}`;
   }
   /**
@@ -193,10 +196,11 @@ class Finput {
       event: e,
       char: char,
       charsToAdd: char,
-      caretPos: this.element.selectionStart,
+      caretStart: this.element.selectionStart,
+      caretEnd: this.element.selectionEnd,
       originalVal: `${this.element.value}`,
       // TODO NEED TO PUT CHAR IN THE CORRECT PLACE USING THE CARET
-      potentialVal: this.addCharacters(this.element.value, char, this.element.selectionStart)
+      potentialVal: this.editString(this.element.value, char, this.element.selectionStart, this.element.selectionEnd)
     }
 
     if (!this.isCharValid(keyInfo) ||
@@ -219,15 +223,26 @@ class Finput {
       event: e,
       char: '',
       charsToAdd: '',
-      caretPos: this.element.selectionStart,
+      caretStart: this.element.selectionStart,
       originalVal: `${this.element.value}`
     }
 
     this.setValue(keyInfo);
   }
+  /**
+   * On focusOUT of the input - fully format the value
+   */
   onFocusout(e) {
     console.log(e);
     this.element.value = this.fullFormat(this.element.value);
+  }
+  /**
+   * On focus of the input - Select all text
+   */
+  onFocusin(e) {
+    console.log(e);
+    this.element.selectionStart = 0;
+    this.element.selectionEnd = this.element.value.length;
   }
 }
 
