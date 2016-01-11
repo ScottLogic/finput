@@ -17,14 +17,13 @@ module.exports = function(grunt) {
             ["babelify", {
               presets: ["es2015"]
             }]
-          ],
-          watch: true
+          ]
         }
       }
     },
     watch: {
       js: {
-        files: ['src/**/*.js'],
+        files: ['src/**/*.js', 'main.js'],
         tasks: ['compile'],
         options: {
           // for grunt-contrib-watch v0.5.0+, 'nospawn: true' for lower versions.
