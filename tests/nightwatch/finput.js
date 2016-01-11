@@ -1,36 +1,34 @@
 
-const INPUT = '#number-input';
 module.exports = {
 
   /**
    * Just wait for page to load
    */
-  'Load page' : function (browser) {
-    browser
-      .url(__dirname + '\\..\\..\\index.html')
-      .waitForElementVisible(INPUT, 100)
+  'Load page' : function (client) {
+    client.page.finput()
+      .navigate()
+      .waitForElementVisible('@finput', 100);
   },
 
   /**
    * Entering data tests
    */
-   'Enter valid numbers' : function (browser) {
-     browser
-       .url(__dirname + '\\..\\..\\index.html')
-       // Value - 100
-       .setValue(INPUT, '100')
-       .assert.value(INPUT, '100')
-       // Value - 1,000
-       .setValue(INPUT, '0')
-       .assert.value(INPUT, '1,000')
-       // Value - 100,000
-       .setValue(INPUT, '00')
-       .assert.value(INPUT, '100,000')
-       // Value - 1,000,000
-       .setValue(INPUT, '0')
-       .assert.value(INPUT, '1,000,000')
+  'Enter valid numbers' : function (client) {
 
+    client.page.finput()
+      .navigate()
+      .setValue('@finput', '100')
+      .assert.value('@finput', '100')
+      // Value - 1,000
+      .setValue('@finput', '0')
+      .assert.value('@finput', '1,000')
+      // Value - 100,000
+      .setValue('@finput', '00')
+      .assert.value('@finput', '100,000')
+      // Value - 1,000,000
+      .setValue('@finput', '0')
+      .assert.value('@finput', '1,000,000');
 
-       .end();
-   },
+    client.end();
+  },
 };
