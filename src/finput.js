@@ -17,12 +17,13 @@ const languageData = {
   }
 }
 const DEFAULTS = {
-  format: '0,0[.]00',
+  format: '0,0',
   lang: 'en',
   maxValue: 10e+12,
   minValue: -10e+12,
   maxLength: 30
 }
+const MINUS = '-';
 
 /**
  * FINPUT COMPONENT CLASS
@@ -74,7 +75,19 @@ class Finput {
 
   // HELPERS
   isCharValid(keyInfo) {
-    return keyInfo.char.match(this.validCharRegex);
+    const validChar = keyInfo.char.match(this.validCharRegex);
+
+    switch (keyInfo.char) {
+      // When inputting minuses, caret must be at the start and there must not be
+      // a minus sign there already
+      case MINUS:
+        return validChar
+          && keyInfo.caretStart === 0
+          // Allow for highlighted text to be replaced by a minus
+          && (keyInfo.originalVal[0] !== MINUS || keyInfo.caretEnd > 0);
+      default:
+        return validChar;
+    }
   }
   isNumberValid(keyInfo) {
     return !isNaN(numeral(keyInfo.potentialVal));
@@ -151,11 +164,12 @@ class Finput {
     const startIndex = str.indexOf('.') > -1
       ? str.indexOf('.') - 1
       : str.length - 1;
+    const endIndex = str[0] === MINUS ? 1 : 0;
 
     // i must be greater than zero because number cannot start with comma
     let i = startIndex;
     let j = 1;
-    for (i, j; i > 0; i--, j++) {
+    for (i, j; i > endIndex; i--, j++) {
       // Every 3 characers, add a comma
       if (j % 3 === 0) {
         str = this.editString(str, ',', i);
