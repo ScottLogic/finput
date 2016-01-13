@@ -11,12 +11,12 @@ module.exports = {
   },
 
   /**
-   * Entering data tests
+   * PARTIAL FORMATTING (Whilst input is focused) TESTS
    */
-  'Enter valid numbers' : function (client) {
-
+  'Enter and format' : function (client) {
     client.page.finput()
       .navigate()
+      // Value - 100
       .setValue('@finput', '100')
       .assert.value('@finput', '100')
       // Value - 1,000
@@ -28,7 +28,27 @@ module.exports = {
       // Value - 1,000,000
       .setValue('@finput', '0')
       .assert.value('@finput', '1,000,000');
-
-    client.end();
   },
+  'Delete and format' : function(client) {
+    client.page.finput()
+      .navigate()
+      .setValue('@finput', '1,000,000')
+      .assert.value('@finput', '1,000,000')
+      // .sendKeys('@finput', '5')
+
+      // Value - 100,000
+      .caretLeft('@finput')
+      .backspace('@finput', 1)
+      .click('@other_input')
+      .assert.value('@finput', '100,000')
+      // Value - 100,000
+      .backspace('@finput', 3)
+      .assert.value('@finput', '100');
+
+  },
+
+  // END
+  'End': function(client) {
+    client.end();
+  }
 };

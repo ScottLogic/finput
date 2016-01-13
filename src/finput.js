@@ -154,7 +154,7 @@ class Finput {
    * Fully format the value using numeral (Done on focus out)
    */
   fullFormat(val) {
-    return numeral(val).format();
+    return val && numeral(val).format();
   }
   /**
    * Partially format the value, only adding commas as needed (Done on keypress/keyup)
@@ -231,6 +231,7 @@ class Finput {
     this.setValue(keyInfo);
   }
   // Force format on every change of input (done by setValue function)
+  // NOTE: ONLY CALLED WHEN DELETE OR BACKSPACE IS PRESSED
   onInput(e) {
     console.log(e);
     const keyInfo = {
@@ -241,7 +242,7 @@ class Finput {
       originalVal: `${this.element.value}`
     }
 
-    this.setValue(keyInfo);
+    // this.setValue(keyInfo);
   }
   /**
    * On focusOUT of the input - fully format the value
