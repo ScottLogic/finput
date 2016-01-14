@@ -1,33 +1,9 @@
 // Copyright Ali Sheehan-Dare, all rights and profits reserved.
 
 import numeral from 'numeral';
-
-const CODES = {
-  'COMMA':        { key: 188, char: 44 },
-  'MINUS':        { key: 189, char: 45 },
-  'DOT':          { key: 190, char: 46 },
-  'LEFT_ARROW':   { key: 37 },
-  'RIGHT_ARROW':  { key: 39 },
-  'UP_ARROW':     { key: 38 },
-  'DOWN_ARROW':   { key: 40 },
-  'BACKSPACE':    { key: 8 },
-  'DELETE':       { key: 46 }
-}
-
-// Char types
-const CHAR_TYPES = {
-  NUMBER: 'NUMBER',
-  SHORTCUT: 'SHORTCUT',
-  DECIMAL: 'DECIMAL',
-  DELIMITER: 'DELIMITER',
-  MINUS: 'MINUS',
-  UNKNOWN: 'UNKNOWN',
-  HORIZONTAL_ARROW: 'HORIZONTAL_ARROW',
-  VERTICAL_ARROW: 'VERTICAL_ARROW',
-  BACKSPACE: 'BACKSPACE',
-  DELETE: 'DELETE'
-}
-
+import keyHandlers from './keyHandlers';
+import helpers from './helpers';
+import {CODES, CHAR_TYPES} from './constants';
 
 /**
  * CONSTANTS
@@ -48,7 +24,8 @@ const DEFAULTS = {
   lang: 'en',
   maxValue: 10e+12,
   minValue: -10e+12,
-  maxLength: 30
+  maxLength: 30,
+  valueStep: 1
 }
 
 /**
@@ -68,12 +45,13 @@ class Finput {
    * @param {Options.maxValue} Limit input value to a maximum value
    * @param {Options.minValue} Limit input value to a minimum value
    * @param {Options.maxDigits} Limit input value to a maximum number of digits
+   * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
    */
   constructor(element, options) {
     this._element = element;
     this._options = Object.assign(options, DEFAULTS);
     this._languageData = languageData[this.options.lang];
-    this._charTypes = this.getCharTypes();
+    this._charTypes = this.createCharTypes();
 
     numeral.defaultFormat(this.options.format);
 
@@ -106,7 +84,7 @@ class Finput {
     return this._charTypes;
   }
 
-  getCharTypes() {
+  createCharTypes() {
     return [
       {
         name: CHAR_TYPES.NUMBER,
@@ -127,18 +105,26 @@ class Finput {
       },
       {
         name: CHAR_TYPES.SHORTCUT,
-        codes: Object.keys(this.languageData.shortcuts).map((s) => {
+        CODES: Object.keys(this.languageData.shortcuts).map((s) => {
           const code = s.toUpperCase().charCodeAt(0);
           return { key: code, code: code };
         })
       },
       {
+        name: CHAR_TYPES.BACKSPACE,
+        code: CODES.BACKSPACE
+      },
+      {
+        name: CHAR_TYPES.DELETE,
+        code: CODES.DELETE
+      },
+      {
         name: CHAR_TYPES.HORIZONTAL_ARROW,
-        codes: [CODES.RIGHT_ARROW, CODES.LEFT_ARROW]
+        CODES: [CODES.RIGHT_ARROW, CODES.LEFT_ARROW]
       },
       {
         name: CHAR_TYPES.VERTICAL_ARROW,
-        codes: [CODES.UP_ARROW, CODES.DOWN_ARROW]
+        CODES: [CODES.UP_ARROW, CODES.DOWN_ARROW]
       }
     ]
   }
@@ -149,8 +135,8 @@ class Finput {
 
       if (type.code) {
         typeMatch = type.code.key === code;
-      } else if (type.codes) {
-        typeMatch = type.codes.map((c) => c.key).indexOf(code) > -1;
+      } else if (type.CODES) {
+        typeMatch = type.CODES.map((c) => c.key).indexOf(code) > -1;
       } else if (type.minCode && type.maxCode) {
         typeMatch = type.minCode.key <= code && code <= type.maxCode.key;
       }
@@ -161,72 +147,28 @@ class Finput {
     }
     return CHAR_TYPES.UNKNOWN;
   }
-  //
-  // // HELPERS
-  // isCharValid(keyInfo) {
-  //   const validChar = keyInfo.char.match(this.validCharRegex);
-  //
-  //   switch (keyInfo.char) {
-  //     // When inputting minuses, caret must be at the start and there must not be
-  //     // a minus sign there already
-  //     case String.fromCharCode(CHAR_CODES.MINUS):
-  //       return validChar
-  //         && keyInfo.caretStart === 0
-  //         // Allow for highlighted text to be replaced by a minus
-  //         && (keyInfo.originalVal[0] !== String.fromCharCode(CHAR_CODES.MINUS) || keyInfo.caretEnd > 0);
-  //     default:
-  //       return validChar;
-  //   }
-  // }
-  // isNumberValid(keyInfo) {
-  //   return !isNaN(numeral(keyInfo.potentialVal));
-  // }
-  // generateValidCharRegex(languageData) {
-  //   return new RegExp(`\[\\d\\-\\`
-  //     + `${this.languageData.decimal}`
-  //     + `${Object.keys(this.languageData.shortcuts).join('')}`
-  //     + `\]`
-  //   );
-  // }
 
   // Check potential value is not going to be too large or too small
   // in relation to limits set in options
-  checkValueSize(keyInfo) {
-    const numberValue = numeral().unformat(keyInfo.potentialVal);
+  // checkValueSize(keyInfo) {
+  //   const numberValue = numeral().unformat(keyInfo.potentialVal);
+  //
+  //   // If the value is too large or too small, then set input value back
+  //   // to original value
+  //   if (numberValue > this.options.maxValue) {
+  //     keyInfo.charsToAdd = '';
+  //   }
+  //   if (numberValue < this.options.minValue) {
+  //     keyInfo.charsToAdd = '';
+  //   }
+  // }
+  // checkValueLength(val) {
+  //   if (val.length > this.options.maxLength) {
+  //     keyInfo.charsToAdd = '';
+  //   }
+  // }
 
-    // If the value is too large or too small, then set input value back
-    // to original value
-    if (numberValue > this.options.maxValue) {
-      keyInfo.charsToAdd = '';
-    }
-    if (numberValue < this.options.minValue) {
-      keyInfo.charsToAdd = '';
-    }
-  }
-  checkValueLength(val) {
-    if (val.length > this.options.maxLength) {
-      keyInfo.charsToAdd = '';
-    }
-  }
-  setValue(keyInfo) {
-    const finalValue = this.editString(
-      keyInfo.originalVal,
-      keyInfo.charsToAdd,
-      keyInfo.caretStart,
-      keyInfo.caretEnd
-    );
-    keyInfo.event.preventDefault();
 
-    // Add necessary commas
-    this.element.value = this.partialFormat(finalValue);
-
-    const offset = this.calculateOffset(
-      finalValue,
-      this.element.value,
-      keyInfo.caretStart + keyInfo.charsToAdd.length
-    );
-    this.setCaret(keyInfo.caretStart + keyInfo.charsToAdd.length + offset);
-  }
   /**
    * Fully format the value using numeral (Done on focus out)
    */
@@ -249,18 +191,13 @@ class Finput {
     for (i, j; i > endIndex; i--, j++) {
       // Every 3 characers, add a comma
       if (j % 3 === 0) {
-        str = this.editString(str, ',', i);
+        str = helpers.editString(str, ',', i);
       }
     }
     return str;
   }
   setCaret(pos) {
     this.element.setSelectionRange(pos, pos);
-  }
-  editString(str, toAdd, caretStart, caretEnd = caretStart) {
-    const firstHalf = str.slice(0, caretStart);
-    const secondHalf = str.slice(caretEnd, str.length);
-    return `${firstHalf}${toAdd}${secondHalf}`;
   }
   /**
    * Calculate how many characters have been added (or removed) before the given
@@ -279,50 +216,8 @@ class Finput {
     return j - i;
   }
 
-
-  // EVENTS
-  onKeypress(e) {
-    console.log('Keypress event', e);
-    const char = String.fromCharCode(e.which);
-    const keyInfo = {
-      event: e,
-      char: char,
-      charsToAdd: char,
-      caretStart: this.element.selectionStart,
-      caretEnd: this.element.selectionEnd,
-      originalVal: `${this.element.value}`,
-      // TODO NEED TO PUT CHAR IN THE CORRECT PLACE USING THE CARET
-      potentialVal: this.editString(this.element.value, char, this.element.selectionStart, this.element.selectionEnd)
-    }
-
-    if (!this.isCharValid(keyInfo) ||
-        !this.isNumberValid(keyInfo))
-    {
-      e.preventDefault();
-      return false;
-    }
-
-    // this.checkValueSize(keyInfo);
-    // this.checkValueLength(this.partialFormat(keyInfo.potentialVal));
-
-    this.setValue(keyInfo);
-  }
-  // Force format on every change of input (done by setValue function)
-  // NOTE: ONLY CALLED WHEN DELETE OR BACKSPACE IS PRESSED
-  onInput(e) {
-    console.log('Input event', e);
-    const keyInfo = {
-      event: e,
-      char: '',
-      charsToAdd: '',
-      caretStart: this.element.selectionStart,
-      originalVal: `${this.element.value}`
-    }
-
-    // this.setValue(keyInfo);
-  }
   /**
-   * On focusOUT of the input - fully format the value
+   * On focusing OUT of the input - format fully
    */
   onFocusout(e) {
     console.log('Focus OUT event', e);
@@ -336,10 +231,13 @@ class Finput {
     this.element.selectionStart = 0;
     this.element.selectionEnd = this.element.value.length;
   }
+  /**
+   * On pasting something into the input
+   */
   onPaste(e) {
     console.log('Paste event', e);
     const chars = e.clipboardData.getData('text');
-    const potentialValue = this.editString(
+    const potentialValue = helpers.editString(
       this.element.value,
       chars,
       this.element.selectionStart,
@@ -351,124 +249,62 @@ class Finput {
       this.element.value = newVal.format();
     }
   }
+  /**
+   * On pressing a key in the input
+   */
   onKeydown(e) {
-    console.log('Keydown event', e);
-
+    console.log(e);
     const keyInfo = {
       event: e,
+      code: e.which || e.keyCode,
       char: String.fromCharCode(e.which),
-      charsToAdd: String.fromCharCode(e.which),
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
-      currentValue: this.element.value
+      currentValue: this.element.value,
+      newValue: this.element.value
     }
 
     switch (this.getKeyType(e)) {
       case CHAR_TYPES.NUMBER:
-        this.handleNumber(keyInfo);
+        keyHandlers.onNumber(keyInfo);
         break;
       case CHAR_TYPES.DECIMAL:
-        this.handleDecimal(keyInfo);
+        keyHandlers.onDecimal(keyInfo, this.languageData);
         break;
       case CHAR_TYPES.MINUS:
-        this.handleMinus(keyInfo);
+        keyHandlers.onMinus(keyInfo);
         break;
       case CHAR_TYPES.SHORTCUT:
-        this.handleShortcut(keyInfo);
+        keyHandlers.onShortcut(keyInfo, this.languageData);
         break;
       case CHAR_TYPES.HORIZONTAL_ARROW:
+        // Default behaviour
         console.log('HORIZONTAL ARROW');
         break;
       case CHAR_TYPES.VERTICAL_ARROW:
-        console.log('VERTICAL ARROW');
+        keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
         break;
       case CHAR_TYPES.BACKSPACE:
-        console.log('BACKSPACE');
+        keyHandlers.onBackspace(keyInfo);
         break;
       case CHAR_TYPES.DELETE:
-        console.log('DELETE');
+        keyHandlers.onDelete(keyInfo, this.languageData);
         break;
       default:
-        console.log("UNKNOWN")
+        console.log("UNKNOWN");
+        e.preventDefault();
     }
 
-    if (keyInfo.newValue) {
-      this.element.value = this.partialFormat(keyInfo.newValue);
+    this.element.value = this.partialFormat(keyInfo.newValue);
 
-      const lengthIncrease = keyInfo.newValue.length - keyInfo.currentValue.length;
-      const offset = this.calculateOffset(
-        keyInfo.newValue,
-        this.element.value,
-        keyInfo.caretStart + lengthIncrease
-      );
-      this.setCaret(keyInfo.caretStart + lengthIncrease + offset);
-    }
+    const offset = this.calculateOffset(
+      keyInfo.newValue,
+      this.element.value,
+      keyInfo.caretStart
+    );
+    this.setCaret(keyInfo.caretStart + offset);
   }
 
-  //==================//
-  //     HANDLERS     //
-  //==================//
-  handleNumber(keyInfo) {
-    console.log('handle NUMBER');
-    const allowedNumber =
-      !(keyInfo.currentValue[0] === String.fromCharCode(CODES.MINUS.char)
-      && keyInfo.caretStart === 0
-      && keyInfo.caretEnd === 0);
-
-    if (allowedNumber) {
-      keyInfo.newValue = this.editString(keyInfo.currentValue, keyInfo.char, keyInfo.caretStart, keyInfo.caretEnd);
-    }
-    keyInfo.event.preventDefault();
-  }
-  handleMinus(keyInfo) {
-    console.log('handle MINUS');
-    const minusAllowed = keyInfo.caretStart === 0 &&
-      (keyInfo.currentValue[0] !== String.fromCharCode(CODES.MINUS.char) || keyInfo.caretEnd > 0);
-
-     if (minusAllowed) {
-       keyInfo.newValue = this.editString(
-         keyInfo.currentValue,
-         String.fromCharCode(CODES.MINUS.char),
-         keyInfo.caretStart,
-         keyInfo.caretEnd
-       );
-     }
-     keyInfo.event.preventDefault();
-  }
-  handleDecimal(keyInfo) {
-    console.log('handle DECIMAL');
-    const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(this.languageData.decimal.char));
-
-    // If there is not already a decimal or the original would be replaced
-    // Add the decimal
-    const decimalAllowed =
-      decimalIndex === -1 ||
-        (decimalIndex >= this.element.selectionStart &&
-         decimalIndex < this.selectionEnd);
-
-    if (decimalAllowed)
-    {
-      keyInfo.newValue = this.editString(
-        keyInfo.currentValue,
-        String.fromCharCode(this.languageData.decimal.char),
-        keyInfo.caretStart,
-        keyInfo.caretEnd
-      );
-    }
-
-    keyInfo.event.preventDefault();
-  }
-  handleShortcut(keyInfo) {
-    console.log('handle SHORTCUT');
-    const power = this.languageData.shortcuts[keyInfo.char.toLowerCase()];
-    if (power) {
-      keyInfo.newValue = numeral(keyInfo.currentValue).multiply(Math.pow(10, power)).format();
-    }
-    keyInfo.event.preventDefault();
-
-    // HACK / TODO - Fix
-    keyInfo.caretStart += power;
-  }
 }
 
 export default Finput;
