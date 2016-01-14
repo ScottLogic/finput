@@ -173,7 +173,12 @@ class Finput {
    * Fully format the value using numeral (Done on focus out)
    */
   fullFormat(val) {
-    return val && numeral(val).format();
+    if (val.length === 1) {
+      return val === 0 ? 0 : null;
+    } else {
+      const formatted = numeral(val).format();
+      return isNaN(formatted) ? null : formatted;
+    }
   }
   /**
    * Partially format the value, only adding commas as needed (Done on keypress/keyup)

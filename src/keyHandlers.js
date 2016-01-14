@@ -50,7 +50,7 @@ module.exports = {
    */
   onDecimal: function(keyInfo, languageData) {
     console.log('handle DECIMAL');
-    const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(this.languageData.decimal.char));
+    const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(languageData.decimal.char));
 
     // If there is not already a decimal or the original would be replaced
     // Add the decimal
@@ -63,7 +63,7 @@ module.exports = {
     {
       keyInfo.newValue = helpers.editString(
         keyInfo.currentValue,
-        String.fromCharCode(this.languageData.decimal.char),
+        String.fromCharCode(languageData.decimal.char),
         keyInfo.caretStart,
         keyInfo.caretEnd
       );
@@ -100,9 +100,16 @@ module.exports = {
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
-      firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - 1);
-      lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
-      keyInfo.caretStart += -1;
+      if (keyInfo.event.ctrlKey) {
+        // If CTRL key is held down - delete everything BEFORE caret
+        firstHalf = '';
+        lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
+        keyInfo.caretStart = 0;
+      } else {
+        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - 1);
+        lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
+        keyInfo.caretStart += -1;
+      }
     } else {
       // Same code as onDelete handler for deleting a selection range
       firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
@@ -123,8 +130,13 @@ module.exports = {
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
       const nextCharCode = keyInfo.currentValue.charCodeAt(keyInfo.caretStart);
-      // If char to delete is delimiter - skip over it
-      if (nextCharCode === languageData.delimiter.char) {
+
+      if (keyInfo.event.ctrlKey) {
+        // If CTRL key is held down - delete everything AFTER caret
+        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
+        lastHalf = '';
+      } else if (nextCharCode === languageData.delimiter.char) {
+        // If char to delete is delimiter - skip over it
         keyInfo.caretStart += 1;
         firstHalf = keyInfo.currentValue;
         lastHalf = '';
