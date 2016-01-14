@@ -11,7 +11,7 @@ exports.CODES = {
   'DELETE':       { key: 46 }
 }
 
-exports.CHAR_TYPES = {
+exports.ACTION_TYPES = {
   NUMBER: 'NUMBER',
   SHORTCUT: 'SHORTCUT',
   DECIMAL: 'DECIMAL',
@@ -22,4 +22,10 @@ exports.CHAR_TYPES = {
   VERTICAL_ARROW: 'VERTICAL_ARROW',
   BACKSPACE: 'BACKSPACE',
   DELETE: 'DELETE'
+}
+
+exports.DRAG_STATES = {
+  NONE: 'NONE',
+  INTERNAL: 'INTERNAL',
+  EXTERNAL: 'EXTERNAL'
 }

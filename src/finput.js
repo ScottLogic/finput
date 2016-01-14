@@ -3,7 +3,7 @@
 import numeral from 'numeral';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
-import {CODES, CHAR_TYPES} from './constants';
+import {CODES, ACTION_TYPES, DRAG_STATES} from './constants';
 
 /**
  * CONSTANTS
@@ -25,7 +25,8 @@ const DEFAULTS = {
   maxValue: 10e+12,
   minValue: -10e+12,
   maxLength: 30,
-  valueStep: 1
+  valueStep: 1,
+  droppableClass: 'finput-droppable'
 }
 
 /**
@@ -46,6 +47,7 @@ class Finput {
    * @param {Options.minValue} Limit input value to a minimum value
    * @param {Options.maxDigits} Limit input value to a maximum number of digits
    * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
+   * @param {Options.droppableClass} Class to give to the input when text drag event has started on the page
    */
   constructor(element, options) {
     this._element = element;
@@ -56,12 +58,21 @@ class Finput {
     numeral.defaultFormat(this.options.format);
 
     // Setup listeners
-    // this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('blur', (e) => this.onFocusout(e));
     this.element.addEventListener('focus', (e) => this.onFocusin(e));
     this.element.addEventListener('drop', (e) => this.onDrop(e));
+    this.element.addEventListener('beforepaste', (e) => this.onPaste(e));
     this.element.addEventListener('paste', (e) => this.onPaste(e));
     this.element.addEventListener('keydown', (e) => this.onKeydown(e));
+    this.element.addEventListener('input', (e) => this.onInput(e));
+
+    // Dragging listeners
+    // Keep track of whether a drag started internally or externally
+    document.addEventListener('dragstart', (e) => this.onDragstart(e));
+    document.addEventListener('dragend', (e) => this.onDragend(e));
+
+    this.element.addEventListener('dragenter', (e) => this.onDragenter(e));
+    this.element.addEventListener('dragleave', (e) => this.onDragleave(e));
   }
 
   // GETTERS
@@ -83,47 +94,55 @@ class Finput {
   get charTypes() {
     return this._charTypes;
   }
+  get dragState() {
+    return this._dragState;
+  }
+
+  // SETTERS
+  set dragState(state) {
+    this._dragState = state;
+  }
 
   createCharTypes() {
     return [
       {
-        name: CHAR_TYPES.NUMBER,
+        name: ACTION_TYPES.NUMBER,
         minCode: { key: 48, char: 48 },
         maxCode: { key: 57, char: 57 }
       },
       {
-        name: CHAR_TYPES.MINUS,
+        name: ACTION_TYPES.MINUS,
         code: CODES.MINUS
       },
       {
-        name: CHAR_TYPES.DECIMAL,
+        name: ACTION_TYPES.DECIMAL,
         code: this.languageData.decimal
       },
       {
-        name: CHAR_TYPES.DELIMITER,
+        name: ACTION_TYPES.DELIMITER,
         code: this.languageData.delimiter
       },
       {
-        name: CHAR_TYPES.SHORTCUT,
+        name: ACTION_TYPES.SHORTCUT,
         CODES: Object.keys(this.languageData.shortcuts).map((s) => {
           const code = s.toUpperCase().charCodeAt(0);
           return { key: code, code: code };
         })
       },
       {
-        name: CHAR_TYPES.BACKSPACE,
+        name: ACTION_TYPES.BACKSPACE,
         code: CODES.BACKSPACE
       },
       {
-        name: CHAR_TYPES.DELETE,
+        name: ACTION_TYPES.DELETE,
         code: CODES.DELETE
       },
       {
-        name: CHAR_TYPES.HORIZONTAL_ARROW,
+        name: ACTION_TYPES.HORIZONTAL_ARROW,
         CODES: [CODES.RIGHT_ARROW, CODES.LEFT_ARROW]
       },
       {
-        name: CHAR_TYPES.VERTICAL_ARROW,
+        name: ACTION_TYPES.VERTICAL_ARROW,
         CODES: [CODES.UP_ARROW, CODES.DOWN_ARROW]
       }
     ]
@@ -145,7 +164,7 @@ class Finput {
         return type.name;
       }
     }
-    return CHAR_TYPES.UNKNOWN;
+    return ACTION_TYPES.UNKNOWN;
   }
 
   // Check potential value is not going to be too large or too small
@@ -221,6 +240,10 @@ class Finput {
     return j - i;
   }
 
+  //
+  // EVENT HANDLERS
+  //
+
   /**
    * On focusing OUT of the input - format fully
    */
@@ -237,19 +260,65 @@ class Finput {
     this.element.selectionEnd = this.element.value.length;
   }
   /**
-   * On pasting something into the input
+   * On dropping something into the input - replace the WHOLE value
+   * with this new value
    */
   onDrop(e) {
+    console.log('Drop event', e);
     const oldValue = this.element.value;
 
-    // Must wait until browser drop event has finished so we can get
-    // new caret position
-    setTimeout(() => {
-      console.log('Drop event', e);
-      console.log(this.element.selectionStart);
-      const newValue = this.fullFormat(this.element.value);
-      this.element.value = newValue || oldValue;
-    }, 0)
+    switch (this.dragState) {
+      case DRAG_STATES.INTERNAL:
+
+        break;
+      case DRAG_STATES.EXTERNAL:
+        const newValue = this.fullFormat(e.dataTransfer.getData('text'));
+        this.element.value = newValue || oldValue;
+        e.preventDefault();
+        break;
+      default:
+        // Do nothing;
+        break;
+    }
+  }
+
+  /**
+   * On start of ANY drag on page
+   */
+  onDragstart(e) {
+    this.dragState = (e.target === this.element)
+      ? DRAG_STATES.INTERNAL
+      : DRAG_STATES.EXTERNAL;
+    if (this.dragState === DRAG_STATES.EXTERNAL) {
+      this.element.classList.add(this.options.droppableClass);
+    }
+    console.log('Drag STARTED', this.dragState, e);
+  }
+  /**
+   * On end of ANY drag on page
+   */
+  onDragend(e) {
+    console.log('Drag ENDED', this.dragState, e);
+    this.dragState = DRAG_STATES.NONE;
+    this.element.classList.remove(this.options.droppableClass);
+  }
+  /**
+   * On entering or leaving the input
+   */
+  onDragenter(e) {
+    console.log('Drag ENTER', this.dragState, e);
+
+    // if (this.dragState === DRAG_STATES.EXTERNAL) {
+    //   this.element.selectionStart = 0;
+    //   this.element.selectionEnd = this.element.value.length;
+    // }
+  }
+  onDragleave(e) {
+    console.log('Drag LEAVE', this.dragState, e);
+
+    if (this.dragState === DRAG_STATES.EXTERNAL) {
+      this.element.selectionStart = this.element.value.length;
+    }
   }
   /**
    * On pasting something into the input
@@ -285,34 +354,39 @@ class Finput {
     }
 
     switch (this.getKeyType(e)) {
-      case CHAR_TYPES.NUMBER:
+      case ACTION_TYPES.NUMBER:
         keyHandlers.onNumber(keyInfo);
         break;
-      case CHAR_TYPES.DECIMAL:
+      case ACTION_TYPES.DECIMAL:
         keyHandlers.onDecimal(keyInfo, this.languageData);
         break;
-      case CHAR_TYPES.MINUS:
+      case ACTION_TYPES.MINUS:
         keyHandlers.onMinus(keyInfo);
         break;
-      case CHAR_TYPES.SHORTCUT:
+      case ACTION_TYPES.SHORTCUT:
         keyHandlers.onShortcut(keyInfo, this.languageData);
         break;
-      case CHAR_TYPES.HORIZONTAL_ARROW:
+      case ACTION_TYPES.HORIZONTAL_ARROW:
         // Default behaviour
         console.log('HORIZONTAL ARROW');
         break;
-      case CHAR_TYPES.VERTICAL_ARROW:
+      case ACTION_TYPES.VERTICAL_ARROW:
         keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
         break;
-      case CHAR_TYPES.BACKSPACE:
+      case ACTION_TYPES.BACKSPACE:
         keyHandlers.onBackspace(keyInfo);
         break;
-      case CHAR_TYPES.DELETE:
+      case ACTION_TYPES.DELETE:
         keyHandlers.onDelete(keyInfo, this.languageData);
         break;
+      // case ACTION_TYPES.CLIPBOARD:
+      //   if (e.ctrlKey) {
+      //   }
+      //   break;
       default:
         console.log("UNKNOWN");
         e.preventDefault();
+        return;
     }
 
     this.element.value = this.partialFormat(keyInfo.newValue);
@@ -323,6 +397,15 @@ class Finput {
       keyInfo.caretStart
     );
     this.setCaret(keyInfo.caretStart + offset);
+  }
+  /**
+   * Backup event if input changes for any other reason, just format value
+   */
+  onInput() {
+    const currentValue = this.element.value;
+    const newValue = this.fullFormat(currentValue);
+
+    this.element.value = newValue || currentValue;
   }
 
 }
