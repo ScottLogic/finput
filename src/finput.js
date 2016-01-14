@@ -59,7 +59,7 @@ class Finput {
     // this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('blur', (e) => this.onFocusout(e));
     this.element.addEventListener('focus', (e) => this.onFocusin(e));
-    // this.element.addEventListener('input', (e) => this.onInput(e));
+    this.element.addEventListener('drop', (e) => this.onDrop(e));
     this.element.addEventListener('paste', (e) => this.onPaste(e));
     this.element.addEventListener('keydown', (e) => this.onKeydown(e));
   }
@@ -174,10 +174,10 @@ class Finput {
    */
   fullFormat(val) {
     if (val.length === 1) {
-      return val === 0 ? 0 : null;
+      return val == 0 ? 0 : null;
     } else {
-      const formatted = numeral(val).format();
-      return isNaN(formatted) ? null : formatted;
+      const numeralVal = numeral(val);
+      return isNaN(numeralVal.value()) ? null : numeralVal.format();
     }
   }
   /**
@@ -235,6 +235,21 @@ class Finput {
     console.log('Focus IN event', e);
     this.element.selectionStart = 0;
     this.element.selectionEnd = this.element.value.length;
+  }
+  /**
+   * On pasting something into the input
+   */
+  onDrop(e) {
+    const oldValue = this.element.value;
+
+    // Must wait until browser drop event has finished so we can get
+    // new caret position
+    setTimeout(() => {
+      console.log('Drop event', e);
+      console.log(this.element.selectionStart);
+      const newValue = this.fullFormat(this.element.value);
+      this.element.value = newValue || oldValue;
+    }, 0)
   }
   /**
    * On pasting something into the input
