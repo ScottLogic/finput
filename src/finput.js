@@ -16,12 +16,12 @@ const languageData = {
       'm': 6,
       'b': 9
     },
-    delimiter: CODES.COMMA,
-    decimal: CODES.DOT
+    delimiter: [CODES.COMMA],
+    decimal: [CODES.DOT, CODES.NUMPAD_DOT]
   }
 }
 const DEFAULTS = {
-  format: '$0,0.00',
+  format: '0,0.00',
   lang: 'en',
   maxValue: 10e+12,
   minValue: -10e+12,
@@ -43,6 +43,7 @@ class Finput {
    *
    * Detailed list of possible options:
    * @param {Options.format} The format of the number to be displayed by the input
+   * @param {Options.currency} Optional currency to prepend to value
    * @param {Options.lang} Language (used in letter abbreviations etc...)
    * @param {Options.maxValue} Limit input value to a maximum value
    * @param {Options.minValue} Limit input value to a minimum value
@@ -64,6 +65,7 @@ class Finput {
     this.element.addEventListener('focus', (e) => this.onFocusin(e));
     this.element.addEventListener('drop', (e) => this.onDrop(e));
     this.element.addEventListener('paste', (e) => this.onPaste(e));
+    this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('keydown', (e) => this.onKeydown(e));
     this.element.addEventListener('input', (e) => this.onInput(e));
 
@@ -116,20 +118,19 @@ class Finput {
     return [
       {
         name: ACTION_TYPES.NUMBER,
-        minCode: { key: 48, char: 48 },
-        maxCode: { key: 57, char: 57 }
+        codes: CODES.NUMBERS
       },
       {
         name: ACTION_TYPES.MINUS,
-        code: CODES.MINUS
+        codes: [CODES.MINUS, CODES.NUM_MINUS]
       },
       {
         name: ACTION_TYPES.DECIMAL,
-        code: this.languageData.decimal
+        codes: this.languageData.decimal
       },
       {
         name: ACTION_TYPES.DELIMITER,
-        code: this.languageData.delimiter
+        codes: this.languageData.delimiter
       },
       {
         name: ACTION_TYPES.SHORTCUT,
@@ -175,20 +176,25 @@ class Finput {
     const code = e.which;
     for (let type of this.actionTypes) {
       let typeMatch = false;
+      let codes;
 
       if (type.code) {
         typeMatch = type.code.key === code;
+        codes = type.code;
       } else if (type.codes) {
-        typeMatch = type.codes.map((c) => c.key).indexOf(code) > -1;
-      } else if (type.minCode && type.maxCode) {
-        typeMatch = type.minCode.key <= code && code <= type.maxCode.key;
+        const index = type.codes.map((c) => c.key).indexOf(code);
+        typeMatch = index > -1;
+        codes = type.codes[index];
       }
 
       if (typeMatch && (type.ctrl ? e.ctrlKey : true)) {
-        return type.name;
+        return {
+          name: type.name,
+          codes: codes
+        };
       }
     }
-    return ACTION_TYPES.UNKNOWN;
+    return { name: ACTION_TYPES.UNKNOWN };
   }
 
   /**
@@ -217,7 +223,7 @@ class Finput {
   }
 
   setValue(val) {
-    const newValue = helpers.fullFormat(val, this.options.format);
+    const newValue = helpers.fullFormat(val, this.options.format, this.options.currency);
     const isValueValid = this.checkValueSizing(newValue);
     const valueCanChange = (newValue && isValueValid);
 
@@ -330,23 +336,29 @@ class Finput {
     const valueChanged = this.setValue(potentialValue);
     e.preventDefault();
   }
+  onKeypress(e) {
+   console.log('keypress', e);
+  }
   /**
    * On pressing any key inside the input
    * @param {e} Keyboard event
    */
   onKeydown(e) {
-    console.log(e);
+    console.log('keydown', e);
     const keyInfo = {
       event: e,
       code: e.which || e.keyCode,
-      char: String.fromCharCode(e.which),
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
       currentValue: this.element.value,
       newValue: this.element.value
     }
 
-    switch (this.getActionType(e)) {
+    const actionType = this.getActionType(e);
+    const codes = actionType.codes;
+    keyInfo.char = codes && String.fromCharCode(codes.char);
+
+    switch (actionType.name) {
       case ACTION_TYPES.NUMBER:
         keyHandlers.onNumber(keyInfo);
         break;
@@ -361,7 +373,6 @@ class Finput {
         break;
       case ACTION_TYPES.HORIZONTAL_ARROW:
         // Default behaviour
-        console.log('HORIZONTAL ARROW');
         break;
       case ACTION_TYPES.VERTICAL_ARROW:
         keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
@@ -388,16 +399,19 @@ class Finput {
         return;
     }
 
-    const newValue = helpers.partialFormat(keyInfo.newValue);
+    const newValue = helpers.partialFormat(keyInfo.newValue, this.options.currency);
+    const currentValue = this.element.value;
     const isValueValid = this.checkValueSizing(newValue);
 
     this.element.value = isValueValid ? newValue : this.element.value;
 
     if (isValueValid) {
       const offset = helpers.calculateOffset(
-        keyInfo.newValue,
+        currentValue,
         this.element.value,
-        keyInfo.caretStart
+        keyInfo.caretStart,
+        this.options.currency,
+        this.languageData
       );
       const newCaretPos = keyInfo.caretStart + offset;
       this.element.setSelectionRange(newCaretPos, newCaretPos);

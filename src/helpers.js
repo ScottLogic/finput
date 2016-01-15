@@ -15,17 +15,19 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
 /**
  * Fully format the value using numeral (Done on focus out)
  */
-exports.fullFormat = function(val, format) {
+exports.fullFormat = function(val, format, currency) {
+  const fullFormat = currency ? `${currency}${format}` : format;
+
   if (!val) {
     return null;
   } else if (val.length === 1) {
-    return val >= 0 && val <= 9 ? numeral(val).format(format) : null;
+    return val >= 0 && val <= 9 ? numeral(val).format(fullFormat) : null;
   } else {
     const numeralVal = numeral(val);
     if (isNaN(numeralVal.value()) || !Number.isFinite(numeralVal.value())) {
       return null
     } else {
-      return numeralVal.format(format);
+      return numeralVal.format(fullFormat);
     }
   }
 }
@@ -33,8 +35,8 @@ exports.fullFormat = function(val, format) {
 /**
  * Partially format the value, only adding commas as needed (Done on keypress/keyup)
  */
-exports.partialFormat = function(val) {
-  let str = val.replace(/\,/g, '');
+exports.partialFormat = function(val, currency) {
+  let str = val.replace(new RegExp(`[${(currency || '')}\,]`, 'g'), '');
   const startIndex = str.indexOf('.') > -1
     ? str.indexOf('.') - 1
     : str.length - 1;
@@ -49,20 +51,22 @@ exports.partialFormat = function(val) {
       str = this.editString(str, ',', i);
     }
   }
-  return str;
+  return `${currency && str ? currency : ''}${str}`;
 }
 
 /**
  * Calculate how many characters have been added (or removed) before the given
  * caret position after formatting. Caret is then adjusted by the returned offset
+ * Currency symbol or delimiters may have been added
  */
-exports.calculateOffset = function(prev, curr, pos) {
+exports.calculateOffset = function(prev, curr, pos, currency, languageData) {
+  const delimiter = String.fromCharCode(languageData.delimiter[0].char);
   let i, j;
   for (i=0, j=0; i < pos; i++, j++) {
-    if (prev[i] === ',') {
+    if (prev[i] === delimiter || prev[i] === currency) {
       i++;
     }
-    if (curr[j] === ',') {
+    if (curr[j] === delimiter || curr[j] === currency) {
       j++;
     }
   }

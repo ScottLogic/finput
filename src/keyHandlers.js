@@ -52,7 +52,7 @@ module.exports = {
    * @param {languageData} Language specific info for the selected language
    */
   onDecimal: function(keyInfo, languageData) {
-    const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(languageData.decimal.char));
+    const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(languageData.decimal[0].char));
 
     // If there is not already a decimal or the original would be replaced
     // Add the decimal
@@ -65,7 +65,7 @@ module.exports = {
     {
       keyInfo.newValue = helpers.editString(
         keyInfo.currentValue,
-        String.fromCharCode(languageData.decimal.char),
+        String.fromCharCode(languageData.decimal[0].char),
         keyInfo.caretStart,
         keyInfo.caretEnd
       );
@@ -138,7 +138,7 @@ module.exports = {
         // If CTRL key is held down - delete everything AFTER caret
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
         lastHalf = '';
-      } else if (nextCharCode === languageData.delimiter.char) {
+      } else if (nextCharCode === languageData.delimiter[0].char) {
         // If char to delete is delimiter - skip over it
         keyInfo.caretStart += 1;
         firstHalf = keyInfo.currentValue;

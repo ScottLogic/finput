@@ -1,8 +1,19 @@
 
 exports.CODES = {
+  'NUMBERS':      (() => {
+    const array = [];
+    let i, j;
+    for (i = 48, j = 96; i < 58; i++, j++) {
+      array.push({ key: i, char: i });
+      array.push({ key: j, char: i });
+    }
+    return array;
+  })(),
   'COMMA':        { key: 188, char: 44 },
   'MINUS':        { key: 189, char: 45 },
+  'NUM_MINUS':    { key: 109, char: 45 },
   'DOT':          { key: 190, char: 46 },
+  'NUMPAD_DOT':   { key: 110, char: 46 },
   'LEFT_ARROW':   { key: 37 },
   'RIGHT_ARROW':  { key: 39 },
   'UP_ARROW':     { key: 38 },
