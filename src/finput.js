@@ -61,7 +61,6 @@ class Finput {
     this.element.addEventListener('blur', (e) => this.onFocusout(e));
     this.element.addEventListener('focus', (e) => this.onFocusin(e));
     this.element.addEventListener('drop', (e) => this.onDrop(e));
-    this.element.addEventListener('beforepaste', (e) => this.onPaste(e));
     this.element.addEventListener('paste', (e) => this.onPaste(e));
     this.element.addEventListener('keydown', (e) => this.onKeydown(e));
     this.element.addEventListener('input', (e) => this.onInput(e));
@@ -188,57 +187,6 @@ class Finput {
   // }
 
 
-  /**
-   * Fully format the value using numeral (Done on focus out)
-   */
-  fullFormat(val) {
-    if (val.length === 1) {
-      return val == 0 ? 0 : null;
-    } else {
-      const numeralVal = numeral(val);
-      return isNaN(numeralVal.value()) ? null : numeralVal.format();
-    }
-  }
-  /**
-   * Partially format the value, only adding commas as needed (Done on keypress/keyup)
-   */
-  partialFormat(val) {
-    let str = val.replace(/\,/g, '');
-    const startIndex = str.indexOf('.') > -1
-      ? str.indexOf('.') - 1
-      : str.length - 1;
-    const endIndex = str[0] === String.fromCharCode(CODES.MINUS.char) ? 1 : 0;
-
-    // i must be greater than zero because number cannot start with comma
-    let i = startIndex;
-    let j = 1;
-    for (i, j; i > endIndex; i--, j++) {
-      // Every 3 characers, add a comma
-      if (j % 3 === 0) {
-        str = helpers.editString(str, ',', i);
-      }
-    }
-    return str;
-  }
-  setCaret(pos) {
-    this.element.setSelectionRange(pos, pos);
-  }
-  /**
-   * Calculate how many characters have been added (or removed) before the given
-   * caret position after formatting. Caret is then adjusted by the returned offset
-   */
-  calculateOffset(prev, curr, pos) {
-    let i, j;
-    for (i=0, j=0; i < pos; i++, j++) {
-      if (prev[i] === ',') {
-        i++;
-      }
-      if (curr[j] === ',') {
-        j++;
-      }
-    }
-    return j - i;
-  }
 
   //
   // EVENT HANDLERS
@@ -249,7 +197,7 @@ class Finput {
    */
   onFocusout(e) {
     console.log('Focus OUT event', e);
-    this.element.value = this.fullFormat(this.element.value);
+    this.element.value = helpers.fullFormat(this.element.value);
   }
   /**
    * On focus of the input - Select all text
@@ -269,10 +217,10 @@ class Finput {
 
     switch (this.dragState) {
       case DRAG_STATES.INTERNAL:
-
+        // This case is handled by the 'onInput' function
         break;
       case DRAG_STATES.EXTERNAL:
-        const newValue = this.fullFormat(e.dataTransfer.getData('text'));
+        const newValue = helpers.fullFormat(e.dataTransfer.getData('text'));
         this.element.value = newValue || oldValue;
         e.preventDefault();
         break;
@@ -307,11 +255,6 @@ class Finput {
    */
   onDragenter(e) {
     console.log('Drag ENTER', this.dragState, e);
-
-    // if (this.dragState === DRAG_STATES.EXTERNAL) {
-    //   this.element.selectionStart = 0;
-    //   this.element.selectionEnd = this.element.value.length;
-    // }
   }
   onDragleave(e) {
     console.log('Drag LEAVE', this.dragState, e);
@@ -333,10 +276,10 @@ class Finput {
       this.element.selectionEnd
     );
 
-    const newVal = numeral(potentialValue);
-    if (!isNaN(newVal.value())) {
-      this.element.value = newVal.format();
-    }
+    const newVal = helpers.fullFormat(potentialValue);
+    this.element.value = newVal || this.element.value;
+
+    e.preventDefault();
   }
   /**
    * On pressing a key in the input
@@ -379,31 +322,33 @@ class Finput {
       case ACTION_TYPES.DELETE:
         keyHandlers.onDelete(keyInfo, this.languageData);
         break;
-      // case ACTION_TYPES.CLIPBOARD:
-      //   if (e.ctrlKey) {
-      //   }
-      //   break;
       default:
         console.log("UNKNOWN");
-        e.preventDefault();
+        // If ctrl key modifier is pressed then allow specific event handler
+        // to handle this
+        if (!e.ctrlKey) {
+          e.preventDefault();
+        }
         return;
     }
 
-    this.element.value = this.partialFormat(keyInfo.newValue);
+    this.element.value = helpers.partialFormat(keyInfo.newValue);
 
-    const offset = this.calculateOffset(
+    const offset = helpers.calculateOffset(
       keyInfo.newValue,
       this.element.value,
       keyInfo.caretStart
     );
-    this.setCaret(keyInfo.caretStart + offset);
+    const newCaretPos = keyInfo.caretStart + offset;
+    this.element.setSelectionRange(newCaretPos, newCaretPos);
   }
   /**
    * Backup event if input changes for any other reason, just format value
    */
-  onInput() {
+  onInput(e) {
+    console.log('on INPUT', e);
     const currentValue = this.element.value;
-    const newValue = this.fullFormat(currentValue);
+    const newValue = helpers.fullFormat(currentValue);
 
     this.element.value = newValue || currentValue;
   }
