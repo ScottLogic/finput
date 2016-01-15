@@ -15,7 +15,7 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
 /**
  * Fully format the value using numeral (Done on focus out)
  */
-exports.fullFormat = function(val) {
+exports.fullFormat = function(val, format) {
   if (!val) {
     return null;
   } else if (val.length === 1) {
@@ -25,7 +25,7 @@ exports.fullFormat = function(val) {
     if (isNaN(numeralVal.value()) || !Number.isFinite(numeralVal.value())) {
       return null
     } else {
-      return numeralVal.format();
+      return numeralVal.format(format);
     }
   }
 }

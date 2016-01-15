@@ -20,11 +20,11 @@ const languageData = {
   }
 }
 const DEFAULTS = {
-  format: '0,0',
+  format: '$0.0a',
   lang: 'en',
   maxValue: 10e+12,
   minValue: -10e+12,
-  maxLength: 30,
+  maxLength: 15,
   valueStep: 1,
   droppableClass: 'finput-droppable'
 }
@@ -53,7 +53,7 @@ class Finput {
     this._element = element;
     this._options = Object.assign(options, DEFAULTS);
     this._languageData = languageData[this.options.lang];
-    this._charTypes = this.createCharTypes();
+    this._actionTypes = this.createActionTypes();
 
     numeral.defaultFormat(this.options.format);
 
@@ -90,8 +90,8 @@ class Finput {
   get languageData() {
     return this._languageData;
   }
-  get charTypes() {
-    return this._charTypes;
+  get actionTypes() {
+    return this._actionTypes;
   }
   get dragState() {
     return this._dragState;
@@ -102,7 +102,11 @@ class Finput {
     this._dragState = state;
   }
 
-  createCharTypes() {
+  /**
+   * Creates the correct action type to char/key codes array with the
+   * correct decimal and delimiter characters (depending on language)
+   */
+  createActionTypes() {
     return [
       {
         name: ACTION_TYPES.NUMBER,
@@ -146,9 +150,14 @@ class Finput {
       }
     ]
   }
-  getKeyType(e) {
+  /**
+   * Determines what type of action needs to be dealt with from the current
+   * keydown event. E.g. vertical arrow pressed, number pressed etc...
+   * @param {e} Keyboard event
+   */
+  getActionType(e) {
     const code = e.which;
-    for (let type of this.charTypes) {
+    for (let type of this.actionTypes) {
       let typeMatch = false;
 
       if (type.code) {
@@ -166,26 +175,30 @@ class Finput {
     return ACTION_TYPES.UNKNOWN;
   }
 
-  // Check potential value is not going to be too large or too small
-  // in relation to limits set in options
-  // checkValueSize(keyInfo) {
-  //   const numberValue = numeral().unformat(keyInfo.potentialVal);
-  //
-  //   // If the value is too large or too small, then set input value back
-  //   // to original value
-  //   if (numberValue > this.options.maxValue) {
-  //     keyInfo.charsToAdd = '';
-  //   }
-  //   if (numberValue < this.options.minValue) {
-  //     keyInfo.charsToAdd = '';
-  //   }
-  // }
-  // checkValueLength(val) {
-  //   if (val.length > this.options.maxLength) {
-  //     keyInfo.charsToAdd = '';
-  //   }
-  // }
-
+  /**
+   * Check value is not too large or small
+   * @param {val} Value to check
+   */
+  checkValueMagnitude(val) {
+    const num = numeral().unformat(val);
+    return num <= this.options.maxValue && num >= this.options.minValue;
+  }
+  /**
+   * Check value is not too many characters long
+   * @param {val} Value to check
+   */
+  checkValueLength(val) {
+    const num = numeral().unformat(val);
+    return num.toString().length <= this.options.maxLength
+  }
+  /**
+   * Combines the above functions to decide whether the given value is not too
+   * large or to many characters
+   * @param {val} Value to check
+   */
+  checkValueSizing(val) {
+    return this.checkValueLength(val) && this.checkValueMagnitude(val);
+  }
 
 
   //
@@ -194,13 +207,18 @@ class Finput {
 
   /**
    * On focusing OUT of the input - format fully
+   * @param {e} Focus event
    */
   onFocusout(e) {
     console.log('Focus OUT event', e);
-    this.element.value = helpers.fullFormat(this.element.value);
+    const newValue = helpers.fullFormat(this.element.value, this.options.format);
+    const isValueValid = this.checkValueSizing(newValue);
+    this.element.value = (newValue && isValueValid) ? newValue : this.element.value;
+
   }
   /**
    * On focus of the input - Select all text
+   * @param {e} Focus event
    */
   onFocusin(e) {
     console.log('Focus IN event', e);
@@ -210,6 +228,7 @@ class Finput {
   /**
    * On dropping something into the input - replace the WHOLE value
    * with this new value
+   * @param {e} Drag event
    */
   onDrop(e) {
     console.log('Drop event', e);
@@ -220,8 +239,9 @@ class Finput {
         // This case is handled by the 'onInput' function
         break;
       case DRAG_STATES.EXTERNAL:
-        const newValue = helpers.fullFormat(e.dataTransfer.getData('text'));
-        this.element.value = newValue || oldValue;
+        const newValue = helpers.fullFormat(e.dataTransfer.getData('text'), this.options.format);
+        const isValueValid = this.checkValueSizing(newValue);
+        this.element.value = (newValue && isValueValid) ? newValue : oldValue;
         e.preventDefault();
         break;
       default:
@@ -232,6 +252,7 @@ class Finput {
 
   /**
    * On start of ANY drag on page
+   * @param {e} Drag event
    */
   onDragstart(e) {
     this.dragState = (e.target === this.element)
@@ -244,6 +265,7 @@ class Finput {
   }
   /**
    * On end of ANY drag on page
+   * @param {e} Drag event
    */
   onDragend(e) {
     console.log('Drag ENDED', this.dragState, e);
@@ -251,11 +273,16 @@ class Finput {
     this.element.classList.remove(this.options.droppableClass);
   }
   /**
-   * On entering or leaving the input
+   * On the dragged item entering the input
+   * @param {e} Drag event
    */
   onDragenter(e) {
     console.log('Drag ENTER', this.dragState, e);
   }
+  /**
+   * On the dragged item leaving the input
+   * @param {e} Drag event
+   */
   onDragleave(e) {
     console.log('Drag LEAVE', this.dragState, e);
 
@@ -265,6 +292,7 @@ class Finput {
   }
   /**
    * On pasting something into the input
+   * @param {e} Clipboard event
    */
   onPaste(e) {
     console.log('Paste event', e);
@@ -276,13 +304,15 @@ class Finput {
       this.element.selectionEnd
     );
 
-    const newVal = helpers.fullFormat(potentialValue);
-    this.element.value = newVal || this.element.value;
+    const newValue = helpers.fullFormat(potentialValue, this.options.format);
+    const isValueValid = this.checkValueSizing(newValue);
+    this.element.value = (newValue && isValueValid) ? newValue : this.element.value;
 
     e.preventDefault();
   }
   /**
-   * On pressing a key in the input
+   * On pressing any key inside the input
+   * @param {e} Keyboard event
    */
   onKeydown(e) {
     console.log(e);
@@ -296,7 +326,7 @@ class Finput {
       newValue: this.element.value
     }
 
-    switch (this.getKeyType(e)) {
+    switch (this.getActionType(e)) {
       case ACTION_TYPES.NUMBER:
         keyHandlers.onNumber(keyInfo);
         break;
@@ -332,25 +362,31 @@ class Finput {
         return;
     }
 
-    this.element.value = helpers.partialFormat(keyInfo.newValue);
+    const newValue = helpers.partialFormat(keyInfo.newValue);
+    const isValueValid = this.checkValueSizing(newValue);
 
-    const offset = helpers.calculateOffset(
-      keyInfo.newValue,
-      this.element.value,
-      keyInfo.caretStart
-    );
-    const newCaretPos = keyInfo.caretStart + offset;
-    this.element.setSelectionRange(newCaretPos, newCaretPos);
+    this.element.value = isValueValid ? newValue : this.element.value;
+
+    if (isValueValid) {
+      const offset = helpers.calculateOffset(
+        keyInfo.newValue,
+        this.element.value,
+        keyInfo.caretStart
+      );
+      const newCaretPos = keyInfo.caretStart + offset;
+      this.element.setSelectionRange(newCaretPos, newCaretPos);
+    }
   }
   /**
    * Backup event if input changes for any other reason, just format value
+   * @param {e} Event
    */
   onInput(e) {
     console.log('on INPUT', e);
     const currentValue = this.element.value;
-    const newValue = helpers.fullFormat(currentValue);
-
-    this.element.value = newValue || currentValue;
+    const newValue = helpers.fullFormat(currentValue, this.options.format);
+    const isValueValid = this.checkValueSizing(newValue);
+    this.element.value = (newValue && isValueValid) ? newValue : currentValue;
   }
 
 }
