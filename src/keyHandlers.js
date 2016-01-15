@@ -8,11 +8,12 @@ import {CODES, ACTION_TYPES} from './constants';
 import helpers from './helpers';
 
 module.exports = {
+
   /**
    * NUMBER HANDLER
+   * @param {keyInfo} Information about the keypress/action
    */
   onNumber: function(keyInfo) {
-    console.log('handle NUMBER');
     const allowedNumber =
       !(keyInfo.currentValue[0] === String.fromCharCode(CODES.MINUS.char)
       && keyInfo.caretStart === 0
@@ -27,9 +28,9 @@ module.exports = {
 
   /**
    * MINUS HANDLER
+   * @param {keyInfo} Information about the keypress/action
    */
   onMinus: function(keyInfo) {
-    console.log('handle MINUS');
     const minusAllowed = keyInfo.caretStart === 0 &&
       (keyInfo.currentValue[0] !== String.fromCharCode(CODES.MINUS.char) || keyInfo.caretEnd > 0);
 
@@ -47,9 +48,10 @@ module.exports = {
 
   /**
    * DECIMAL HANDLER
+   * @param {keyInfo} Information about the keypress/action
+   * @param {languageData} Language specific info for the selected language
    */
   onDecimal: function(keyInfo, languageData) {
-    console.log('handle DECIMAL');
     const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(languageData.decimal.char));
 
     // If there is not already a decimal or the original would be replaced
@@ -75,9 +77,10 @@ module.exports = {
 
   /**
    * SHORTCUT HANDLER
+   * @param {keyInfo} Information about the keypress/action
+   * @param {languageData} Language specific info for the selected language
    */
   onShortcut: function(keyInfo, languageData) {
-    console.log('handle SHORTCUT');
     const power = languageData.shortcuts[keyInfo.char.toLowerCase()];
 
     if (power) {
@@ -94,9 +97,9 @@ module.exports = {
 
   /**
    * BACKSPACE HANDLER
+   * @param {keyInfo} Information about the keypress/action
    */
   onBackspace: function(keyInfo) {
-    console.log('handle BACKSPACE');
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
@@ -120,12 +123,12 @@ module.exports = {
     keyInfo.event.preventDefault();
   },
 
-
   /**
    * DELETE HANDLER
+   * @param {keyInfo} Information about the keypress/action
+   * @param {languageData} Language specific info for the selected language
    */
   onDelete: function(keyInfo, languageData) {
-    console.log('handle DELETE');
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
@@ -156,10 +159,10 @@ module.exports = {
 
   /**
    * VERTICAL ARROW HANDLER
+   * @param {keyInfo} Information about the keypress/action
+   * @param {step} How much to increase/decrease value by
    */
   onVerticalArrow: function(keyInfo, step) {
-    console.log('handle VERTICAL ARROW');
-
     // If step is 0 (or falsey) then assume arrow key value changing is disabled
     if (step && !isNaN(step)) {
       switch (keyInfo.code) {
@@ -174,5 +177,26 @@ module.exports = {
       }
       keyInfo.event.preventDefault();
     }
+  },
+
+  /**
+   * UNDO HANDLER
+   * @param {finput} the Finput object
+   * @param {event} The keydown event which triggered the undo
+   */
+  onUndo: function(finput, event) {
+    finput.element.value = finput.history.undo();
+    finput.element.setSelectionRange(finput.element.value.length, finput.element.value.length);
+    event.preventDefault();
+  },
+  /**
+   * REDO HANDLER
+   * @param {finput} the Finput object
+   * @param {event} The keydown event which triggered the redo
+   */
+  onRedo: function(finput, event) {
+    finput.element.value = finput.history.redo();
+    finput.element.setSelectionRange(finput.element.value.length, finput.element.value.length);
+    event.preventDefault();
   }
 }

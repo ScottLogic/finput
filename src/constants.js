@@ -8,7 +8,9 @@ exports.CODES = {
   'UP_ARROW':     { key: 38 },
   'DOWN_ARROW':   { key: 40 },
   'BACKSPACE':    { key: 8 },
-  'DELETE':       { key: 46 }
+  'DELETE':       { key: 46 },
+  'REDO':         { key: 89, char: 121 },
+  'UNDO':         { key: 90, char: 122 }
 }
 
 exports.ACTION_TYPES = {
@@ -21,7 +23,9 @@ exports.ACTION_TYPES = {
   HORIZONTAL_ARROW: 'HORIZONTAL_ARROW',
   VERTICAL_ARROW: 'VERTICAL_ARROW',
   BACKSPACE: 'BACKSPACE',
-  DELETE: 'DELETE'
+  DELETE: 'DELETE',
+  UNDO: 'UNDO',
+  REDO: 'REDO'
 }
 
 exports.DRAG_STATES = {

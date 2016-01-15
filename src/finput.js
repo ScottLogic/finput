@@ -3,6 +3,7 @@
 import numeral from 'numeral';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
+import ValueHistory from './valueHistory';
 import {CODES, ACTION_TYPES, DRAG_STATES} from './constants';
 
 /**
@@ -20,7 +21,7 @@ const languageData = {
   }
 }
 const DEFAULTS = {
-  format: '$0.0a',
+  format: '$0,0.00',
   lang: 'en',
   maxValue: 10e+12,
   minValue: -10e+12,
@@ -51,9 +52,10 @@ class Finput {
    */
   constructor(element, options) {
     this._element = element;
-    this._options = Object.assign(options, DEFAULTS);
+    this._options = Object.assign(DEFAULTS, options);
     this._languageData = languageData[this.options.lang];
     this._actionTypes = this.createActionTypes();
+    this._history = new ValueHistory();
 
     numeral.defaultFormat(this.options.format);
 
@@ -96,6 +98,10 @@ class Finput {
   get dragState() {
     return this._dragState;
   }
+  get history() {
+    return this._history;
+  }
+
 
   // SETTERS
   set dragState(state) {
@@ -127,7 +133,7 @@ class Finput {
       },
       {
         name: ACTION_TYPES.SHORTCUT,
-        CODES: Object.keys(this.languageData.shortcuts).map((s) => {
+        codes: Object.keys(this.languageData.shortcuts).map((s) => {
           const code = s.toUpperCase().charCodeAt(0);
           return { key: code, code: code };
         })
@@ -142,11 +148,21 @@ class Finput {
       },
       {
         name: ACTION_TYPES.HORIZONTAL_ARROW,
-        CODES: [CODES.RIGHT_ARROW, CODES.LEFT_ARROW]
+        codes: [CODES.RIGHT_ARROW, CODES.LEFT_ARROW]
       },
       {
         name: ACTION_TYPES.VERTICAL_ARROW,
-        CODES: [CODES.UP_ARROW, CODES.DOWN_ARROW]
+        codes: [CODES.UP_ARROW, CODES.DOWN_ARROW]
+      },
+      {
+        name: ACTION_TYPES.UNDO,
+        code: CODES.UNDO,
+        ctrl: true
+      },
+      {
+        name: ACTION_TYPES.REDO,
+        code: CODES.REDO,
+        ctrl: true
       }
     ]
   }
@@ -162,13 +178,13 @@ class Finput {
 
       if (type.code) {
         typeMatch = type.code.key === code;
-      } else if (type.CODES) {
-        typeMatch = type.CODES.map((c) => c.key).indexOf(code) > -1;
+      } else if (type.codes) {
+        typeMatch = type.codes.map((c) => c.key).indexOf(code) > -1;
       } else if (type.minCode && type.maxCode) {
         typeMatch = type.minCode.key <= code && code <= type.maxCode.key;
       }
 
-      if (typeMatch) {
+      if (typeMatch && (type.ctrl ? e.ctrlKey : true)) {
         return type.name;
       }
     }
@@ -200,6 +216,19 @@ class Finput {
     return this.checkValueLength(val) && this.checkValueMagnitude(val);
   }
 
+  setValue(val) {
+    const newValue = helpers.fullFormat(val, this.options.format);
+    const isValueValid = this.checkValueSizing(newValue);
+    const valueCanChange = (newValue && isValueValid);
+
+    if (valueCanChange) {
+      this.element.value = newValue;
+      this.history.addValue(newValue);
+    }
+
+    return valueCanChange;
+  }
+
 
   //
   // EVENT HANDLERS
@@ -211,10 +240,7 @@ class Finput {
    */
   onFocusout(e) {
     console.log('Focus OUT event', e);
-    const newValue = helpers.fullFormat(this.element.value, this.options.format);
-    const isValueValid = this.checkValueSizing(newValue);
-    this.element.value = (newValue && isValueValid) ? newValue : this.element.value;
-
+    const valueChanged = this.setValue(this.element.value);
   }
   /**
    * On focus of the input - Select all text
@@ -232,16 +258,13 @@ class Finput {
    */
   onDrop(e) {
     console.log('Drop event', e);
-    const oldValue = this.element.value;
 
     switch (this.dragState) {
       case DRAG_STATES.INTERNAL:
         // This case is handled by the 'onInput' function
         break;
       case DRAG_STATES.EXTERNAL:
-        const newValue = helpers.fullFormat(e.dataTransfer.getData('text'), this.options.format);
-        const isValueValid = this.checkValueSizing(newValue);
-        this.element.value = (newValue && isValueValid) ? newValue : oldValue;
+        const valueChanged = this.setValue(e.dataTransfer.getData('text'));
         e.preventDefault();
         break;
       default:
@@ -304,10 +327,7 @@ class Finput {
       this.element.selectionEnd
     );
 
-    const newValue = helpers.fullFormat(potentialValue, this.options.format);
-    const isValueValid = this.checkValueSizing(newValue);
-    this.element.value = (newValue && isValueValid) ? newValue : this.element.value;
-
+    const valueChanged = this.setValue(potentialValue);
     e.preventDefault();
   }
   /**
@@ -352,6 +372,12 @@ class Finput {
       case ACTION_TYPES.DELETE:
         keyHandlers.onDelete(keyInfo, this.languageData);
         break;
+      case ACTION_TYPES.UNDO:
+        keyHandlers.onUndo(this, e);
+        return;
+      case ACTION_TYPES.REDO:
+        keyHandlers.onRedo(this, e);
+        return;
       default:
         console.log("UNKNOWN");
         // If ctrl key modifier is pressed then allow specific event handler
@@ -375,6 +401,7 @@ class Finput {
       );
       const newCaretPos = keyInfo.caretStart + offset;
       this.element.setSelectionRange(newCaretPos, newCaretPos);
+      this.history.addValue(newValue);
     }
   }
   /**
@@ -383,10 +410,7 @@ class Finput {
    */
   onInput(e) {
     console.log('on INPUT', e);
-    const currentValue = this.element.value;
-    const newValue = helpers.fullFormat(currentValue, this.options.format);
-    const isValueValid = this.checkValueSizing(newValue);
-    this.element.value = (newValue && isValueValid) ? newValue : currentValue;
+    const valueChanged = this.setValue(this.element.value);
   }
 
 }

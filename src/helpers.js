@@ -19,7 +19,7 @@ exports.fullFormat = function(val, format) {
   if (!val) {
     return null;
   } else if (val.length === 1) {
-    return val >= 0 && val <= 9 ? val : null;
+    return val >= 0 && val <= 9 ? numeral(val).format(format) : null;
   } else {
     const numeralVal = numeral(val);
     if (isNaN(numeralVal.value()) || !Number.isFinite(numeralVal.value())) {
