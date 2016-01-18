@@ -11,8 +11,12 @@
     "grunt-browser-sync": "^2.2.0",
     "grunt-browserify": "^4.0.1",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-nightwatch": "^0.5.2",
-    "nightwatch": "^0.8.15",
-    "selenium-standalone": "^4.8.0"
+    "jasmine": "^2.4.1",
+    "webdriver-manager": "^8.0.0",
+    "webdriverio": "^3.4.0"
+  },
+  "scripts": {
+    "webdriver": "webdriver-manager start",
+    "test": "wdio wdio.conf.js"
   }
 }
