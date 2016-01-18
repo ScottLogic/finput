@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "finput",
+  "version": "1.5.3",
   "dependencies": {
     "numeral": "^1.5.3"
   },
