@@ -116,7 +116,7 @@ module.exports = {
             ? 2
             : 1;
 
-        caretJump = ((keyInfo.caretStart - caretJump) > 0) ? caretJump : 0;
+        caretJump = ((keyInfo.caretStart - caretJump) >= 0) ? caretJump : 0;
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - caretJump);
         lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
         keyInfo.caretStart += -caretJump;

@@ -67,10 +67,10 @@ exports.partialFormat = function(val, currency, languageData) {
 exports.calculateOffset = function(prev, curr, pos, currency, languageData) {
   let i, j;
   for (i=0, j=0; i < pos; i++, j++) {
-    if (prev[i] === languageData.delimiter || prev[i] === currency) {
+    if (prev[i] === languageData.delimiter || (currency && prev[i] === currency)) {
       i++;
     }
-    if (curr[j] === languageData.delimiter || curr[j] === currency) {
+    if (curr[j] === languageData.delimiter || (currency &&curr[j] === currency)) {
       j++;
     }
   }

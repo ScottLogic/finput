@@ -130,6 +130,14 @@ class Finput {
         names: ['-']
       },
       {
+        type: ACTION_TYPES.HOME,
+        names: ['home']
+      },
+      {
+        type: ACTION_TYPES.END,
+        names: ['end']
+      },
+      {
         type: ACTION_TYPES.DECIMAL,
         names: [this.languageData.decimal]
       },
@@ -369,6 +377,9 @@ class Finput {
         keyHandlers.onShortcut(keyInfo, this.languageData);
         break;
       case ACTION_TYPES.HORIZONTAL_ARROW:
+      case ACTION_TYPES.HOME:
+      case ACTION_TYPES.END:
+        console.log(actionType);
         // Default behaviour
         return;
       case ACTION_TYPES.VERTICAL_ARROW:

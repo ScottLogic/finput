@@ -11,7 +11,9 @@ exports.ACTION_TYPES = {
   BACKSPACE: 'BACKSPACE',
   DELETE: 'DELETE',
   UNDO: 'UNDO',
-  REDO: 'REDO'
+  REDO: 'REDO',
+  HOME: 'HOME',
+  END: 'END'
 }
 
 exports.DRAG_STATES = {
