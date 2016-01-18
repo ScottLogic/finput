@@ -1,5 +1,5 @@
 
-import {CODES, ACTION_TYPES, DRAG_STATES} from './constants';
+import {ACTION_TYPES, DRAG_STATES} from './constants';
 
 /**
  * Edit a string with a new string to add.
@@ -35,12 +35,12 @@ exports.fullFormat = function(val, format, currency) {
 /**
  * Partially format the value, only adding commas as needed (Done on keypress/keyup)
  */
-exports.partialFormat = function(val, currency) {
-  let str = val.replace(new RegExp(`[${(currency || '')}\,]`, 'g'), '');
-  const startIndex = str.indexOf('.') > -1
-    ? str.indexOf('.') - 1
+exports.partialFormat = function(val, currency, languageData) {
+  let str = val.replace(new RegExp(`[${(currency || '')}${languageData.delimiter}]`, 'g'), '');
+  const startIndex = str.indexOf(languageData.decimal) > -1
+    ? str.indexOf(languageData.decimal) - 1
     : str.length - 1;
-  const endIndex = str[0] === String.fromCharCode(CODES.MINUS.char) ? 1 : 0;
+  const endIndex = str[0] === '-' ? 1 : 0;
 
   // i must be greater than zero because number cannot start with comma
   let i = startIndex;
@@ -51,7 +51,12 @@ exports.partialFormat = function(val, currency) {
       str = this.editString(str, ',', i);
     }
   }
-  return `${currency && str ? currency : ''}${str}`;
+  // Only add currency symbol on if value has any numbers
+  if (currency && str && str.match(/\d/)) {
+    return str[0] === '-' ? str.replace('-', `-${currency}`) : `${currency}${str}`
+  } else {
+    return str;
+  }
 }
 
 /**
@@ -60,13 +65,12 @@ exports.partialFormat = function(val, currency) {
  * Currency symbol or delimiters may have been added
  */
 exports.calculateOffset = function(prev, curr, pos, currency, languageData) {
-  const delimiter = String.fromCharCode(languageData.delimiter[0].char);
   let i, j;
   for (i=0, j=0; i < pos; i++, j++) {
-    if (prev[i] === delimiter || prev[i] === currency) {
+    if (prev[i] === languageData.delimiter || prev[i] === currency) {
       i++;
     }
-    if (curr[j] === delimiter || curr[j] === currency) {
+    if (curr[j] === languageData.delimiter || curr[j] === currency) {
       j++;
     }
   }

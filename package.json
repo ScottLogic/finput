@@ -4,6 +4,7 @@
   "dependencies": {
     "numeral": "^1.5.3"
   },
+  "main": "./finput.js",
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.3.13",
@@ -14,6 +15,7 @@
     "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-nightwatch": "^0.5.2",
+    "keycode": "^2.1.0",
     "nightwatch": "^0.8.15",
     "selenium-standalone": "^4.8.0"
   }

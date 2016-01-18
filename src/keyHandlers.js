@@ -4,7 +4,7 @@
 // All functions dealing with keypresses (listened to on the keydown event)
 // are here, with specific implementations for most types of key
 
-import {CODES, ACTION_TYPES, DELIMITER_STRATEGIES} from './constants';
+import {ACTION_TYPES, DELIMITER_STRATEGIES} from './constants';
 import helpers from './helpers';
 
 module.exports = {
@@ -15,12 +15,12 @@ module.exports = {
    */
   onNumber: function(keyInfo) {
     const allowedNumber =
-      !(keyInfo.currentValue[0] === String.fromCharCode(CODES.MINUS.char)
+      !(keyInfo.currentValue[0] === '-'
       && keyInfo.caretStart === 0
       && keyInfo.caretEnd === 0);
 
     if (allowedNumber) {
-      keyInfo.newValue = helpers.editString(keyInfo.currentValue, keyInfo.char, keyInfo.caretStart, keyInfo.caretEnd);
+      keyInfo.newValue = helpers.editString(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, keyInfo.caretEnd);
       keyInfo.caretStart += 1;
     }
     keyInfo.event.preventDefault();
@@ -32,12 +32,12 @@ module.exports = {
    */
   onMinus: function(keyInfo) {
     const minusAllowed = keyInfo.caretStart === 0 &&
-      (keyInfo.currentValue[0] !== String.fromCharCode(CODES.MINUS.char) || keyInfo.caretEnd > 0);
+      (keyInfo.currentValue[0] !== '-' || keyInfo.caretEnd > 0);
 
      if (minusAllowed) {
        keyInfo.newValue = helpers.editString(
          keyInfo.currentValue,
-         String.fromCharCode(CODES.MINUS.char),
+         '-',
          keyInfo.caretStart,
          keyInfo.caretEnd
        );
@@ -52,12 +52,12 @@ module.exports = {
    * @param {languageData} Language specific info for the selected language
    */
   onDecimal: function(keyInfo, languageData) {
-    const decimalIndex = keyInfo.currentValue.indexOf(String.fromCharCode(languageData.decimal[0].char));
+    const decimalIndex = keyInfo.currentValue.indexOf(languageData.decimal);
 
     // If there is not already a decimal or the original would be replaced
     // Add the decimal
     const decimalAllowed =
-      decimalIndex === -1 ||
+      (decimalIndex === -1) ||
         (decimalIndex >= keyInfo.caretStart &&
          decimalIndex < keyInfo.caretEnd);
 
@@ -65,7 +65,7 @@ module.exports = {
     {
       keyInfo.newValue = helpers.editString(
         keyInfo.currentValue,
-        String.fromCharCode(languageData.decimal[0].char),
+        languageData.decimal,
         keyInfo.caretStart,
         keyInfo.caretEnd
       );
@@ -81,7 +81,7 @@ module.exports = {
    * @param {languageData} Language specific info for the selected language
    */
   onShortcut: function(keyInfo, languageData) {
-    const power = languageData.shortcuts[keyInfo.char.toLowerCase()];
+    const power = languageData.shortcuts[keyInfo.keyName.toLowerCase()];
 
     if (power) {
       const numeralVal = numeral(keyInfo.currentValue);
@@ -110,12 +110,13 @@ module.exports = {
         keyInfo.caretStart = 0;
       } else {
         // Assume as there is a comma then there must be a number before it
-        const caretJump =
+        let caretJump =
           ((delimiterStrategy === DELIMITER_STRATEGIES.DELETE_NUMBER)
-          && (keyInfo.currentValue[keyInfo.caretStart - 1] === String.fromCharCode(delimiter.char)))
+          && (keyInfo.currentValue[keyInfo.caretStart - 1] === delimiter))
             ? 2
             : 1;
 
+        caretJump = ((keyInfo.caretStart - caretJump) > 0) ? caretJump : 0;
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - caretJump);
         lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
         keyInfo.caretStart += -caretJump;
@@ -139,7 +140,7 @@ module.exports = {
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
-      const nextCharCode = keyInfo.currentValue.charCodeAt(keyInfo.caretStart);
+      const nextChar = keyInfo.currentValue[keyInfo.caretStart];
 
       if (keyInfo.event.ctrlKey) {
         // If CTRL key is held down - delete everything AFTER caret
@@ -148,7 +149,7 @@ module.exports = {
       } else {
         // Assume as there is a comma then there must be a number after it
         const toDelete = delimiterStrategy === DELIMITER_STRATEGIES.DELETE_NUMBER;
-        const delimiterNext = nextCharCode === delimiter.char;
+        const delimiterNext = nextChar === delimiter;
 
         // If char to delete is delimiter and number is not to be deleted - skip over it
         keyInfo.caretStart += delimiterNext && !toDelete ? 1 : 0;
@@ -176,11 +177,11 @@ module.exports = {
   onVerticalArrow: function(keyInfo, step) {
     // If step is 0 (or falsey) then assume arrow key value changing is disabled
     if (step && !isNaN(step)) {
-      switch (keyInfo.code) {
-        case CODES.UP_ARROW.key:
+      switch (keyInfo.keyName) {
+        case 'up':
           keyInfo.newValue = numeral(keyInfo.currentValue).add(step).format();
           break;
-        case CODES.DOWN_ARROW.key:
+        case 'down':
           keyInfo.newValue = numeral(keyInfo.currentValue).subtract(step).format();
           break;
         default:

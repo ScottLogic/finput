@@ -1,10 +1,11 @@
 // Copyright Ali Sheehan-Dare, all rights and profits reserved.
 
 import numeral from 'numeral';
+import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
 import ValueHistory from './valueHistory';
-import {CODES, ACTION_TYPES, DRAG_STATES, DELIMITER_STRATEGIES} from './constants';
+import {ACTION_TYPES, DRAG_STATES, DELIMITER_STRATEGIES} from './constants';
 
 
 /**
@@ -17,8 +18,8 @@ const languageData = {
       'm': 6,
       'b': 9
     },
-    delimiter: [CODES.COMMA],
-    decimal: [CODES.DOT, CODES.NUMPAD_DOT]
+    delimiter: ',',
+    decimal: '.'
   }
 }
 
@@ -69,8 +70,8 @@ class Finput {
     this.element.addEventListener('focus', (e) => this.onFocusin(e));
     this.element.addEventListener('drop', (e) => this.onDrop(e));
     this.element.addEventListener('paste', (e) => this.onPaste(e));
-    this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('keydown', (e) => this.onKeydown(e));
+    this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('input', (e) => this.onInput(e));
 
     // Dragging listeners
@@ -121,52 +122,49 @@ class Finput {
   createActionTypes() {
     return [
       {
-        name: ACTION_TYPES.NUMBER,
-        codes: CODES.NUMBERS
+        type: ACTION_TYPES.NUMBER,
+        names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
       },
       {
-        name: ACTION_TYPES.MINUS,
-        codes: [CODES.MINUS, CODES.NUM_MINUS]
+        type: ACTION_TYPES.MINUS,
+        names: ['-']
       },
       {
-        name: ACTION_TYPES.DECIMAL,
-        codes: this.languageData.decimal
+        type: ACTION_TYPES.DECIMAL,
+        names: [this.languageData.decimal]
       },
       {
-        name: ACTION_TYPES.DELIMITER,
-        codes: this.languageData.delimiter
+        type: ACTION_TYPES.DELIMITER,
+        names: [this.languageData.delimiter]
       },
       {
-        name: ACTION_TYPES.SHORTCUT,
-        codes: Object.keys(this.languageData.shortcuts).map((s) => {
-          const code = s.toUpperCase().charCodeAt(0);
-          return { key: code, code: code };
-        })
+        type: ACTION_TYPES.SHORTCUT,
+        names: Object.keys(this.languageData.shortcuts)
       },
       {
-        name: ACTION_TYPES.BACKSPACE,
-        code: CODES.BACKSPACE
+        type: ACTION_TYPES.BACKSPACE,
+        names: ['backspace']
       },
       {
-        name: ACTION_TYPES.DELETE,
-        code: CODES.DELETE
+        type: ACTION_TYPES.DELETE,
+        names: ['delete']
       },
       {
-        name: ACTION_TYPES.HORIZONTAL_ARROW,
-        codes: [CODES.RIGHT_ARROW, CODES.LEFT_ARROW]
+        type: ACTION_TYPES.HORIZONTAL_ARROW,
+        names: ['left', 'right']
       },
       {
-        name: ACTION_TYPES.VERTICAL_ARROW,
-        codes: [CODES.UP_ARROW, CODES.DOWN_ARROW]
+        type: ACTION_TYPES.VERTICAL_ARROW,
+        names: ['up', 'down']
       },
       {
-        name: ACTION_TYPES.UNDO,
-        code: CODES.UNDO,
+        type: ACTION_TYPES.UNDO,
+        names: ['z'],
         ctrl: true
       },
       {
-        name: ACTION_TYPES.REDO,
-        code: CODES.REDO,
+        type: ACTION_TYPES.REDO,
+        names: ['y'],
         ctrl: true
       }
     ]
@@ -176,29 +174,16 @@ class Finput {
    * keydown event. E.g. vertical arrow pressed, number pressed etc...
    * @param {e} Keyboard event
    */
-  getActionType(e) {
-    const code = e.which;
-    for (let type of this.actionTypes) {
-      let typeMatch = false;
-      let codes;
+  getActionType(name, e) {
+    for (let actionType of this.actionTypes) {
+      const index = actionType.names.indexOf(name);
+      const typeMatch = index > -1;
 
-      if (type.code) {
-        typeMatch = type.code.key === code;
-        codes = type.code;
-      } else if (type.codes) {
-        const index = type.codes.map((c) => c.key).indexOf(code);
-        typeMatch = index > -1;
-        codes = type.codes[index];
-      }
-
-      if (typeMatch && (type.ctrl ? e.ctrlKey : true)) {
-        return {
-          name: type.name,
-          codes: codes
-        };
+      if (typeMatch && (actionType.ctrl ? e.ctrlKey : true)) {
+        return actionType.type;
       }
     }
-    return { name: ACTION_TYPES.UNKNOWN };
+    return ACTION_TYPES.UNKNOWN;
   }
 
   /**
@@ -207,7 +192,9 @@ class Finput {
    */
   checkValueMagnitude(val) {
     const num = numeral().unformat(val);
-    return num <= this.options.maxValue && num >= this.options.minValue;
+    return num
+      ? (num <= this.options.maxValue && num >= this.options.minValue)
+      : true;
   }
   /**
    * Check value is not too many characters long
@@ -215,7 +202,9 @@ class Finput {
    */
   checkValueLength(val) {
     const num = numeral().unformat(val);
-    return num.toString().length <= this.options.maxLength
+    return num
+      ? num.toString().length <= this.options.maxLength
+      : true;
   }
   /**
    * Combines the above functions to decide whether the given value is not too
@@ -353,20 +342,20 @@ class Finput {
    */
   onKeydown(e) {
     console.log('keydown', e);
+
     const keyInfo = {
       event: e,
       code: e.which || e.keyCode,
+      keyName: keycode(e).replace('numpad ', ''),
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
       currentValue: this.element.value,
       newValue: this.element.value
     }
 
-    const actionType = this.getActionType(e);
-    const codes = actionType.codes;
-    keyInfo.char = codes && String.fromCharCode(codes.char);
+    const actionType = this.getActionType(keyInfo.keyName, e);
 
-    switch (actionType.name) {
+    switch (actionType) {
       case ACTION_TYPES.NUMBER:
         keyHandlers.onNumber(keyInfo);
         break;
@@ -386,10 +375,10 @@ class Finput {
         keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
         break;
       case ACTION_TYPES.BACKSPACE:
-        keyHandlers.onBackspace(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter[0]);
+        keyHandlers.onBackspace(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter);
         break;
       case ACTION_TYPES.DELETE:
-        keyHandlers.onDelete(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter[0]);
+        keyHandlers.onDelete(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter);
         break;
       case ACTION_TYPES.UNDO:
         keyHandlers.onUndo(this, e);
@@ -407,7 +396,7 @@ class Finput {
         return;
     }
 
-    const newValue = helpers.partialFormat(keyInfo.newValue, this.options.currency);
+    const newValue = helpers.partialFormat(keyInfo.newValue, this.options.currency, this.languageData);
     const currentValue = this.element.value;
     const isValueValid = this.checkValueSizing(newValue);
 
