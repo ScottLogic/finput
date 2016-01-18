@@ -16,7 +16,7 @@
     "webdriverio": "^3.4.0"
   },
   "scripts": {
-    "webdriver": "webdriver-manager start",
+    "webdriver": "webdriver-manager",
     "test": "wdio wdio.conf.js"
   }
 }
