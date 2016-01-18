@@ -1,11 +1,13 @@
 
 import Finput from './src/finput.js';
 
-const element = document.getElementById('number-input');
+var element = document.getElementById('number-input');
 
-const finput = new Finput(element, {
+var myFinput = new Finput(element, {
   valueStep: 100,
-  currency: '$'
+  currency: '$',
+  delimiterDeleteStrategy: 'SKIP'
 });
 
-console.log(finput.element);
+console.log(Finput);
+console.log(myFinput);

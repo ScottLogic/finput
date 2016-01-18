@@ -4,7 +4,7 @@
 // All functions dealing with keypresses (listened to on the keydown event)
 // are here, with specific implementations for most types of key
 
-import {CODES, ACTION_TYPES} from './constants';
+import {CODES, ACTION_TYPES, DELIMITER_STRATEGIES} from './constants';
 import helpers from './helpers';
 
 module.exports = {
@@ -99,7 +99,7 @@ module.exports = {
    * BACKSPACE HANDLER
    * @param {keyInfo} Information about the keypress/action
    */
-  onBackspace: function(keyInfo) {
+  onBackspace: function(keyInfo, delimiterStrategy, delimiter) {
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
@@ -109,9 +109,16 @@ module.exports = {
         lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
         keyInfo.caretStart = 0;
       } else {
-        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - 1);
+        // Assume as there is a comma then there must be a number before it
+        const caretJump =
+          ((delimiterStrategy === DELIMITER_STRATEGIES.DELETE_NUMBER)
+          && (keyInfo.currentValue[keyInfo.caretStart - 1] === String.fromCharCode(delimiter.char)))
+            ? 2
+            : 1;
+
+        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - caretJump);
         lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
-        keyInfo.caretStart += -1;
+        keyInfo.caretStart += -caretJump;
       }
     } else {
       // Same code as onDelete handler for deleting a selection range
@@ -128,7 +135,7 @@ module.exports = {
    * @param {keyInfo} Information about the keypress/action
    * @param {languageData} Language specific info for the selected language
    */
-  onDelete: function(keyInfo, languageData) {
+  onDelete: function(keyInfo, delimiterStrategy, delimiter) {
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
@@ -138,14 +145,18 @@ module.exports = {
         // If CTRL key is held down - delete everything AFTER caret
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
         lastHalf = '';
-      } else if (nextCharCode === languageData.delimiter[0].char) {
-        // If char to delete is delimiter - skip over it
-        keyInfo.caretStart += 1;
-        firstHalf = keyInfo.currentValue;
-        lastHalf = '';
       } else {
+        // Assume as there is a comma then there must be a number after it
+        const toDelete = delimiterStrategy === DELIMITER_STRATEGIES.DELETE_NUMBER;
+        const delimiterNext = nextCharCode === delimiter.char;
+
+        // If char to delete is delimiter and number is not to be deleted - skip over it
+        keyInfo.caretStart += delimiterNext && !toDelete ? 1 : 0;
+
+        const lastHalfStart = keyInfo.caretStart
+          + (delimiterNext ? (toDelete ? 2 : 0) : 1);
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
-        lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart + 1, keyInfo.currentValue.length);
+        lastHalf = keyInfo.currentValue.slice(lastHalfStart, keyInfo.currentValue.length);
       }
     } else {
       // Same code as onBackspace handler for deleting a selection range

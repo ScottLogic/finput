@@ -4,7 +4,8 @@ import numeral from 'numeral';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
 import ValueHistory from './valueHistory';
-import {CODES, ACTION_TYPES, DRAG_STATES} from './constants';
+import {CODES, ACTION_TYPES, DRAG_STATES, DELIMITER_STRATEGIES} from './constants';
+
 
 /**
  * CONSTANTS
@@ -20,6 +21,7 @@ const languageData = {
     decimal: [CODES.DOT, CODES.NUMPAD_DOT]
   }
 }
+
 const DEFAULTS = {
   format: '0,0.00',
   lang: 'en',
@@ -27,7 +29,8 @@ const DEFAULTS = {
   minValue: -10e+12,
   maxLength: 15,
   valueStep: 1,
-  droppableClass: 'finput-droppable'
+  droppableClass: 'finput-droppable',
+  delimiterDeleteStrategy: DELIMITER_STRATEGIES.SKIP
 }
 
 /**
@@ -50,6 +53,7 @@ class Finput {
    * @param {Options.maxDigits} Limit input value to a maximum number of digits
    * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
    * @param {Options.droppableClass} Class to give to the input when text drag event has started on the page
+   * @param {Options.delimiterDeleteStrategy} Behaviour to apply when deleting or backspacing a delimiter
    */
   constructor(element, options) {
     this._element = element;
@@ -222,6 +226,10 @@ class Finput {
     return this.checkValueLength(val) && this.checkValueMagnitude(val);
   }
 
+  /**
+   * Sets the value, fully formatted, for the input
+   * @param {val} New value to set
+   */
   setValue(val) {
     const newValue = helpers.fullFormat(val, this.options.format, this.options.currency);
     const isValueValid = this.checkValueSizing(newValue);
@@ -373,15 +381,15 @@ class Finput {
         break;
       case ACTION_TYPES.HORIZONTAL_ARROW:
         // Default behaviour
-        break;
+        return;
       case ACTION_TYPES.VERTICAL_ARROW:
         keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
         break;
       case ACTION_TYPES.BACKSPACE:
-        keyHandlers.onBackspace(keyInfo);
+        keyHandlers.onBackspace(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter[0]);
         break;
       case ACTION_TYPES.DELETE:
-        keyHandlers.onDelete(keyInfo, this.languageData);
+        keyHandlers.onDelete(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter[0]);
         break;
       case ACTION_TYPES.UNDO:
         keyHandlers.onUndo(this, e);
