@@ -11,25 +11,19 @@ import {ACTION_TYPES, DRAG_STATES} from './constants';
 /**
  * CONSTANTS
  */
-const languageData = {
-  en: {
-    shortcuts: {
-      'k': 3,
-      'm': 6,
-      'b': 9
-    },
-    delimiter: ',',
-    decimal: '.'
-  }
-}
-
 const DEFAULTS = {
   format: '0,0.00',
-  lang: 'en',
   maxValue: 10e+12,
   minValue: -10e+12,
   maxLength: 15,
   valueStep: 1,
+  thousands: ',',
+  decimal: '.',
+  shortcuts: {
+    'k': 3,
+    'm': 6,
+    'b': 9
+  }
 }
 
 /**
@@ -46,17 +40,14 @@ class Finput {
    * Detailed list of possible options:
    * @param {Options.format} The format of the number to be displayed by the input
    * @param {Options.currency} Optional currency to prepend to value
-   * @param {Options.lang} Language (used in letter abbreviations etc...)
    * @param {Options.maxValue} Limit input value to a maximum value
    * @param {Options.minValue} Limit input value to a minimum value
    * @param {Options.maxDigits} Limit input value to a maximum number of digits
    * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
-   * @param {Options.delimiterDeleteStrategy} Behaviour to apply when deleting or backspacing a delimiter
    */
   constructor(element, options) {
     this._element = element;
     this._options = Object.assign(DEFAULTS, options);
-    this._languageData = languageData[this.options.lang];
     this._actionTypes = this.createActionTypes();
     this._history = new ValueHistory();
 
@@ -90,9 +81,6 @@ class Finput {
   get formattedValue() {
     return numeral(this.element.value).format();
   }
-  get languageData() {
-    return this._languageData;
-  }
   get actionTypes() {
     return this._actionTypes;
   }
@@ -111,7 +99,7 @@ class Finput {
 
   /**
    * Creates the correct action type to char/key codes array with the
-   * correct decimal and delimiter characters (depending on language)
+   * correct decimal and thousand separator characters (depending on language)
    */
   createActionTypes() {
     return [
@@ -133,15 +121,15 @@ class Finput {
       },
       {
         type: ACTION_TYPES.DECIMAL,
-        names: [this.languageData.decimal]
+        names: [this.options.decimal]
       },
       {
         type: ACTION_TYPES.DELIMITER,
-        names: [this.languageData.delimiter]
+        names: [this.options.thousands]
       },
       {
         type: ACTION_TYPES.SHORTCUT,
-        names: Object.keys(this.languageData.shortcuts)
+        names: Object.keys(this.options.shortcuts)
       },
       {
         type: ACTION_TYPES.BACKSPACE,
@@ -321,12 +309,10 @@ class Finput {
    * @param {e} Keyboard event
    */
   onKeydown(e) {
-    console.debug('keydown', e);
-
     const keyInfo = {
       event: e,
       code: e.which || e.keyCode,
-      keyName: keycode(e).replace('numpad ', ''),
+      keyName: keycode(e) ? keycode(e).replace('numpad ', '') : null,
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
       currentValue: this.element.value,
@@ -335,18 +321,20 @@ class Finput {
 
     const actionType = this.getActionType(keyInfo.keyName, e);
 
+    console.debug(actionType);
+
     switch (actionType) {
       case ACTION_TYPES.NUMBER:
         keyHandlers.onNumber(keyInfo);
         break;
       case ACTION_TYPES.DECIMAL:
-        keyHandlers.onDecimal(keyInfo, this.languageData);
+        keyHandlers.onDecimal(keyInfo, this.options);
         break;
       case ACTION_TYPES.MINUS:
         keyHandlers.onMinus(keyInfo);
         break;
       case ACTION_TYPES.SHORTCUT:
-        keyHandlers.onShortcut(keyInfo, this.languageData);
+        keyHandlers.onShortcut(keyInfo, this.options);
         break;
       case ACTION_TYPES.HORIZONTAL_ARROW:
       case ACTION_TYPES.HOME:
@@ -358,10 +346,10 @@ class Finput {
         keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
         break;
       case ACTION_TYPES.BACKSPACE:
-        keyHandlers.onBackspace(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter);
+        keyHandlers.onBackspace(keyInfo, this.options.thousands);
         break;
       case ACTION_TYPES.DELETE:
-        keyHandlers.onDelete(keyInfo, this.options.delimiterDeleteStrategy, this.languageData.delimiter);
+        keyHandlers.onDelete(keyInfo, this.options.thousands);
         break;
       case ACTION_TYPES.UNDO:
         keyHandlers.onUndo(this, e);
@@ -370,7 +358,6 @@ class Finput {
         keyHandlers.onRedo(this, e);
         return;
       default:
-        console.debug("UNKNOWN");
         // If ctrl key modifier is pressed then allow specific event handler
         // to handle this
         if (!e.ctrlKey) {
@@ -379,7 +366,7 @@ class Finput {
         return;
     }
 
-    const newValue = helpers.partialFormat(keyInfo.newValue, this.options.currency, this.languageData);
+    const newValue = helpers.partialFormat(keyInfo.newValue, this.options);
     const currentValue = keyInfo.newValue;
     const isValueValid = this.checkValueSizing(newValue);
 
@@ -390,8 +377,7 @@ class Finput {
         currentValue,
         this.element.value,
         keyInfo.caretStart,
-        this.options.currency,
-        this.languageData
+        this.options
       );
       const newCaretPos = keyInfo.caretStart + offset;
       this.element.setSelectionRange(newCaretPos, newCaretPos);

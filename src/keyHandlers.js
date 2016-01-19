@@ -99,7 +99,7 @@ module.exports = {
    * BACKSPACE HANDLER
    * @param {keyInfo} Information about the keypress/action
    */
-  onBackspace: function(keyInfo, delimiterStrategy, delimiter) {
+  onBackspace: function(keyInfo, thousands) {
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
@@ -132,7 +132,7 @@ module.exports = {
    * @param {keyInfo} Information about the keypress/action
    * @param {languageData} Language specific info for the selected language
    */
-  onDelete: function(keyInfo, delimiterStrategy, delimiter) {
+  onDelete: function(keyInfo, thousands) {
     let firstHalf, lastHalf;
 
     if (keyInfo.caretStart === keyInfo.caretEnd) {
@@ -144,13 +144,13 @@ module.exports = {
         lastHalf = '';
       } else {
         // Assume as there is a comma then there must be a number after it
-        const delimiterNext = nextChar === delimiter;
+        const thousandsNext = nextChar === thousands;
 
-        // If char to delete is delimiter and number is not to be deleted - skip over it
-        keyInfo.caretStart += delimiterNext ? 1 : 0;
+        // If char to delete is thousands and number is not to be deleted - skip over it
+        keyInfo.caretStart += thousandsNext ? 1 : 0;
 
         const lastHalfStart = keyInfo.caretStart
-          + (delimiterNext ? 0 : 1);
+          + (thousandsNext ? 0 : 1);
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
         lastHalf = keyInfo.currentValue.slice(lastHalfStart, keyInfo.currentValue.length);
       }

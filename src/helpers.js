@@ -35,10 +35,10 @@ exports.fullFormat = function(val, format, currency) {
 /**
  * Partially format the value, only adding commas as needed (Done on keypress/keyup)
  */
-exports.partialFormat = function(val, currency, languageData) {
-  let str = val.replace(new RegExp(`[${(currency || '')}${languageData.delimiter}]`, 'g'), '');
-  const startIndex = str.indexOf(languageData.decimal) > -1
-    ? str.indexOf(languageData.decimal) - 1
+exports.partialFormat = function(val, options) {
+  let str = val.replace(new RegExp(`[${(options.currency || '')}${options.thousands}]`, 'g'), '');
+  const startIndex = str.indexOf(options.decimal) > -1
+    ? str.indexOf(options.decimal) - 1
     : str.length - 1;
   const endIndex = str[0] === '-' ? 1 : 0;
 
@@ -52,8 +52,8 @@ exports.partialFormat = function(val, currency, languageData) {
     }
   }
   // Only add currency symbol on if value has any numbers
-  if (currency && str && str.match(/\d/)) {
-    return str[0] === '-' ? str.replace('-', `-${currency}`) : `${currency}${str}`
+  if (options.currency && str && str.match(/\d/)) {
+    return str[0] === '-' ? str.replace('-', `-${options.currency}`) : `${options.currency}${str}`
   } else {
     return str;
   }
@@ -62,17 +62,17 @@ exports.partialFormat = function(val, currency, languageData) {
 /**
  * Calculate how many characters have been added (or removed) before the given
  * caret position after formatting. Caret is then adjusted by the returned offset
- * Currency symbol or delimiters may have been added
+ * Currency symbol or thousand separators may have been added
  */
-exports.calculateOffset = function(prev, curr, pos, currency, languageData) {
+exports.calculateOffset = function(prev, curr, pos, options) {
   let i, prevSymbols = 0, currentSymbols = 0;
   for (i=0; i < pos; i++) {
-    if (prev[i] === languageData.delimiter || (currency && prev[i] === currency)) {
+    if (prev[i] === options.thousands || (options.currency && prev[i] === options.currency)) {
       prevSymbols++;
     }
   }
   for (i=0; i < pos; i++) {
-    if (curr[i] === languageData.delimiter || (currency && curr[i] === currency)) {
+    if (curr[i] === options.thousands || (options.currency && curr[i] === options.currency)) {
       currentSymbols++;
     }
   }
