@@ -408,7 +408,7 @@ class Finput {
     }
 
     const newValue = helpers.partialFormat(keyInfo.newValue, this.options.currency, this.languageData);
-    const currentValue = this.element.value;
+    const currentValue = keyInfo.newValue;
     const isValueValid = this.checkValueSizing(newValue);
 
     this.element.value = isValueValid ? newValue : this.element.value;

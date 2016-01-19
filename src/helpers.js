@@ -65,14 +65,16 @@ exports.partialFormat = function(val, currency, languageData) {
  * Currency symbol or delimiters may have been added
  */
 exports.calculateOffset = function(prev, curr, pos, currency, languageData) {
-  let i, j;
-  for (i=0, j=0; i < pos; i++, j++) {
+  let i, prevSymbols = 0, currentSymbols = 0;
+  for (i=0; i < pos; i++) {
     if (prev[i] === languageData.delimiter || (currency && prev[i] === currency)) {
-      i++;
-    }
-    if (curr[j] === languageData.delimiter || (currency &&curr[j] === currency)) {
-      j++;
+      prevSymbols++;
     }
   }
-  return j - i;
+  for (i=0; i < pos; i++) {
+    if (curr[i] === languageData.delimiter || (currency && curr[i] === currency)) {
+      currentSymbols++;
+    }
+  }
+  return currentSymbols - prevSymbols;
 }
