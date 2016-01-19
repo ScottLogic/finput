@@ -16,6 +16,8 @@ exports.config = {
     exclude: [
         // 'path/to/excluded/files'
     ],
+    user: process.env.BROWSERSTACK_USER,
+    key: process.env.BROWSERSTACK_KEY,
     //
     // ============
     // Capabilities
@@ -30,7 +32,8 @@ exports.config = {
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
     capabilities: [{
-        browserName: 'firefox'
+        browserName: 'firefox',
+        'browserstack.local': true
     }],
     //
     // ===================

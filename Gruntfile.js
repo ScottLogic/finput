@@ -3,6 +3,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-browser-sync');
+  grunt.loadNpmTasks('grunt-webdriver');
+  grunt.loadNpmTasks('grunt-browserstacktunnel-wrapper');
+
+  var browserstackKey = process.env.BROWSERSTACK_KEY;
 
   grunt.initConfig({
     browserify: {
@@ -57,11 +61,32 @@ module.exports = function(grunt) {
           'dist/finput.min.js': ['dist/finput.js']
         }
       }
-    }
+    },
+    webdriver: {
+      test: {
+        configFile: './wdio.conf.js'
+      }
+    },
+    'browserstacktunnel-wrapper': {
+      options: {
+        key: browserstackKey,
+        hosts: [{
+          name: 'localhost',
+          port: 300,
+          sslFlag: 0
+        }],
+        forcelocal: true,
+        onlyAutomate: true,
+        v: true
+      }
+    },
   });
 
   grunt.registerTask('compile', ['browserify:dev', 'uglify']);
   grunt.registerTask('serve', ['compile', 'browserSync', 'watch']);
+
+  grunt.registerTask('test:browserstack', browserstackKey ?
+          ['browserstacktunnel-wrapper', 'webdriver'] : []);
 
   grunt.registerTask('default', 'serve');
 };

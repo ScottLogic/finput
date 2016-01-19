@@ -17,14 +17,27 @@ A vanilla-JS financial amount input control. Supports the following features -
 
 ## Running tests
 
+Build and run the server -
+
+`grunt serve`
+
+# WITH browserstack
+
+Set browserstack config: in bash -
+
+`export BROWSERSTACK_KEY=*YOUR_KEY*`
+`export BROWSERSTACK_USER=*YOUR_USERNAME*`
+
+Execute the tests -
+
+`grunt test:browserstack`
+
+# WITHOUT browserstack
+
 Install and run an instance of webdriver e.g. -
 
 `npm run webdriver update`
 `npm run webdriver start`
-
-Build and run the server -
-
-`grunt serve`
 
 Execute the tests -
 
