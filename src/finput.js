@@ -1,6 +1,5 @@
 // Copyright Ali Sheehan-Dare, all rights and profits reserved.
 
-import numeral from 'numeral';
 import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
@@ -40,9 +39,6 @@ class Finput {
    * Detailed list of possible options:
    * @param {Options.format} The format of the number to be displayed by the input
    * @param {Options.currency} Optional currency to prepend to value
-   * @param {Options.maxValue} Limit input value to a maximum value
-   * @param {Options.minValue} Limit input value to a minimum value
-   * @param {Options.maxDigits} Limit input value to a maximum number of digits
    * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
    */
   constructor(element, options) {
@@ -50,8 +46,6 @@ class Finput {
     this._options = Object.assign(DEFAULTS, options);
     this._actionTypes = this.createActionTypes();
     this._history = new ValueHistory();
-
-    numeral.defaultFormat(this.options.format);
 
     // Setup listeners
     this.element.addEventListener('blur', (e) => this.onFocusout(e));
@@ -76,10 +70,10 @@ class Finput {
     return this._options;
   }
   get value() {
-    return numeral().unformat(this.element.value);
+    return this._value;
   }
   get formattedValue() {
-    return numeral(this.element.value).format();
+    return this._formattedValue;
   }
   get actionTypes() {
     return this._actionTypes;
@@ -95,6 +89,12 @@ class Finput {
   // SETTERS
   set dragState(state) {
     this._dragState = state;
+  }
+  set value(val) {
+    this._value = val;
+  }
+  set formattedValue(val) {
+    this._formattedValue = val;
   }
 
   /**
@@ -177,47 +177,14 @@ class Finput {
   }
 
   /**
-   * Check value is not too large or small
-   * @param {val} Value to check
-   */
-  checkValueMagnitude(val) {
-    const num = numeral().unformat(val);
-    return num
-      ? (num <= this.options.maxValue && num >= this.options.minValue)
-      : true;
-  }
-  /**
-   * Check value is not too many characters long
-   * @param {val} Value to check
-   */
-  checkValueLength(val) {
-    const num = numeral().unformat(val);
-    return num
-      ? num.toString().length <= this.options.maxLength
-      : true;
-  }
-  /**
-   * Combines the above functions to decide whether the given value is not too
-   * large or to many characters
-   * @param {val} Value to check
-   */
-  checkValueSizing(val) {
-    return this.checkValueLength(val) && this.checkValueMagnitude(val);
-  }
-
-  /**
    * Sets the value, fully formatted, for the input
    * @param {val} New value to set
    */
   setValue(val) {
     const newValue = helpers.fullFormat(val, this.options.format, this.options.currency);
-    const isValueValid = this.checkValueSizing(newValue);
-    const valueCanChange = (newValue && isValueValid);
 
-    if (valueCanChange) {
-      this.element.value = newValue;
-      this.history.addValue(newValue);
-    }
+    this.element.value = newValue;
+    this.history.addValue(newValue);
 
     return valueCanChange;
   }
@@ -368,21 +335,18 @@ class Finput {
 
     const newValue = helpers.partialFormat(keyInfo.newValue, this.options);
     const currentValue = keyInfo.newValue;
-    const isValueValid = this.checkValueSizing(newValue);
 
-    this.element.value = isValueValid ? newValue : this.element.value;
+    this.element.value = newValue;
 
-    if (isValueValid) {
-      const offset = helpers.calculateOffset(
-        currentValue,
-        this.element.value,
-        keyInfo.caretStart,
-        this.options
-      );
-      const newCaretPos = keyInfo.caretStart + offset;
-      this.element.setSelectionRange(newCaretPos, newCaretPos);
-      this.history.addValue(newValue);
-    }
+    const offset = helpers.calculateOffset(
+      currentValue,
+      this.element.value,
+      keyInfo.caretStart,
+      this.options
+    );
+    const newCaretPos = keyInfo.caretStart + offset;
+    this.element.setSelectionRange(newCaretPos, newCaretPos);
+    this.history.addValue(newValue);
   }
   /**
    * Backup event if input changes for any other reason, just format value

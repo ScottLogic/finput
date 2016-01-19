@@ -84,9 +84,7 @@ module.exports = {
     const power = languageData.shortcuts[keyInfo.keyName.toLowerCase()];
 
     if (power) {
-      const numeralVal = numeral(keyInfo.currentValue);
-      keyInfo.newValue = (numeralVal.value() ? numeralVal : numeral(1))
-        .multiply(Math.pow(10, power)).format();
+      // TODO - multiply current value by shortcut
 
       // TODO - BEHAVIOUR: should caret to jump to end? as whole value is
       // muliplied by the multipler - (doesn't just chuck zeros in the middle)
@@ -174,10 +172,10 @@ module.exports = {
     if (step && !isNaN(step)) {
       switch (keyInfo.keyName) {
         case 'up':
-          keyInfo.newValue = numeral(keyInfo.currentValue).add(step).format();
+          // TODO - Up arrow step
           break;
         case 'down':
-          keyInfo.newValue = numeral(keyInfo.currentValue).subtract(step).format();
+          // TODO - Down arrow step
           break;
         default:
           // Do nothing

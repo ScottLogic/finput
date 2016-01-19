@@ -13,23 +13,12 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
 }
 
 /**
- * Fully format the value using numeral (Done on focus out)
+ * Fully format the value
  */
 exports.fullFormat = function(val, format, currency) {
   const fullFormat = currency ? `${currency}${format}` : format;
 
-  if (!val) {
-    return null;
-  } else if (val.length === 1) {
-    return val >= 0 && val <= 9 ? numeral(val).format(fullFormat) : null;
-  } else {
-    const numeralVal = numeral(val);
-    if (isNaN(numeralVal.value()) || !Number.isFinite(numeralVal.value())) {
-      return null
-    } else {
-      return numeralVal.format(fullFormat);
-    }
-  }
+  // TODO - Full format
 }
 
 /**
