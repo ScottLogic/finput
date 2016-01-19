@@ -21,7 +21,7 @@ Build and run the server -
 
 `grunt serve`
 
-# WITH browserstack
+### WITH browserstack
 
 Set browserstack config: in bash -
 
@@ -32,7 +32,7 @@ Execute the tests -
 
 `grunt test:browserstack`
 
-# WITHOUT browserstack
+### WITHOUT browserstack
 
 Install and run an instance of webdriver e.g. -
 
