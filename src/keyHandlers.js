@@ -4,7 +4,7 @@
 // All functions dealing with keypresses (listened to on the keydown event)
 // are here, with specific implementations for most types of key
 
-import {ACTION_TYPES, DELIMITER_STRATEGIES} from './constants';
+import {ACTION_TYPES} from './constants';
 import helpers from './helpers';
 
 module.exports = {
@@ -110,11 +110,7 @@ module.exports = {
         keyInfo.caretStart = 0;
       } else {
         // Assume as there is a comma then there must be a number before it
-        let caretJump =
-          ((delimiterStrategy === DELIMITER_STRATEGIES.DELETE_NUMBER)
-          && (keyInfo.currentValue[keyInfo.caretStart - 1] === delimiter))
-            ? 2
-            : 1;
+        let caretJump = 1;
 
         caretJump = ((keyInfo.caretStart - caretJump) >= 0) ? caretJump : 0;
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - caretJump);
@@ -148,14 +144,13 @@ module.exports = {
         lastHalf = '';
       } else {
         // Assume as there is a comma then there must be a number after it
-        const toDelete = delimiterStrategy === DELIMITER_STRATEGIES.DELETE_NUMBER;
         const delimiterNext = nextChar === delimiter;
 
         // If char to delete is delimiter and number is not to be deleted - skip over it
-        keyInfo.caretStart += delimiterNext && !toDelete ? 1 : 0;
+        keyInfo.caretStart += delimiterNext ? 1 : 0;
 
         const lastHalfStart = keyInfo.caretStart
-          + (delimiterNext ? (toDelete ? 2 : 0) : 1);
+          + (delimiterNext ? 0 : 1);
         firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
         lastHalf = keyInfo.currentValue.slice(lastHalfStart, keyInfo.currentValue.length);
       }

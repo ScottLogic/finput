@@ -5,7 +5,7 @@ import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
 import ValueHistory from './valueHistory';
-import {ACTION_TYPES, DRAG_STATES, DELIMITER_STRATEGIES} from './constants';
+import {ACTION_TYPES, DRAG_STATES} from './constants';
 
 
 /**
@@ -30,8 +30,6 @@ const DEFAULTS = {
   minValue: -10e+12,
   maxLength: 15,
   valueStep: 1,
-  droppableClass: 'finput-droppable',
-  delimiterDeleteStrategy: DELIMITER_STRATEGIES.SKIP
 }
 
 /**
@@ -53,7 +51,6 @@ class Finput {
    * @param {Options.minValue} Limit input value to a minimum value
    * @param {Options.maxDigits} Limit input value to a maximum number of digits
    * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
-   * @param {Options.droppableClass} Class to give to the input when text drag event has started on the page
    * @param {Options.delimiterDeleteStrategy} Behaviour to apply when deleting or backspacing a delimiter
    */
   constructor(element, options) {
@@ -78,9 +75,6 @@ class Finput {
     // Keep track of whether a drag started internally or externally
     document.addEventListener('dragstart', (e) => this.onDragstart(e));
     document.addEventListener('dragend', (e) => this.onDragend(e));
-
-    this.element.addEventListener('dragenter', (e) => this.onDragenter(e));
-    this.element.addEventListener('dragleave', (e) => this.onDragleave(e));
   }
 
   // GETTERS
@@ -292,9 +286,6 @@ class Finput {
     this.dragState = (e.target === this.element)
       ? DRAG_STATES.INTERNAL
       : DRAG_STATES.EXTERNAL;
-    if (this.dragState === DRAG_STATES.EXTERNAL) {
-      this.element.classList.add(this.options.droppableClass);
-    }
     console.debug('Drag STARTED', this.dragState, e);
   }
   /**
@@ -304,25 +295,6 @@ class Finput {
   onDragend(e) {
     console.debug('Drag ENDED', this.dragState, e);
     this.dragState = DRAG_STATES.NONE;
-    this.element.classList.remove(this.options.droppableClass);
-  }
-  /**
-   * On the dragged item entering the input
-   * @param {e} Drag event
-   */
-  onDragenter(e) {
-    console.debug('Drag ENTER', this.dragState, e);
-  }
-  /**
-   * On the dragged item leaving the input
-   * @param {e} Drag event
-   */
-  onDragleave(e) {
-    console.debug('Drag LEAVE', this.dragState, e);
-
-    if (this.dragState === DRAG_STATES.EXTERNAL) {
-      this.element.selectionStart = this.element.value.length;
-    }
   }
   /**
    * On pasting something into the input
