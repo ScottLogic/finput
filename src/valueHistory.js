@@ -51,13 +51,12 @@ export default class ValueHistory {
   /**
    * Add new value to history array. Any possible 'redo's' are removed from array
    * as a new 'branch' of history is created when a new value is added
-   * @param {val} Value to add to history 
+   * @param {val} Value to add to history
    */
   addValue(val) {
     // Delete everything AFTER current value
     if (val !== this.currentValue) {
-      this.history = this.history.slice(0, this.currentIndex + 1);
-      this.history.push(val);
+      this.history.splice(this.currentIndex + 1, null, val);
 
       if (this.history.length > MAX_BUFFER_SIZE) {
         this.history.shift();

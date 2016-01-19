@@ -94,7 +94,7 @@ class Finput {
     return numeral().unformat(this.element.value);
   }
   get formattedValue() {
-    return numeral().unformat(this.element.value);
+    return numeral(this.element.value).format();
   }
   get languageData() {
     return this._languageData;
