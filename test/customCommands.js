@@ -23,6 +23,13 @@ const keyMap = {
   '⑨': '\u{e023}',
 };
 
+function initFinput(options) {
+  var el = window.document.getElementById('number-input');
+  var elClone = el.cloneNode(true);
+  el.parentNode.replaceChild(elClone, el);
+  var myFinput = new window.Finput(elClone, options);
+}
+
 module.exports = function(options) {
 
   return function(initialKeys) {
@@ -34,9 +41,7 @@ module.exports = function(options) {
       it(`should show ${expected} when ${keys} are pressed`, function*() {
         const mappedKeys = keys.replace(/./g, (c) => keyMap[c] || c);
         yield browser.url('/')
-          .execute(function(options) {
-            var myFinput = new window.Finput(window.document.getElementById('number-input'), options);
-          }, options)
+          .execute(initFinput, options)
           .leftClick(input)
           .keys(mappedKeys);
         const value = yield browser.getValue(input);

@@ -250,7 +250,7 @@ class Finput {
    * @param {e} Focus event
    */
   onFocusout(e) {
-    console.log('Focus OUT event', e);
+    console.debug('Focus OUT event', e);
     const valueChanged = this.setValue(this.element.value);
   }
   /**
@@ -258,7 +258,7 @@ class Finput {
    * @param {e} Focus event
    */
   onFocusin(e) {
-    console.log('Focus IN event', e);
+    console.debug('Focus IN event', e);
     this.element.selectionStart = 0;
     this.element.selectionEnd = this.element.value.length;
   }
@@ -268,7 +268,7 @@ class Finput {
    * @param {e} Drag event
    */
   onDrop(e) {
-    console.log('Drop event', e);
+    console.debug('Drop event', e);
 
     switch (this.dragState) {
       case DRAG_STATES.INTERNAL:
@@ -295,14 +295,14 @@ class Finput {
     if (this.dragState === DRAG_STATES.EXTERNAL) {
       this.element.classList.add(this.options.droppableClass);
     }
-    console.log('Drag STARTED', this.dragState, e);
+    console.debug('Drag STARTED', this.dragState, e);
   }
   /**
    * On end of ANY drag on page
    * @param {e} Drag event
    */
   onDragend(e) {
-    console.log('Drag ENDED', this.dragState, e);
+    console.debug('Drag ENDED', this.dragState, e);
     this.dragState = DRAG_STATES.NONE;
     this.element.classList.remove(this.options.droppableClass);
   }
@@ -311,14 +311,14 @@ class Finput {
    * @param {e} Drag event
    */
   onDragenter(e) {
-    console.log('Drag ENTER', this.dragState, e);
+    console.debug('Drag ENTER', this.dragState, e);
   }
   /**
    * On the dragged item leaving the input
    * @param {e} Drag event
    */
   onDragleave(e) {
-    console.log('Drag LEAVE', this.dragState, e);
+    console.debug('Drag LEAVE', this.dragState, e);
 
     if (this.dragState === DRAG_STATES.EXTERNAL) {
       this.element.selectionStart = this.element.value.length;
@@ -329,7 +329,7 @@ class Finput {
    * @param {e} Clipboard event
    */
   onPaste(e) {
-    console.log('Paste event', e);
+    console.debug('Paste event', e);
     const chars = e.clipboardData.getData('text');
     const potentialValue = helpers.editString(
       this.element.value,
@@ -342,14 +342,14 @@ class Finput {
     e.preventDefault();
   }
   onKeypress(e) {
-   console.log('keypress', e);
+   console.debug('keypress', e);
   }
   /**
    * On pressing any key inside the input
    * @param {e} Keyboard event
    */
   onKeydown(e) {
-    console.log('keydown', e);
+    console.debug('keydown', e);
 
     const keyInfo = {
       event: e,
@@ -379,7 +379,7 @@ class Finput {
       case ACTION_TYPES.HORIZONTAL_ARROW:
       case ACTION_TYPES.HOME:
       case ACTION_TYPES.END:
-        console.log(actionType);
+        console.debug(actionType);
         // Default behaviour
         return;
       case ACTION_TYPES.VERTICAL_ARROW:
@@ -398,7 +398,7 @@ class Finput {
         keyHandlers.onRedo(this, e);
         return;
       default:
-        console.log("UNKNOWN");
+        console.debug("UNKNOWN");
         // If ctrl key modifier is pressed then allow specific event handler
         // to handle this
         if (!e.ctrlKey) {
@@ -431,7 +431,7 @@ class Finput {
    * @param {e} Event
    */
   onInput(e) {
-    console.log('on INPUT', e);
+    console.debug('on INPUT', e);
     const valueChanged = this.setValue(this.element.value);
   }
 
