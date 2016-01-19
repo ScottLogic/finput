@@ -13,7 +13,7 @@ module.exports = function(grunt) {
       dev: {
         files: {
           'build/bundle.js': ['main.js'],
-          'dist/finput.js': ['src/finput.js']
+          // 'dist/finput.js': ['src/finput.js']
         },
         options: {
           browserifyOptions: {
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('compile', ['browserify:dev', 'uglify']);
+  grunt.registerTask('compile', ['browserify:dev'/*, 'uglify'*/]);
   grunt.registerTask('serve', ['compile', 'browserSync', 'watch']);
 
   grunt.registerTask('test:browserstack', browserstackKey ?

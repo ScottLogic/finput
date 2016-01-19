@@ -181,12 +181,10 @@ class Finput {
    * @param {val} New value to set
    */
   setValue(val) {
-    const newValue = helpers.fullFormat(val, this.options.format, this.options.currency);
+    const newValue = helpers.fullFormat(val, this.options);
 
     this.element.value = newValue;
     this.history.addValue(newValue);
-
-    return valueCanChange;
   }
 
 
@@ -200,7 +198,7 @@ class Finput {
    */
   onFocusout(e) {
     console.debug('Focus OUT event', e);
-    const valueChanged = this.setValue(this.element.value);
+    this.setValue(this.element.value);
   }
   /**
    * On focus of the input - Select all text
@@ -224,7 +222,7 @@ class Finput {
         // This case is handled by the 'onInput' function
         break;
       case DRAG_STATES.EXTERNAL:
-        const valueChanged = this.setValue(e.dataTransfer.getData('text'));
+        this.setValue(e.dataTransfer.getData('text'));
         e.preventDefault();
         break;
       default:
@@ -265,7 +263,7 @@ class Finput {
       this.element.selectionEnd
     );
 
-    const valueChanged = this.setValue(potentialValue);
+    this.setValue(potentialValue);
     e.preventDefault();
   }
   onKeypress(e) {
@@ -354,7 +352,7 @@ class Finput {
    */
   onInput(e) {
     console.debug('on INPUT', e);
-    const valueChanged = this.setValue(this.element.value);
+    this.setValue(this.element.value);
   }
 
 }

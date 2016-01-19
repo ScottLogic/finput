@@ -15,10 +15,11 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
 /**
  * Fully format the value
  */
-exports.fullFormat = function(val, format, currency) {
-  const fullFormat = currency ? `${currency}${format}` : format;
+exports.fullFormat = function(val, options) {
 
   // TODO - Full format
+
+  return val;
 }
 
 /**
