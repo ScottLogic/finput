@@ -1,5 +1,5 @@
 
-import Finput from './src/finput.js';
+// import Finput from './src/finput.js';
 
 var element = document.getElementById('number-input');
 

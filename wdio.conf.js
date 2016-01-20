@@ -1,3 +1,6 @@
+var fs = require("fs");
+var config = JSON.parse(fs.readFileSync("./config.json"));
+
 exports.config = {
 
     //
@@ -16,8 +19,8 @@ exports.config = {
     exclude: [
         // 'path/to/excluded/files'
     ],
-    user: process.env.BROWSERSTACK_USER,
-    key: process.env.BROWSERSTACK_KEY,
+    user: config.browserstackUsername,
+    key: config.browserstackKey,
     //
     // ============
     // Capabilities

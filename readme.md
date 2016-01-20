@@ -23,10 +23,10 @@ Build and run the server -
 
 ### WITH browserstack
 
-Set browserstack config: in bash -
+Set browserstack config
 
-`export BROWSERSTACK_KEY=*YOUR_KEY*`
-`export BROWSERSTACK_USER=*YOUR_USERNAME*`
+- Copy `config.example.json` to a new file: `config.json`
+- Update the correct browserstack information
 
 Execute the tests -
 

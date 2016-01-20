@@ -8,8 +8,8 @@ const typing = require('../customCommands')({
 
 describe('With currency', function() {
 
-  // Shortcuts
-  typing('k').shouldShow('£1,000');
-  typing('m').shouldShow('£1,000,000');
-  typing('b').shouldShow('£1,000,000,000');
+  // // Shortcuts
+  // typing('k').shouldShow('£1,000');
+  // typing('m').shouldShow('£1,000,000');
+  // typing('b').shouldShow('£1,000,000,000');
 });

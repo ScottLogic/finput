@@ -47,4 +47,17 @@ describe('Without currency', function() {
   typing(`↑`).nTimes(10).thenTyping(`↓`).nTimes(10).shouldShow('0');
   typing(`↓`).shouldShow('-100');
   typing(`↓↑`).shouldShow('0');
+
+  // Testing 0 and decimal formatting
+  typing(`0`).shouldShow('0');
+  typing(`10`).shouldShow('10');
+  typing(`1←0`).shouldShow('1');
+  typing(`0.5←0`).shouldShow('0.05');
+  typing(`0.5←←0`).shouldShow('0.5');
+  typing(`0.5←←←0`).shouldShow('0.5');
+  typing(`.8`).shouldShow('.8');
+  typing(`.8←0`).shouldShow('.08');
+  typing(`.8←←`).shouldShow('0.8');
+
+
 });

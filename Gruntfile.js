@@ -6,14 +6,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-webdriver');
   grunt.loadNpmTasks('grunt-browserstacktunnel-wrapper');
 
-  var browserstackKey = process.env.BROWSERSTACK_KEY;
+  var fs = require("fs");
+  var browserstackKey = JSON.parse(fs.readFileSync("./config.json")).browserstackKey;
 
   grunt.initConfig({
     browserify: {
       dev: {
         files: {
           'build/bundle.js': ['main.js'],
-          // 'dist/finput.js': ['src/finput.js']
+          'dist/finput.js': ['src/finput.js']
         },
         options: {
           browserifyOptions: {
@@ -87,6 +88,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test:browserstack', browserstackKey ?
           ['browserstacktunnel-wrapper', 'webdriver'] : []);
+
+  // Shortcut for test task
+  grunt.registerTask('test', ['test:browserstack']);
 
   grunt.registerTask('default', 'serve');
 };
