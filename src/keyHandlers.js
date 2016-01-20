@@ -4,7 +4,7 @@
 // All functions dealing with keypresses (listened to on the keydown event)
 // are here, with specific implementations for most types of key
 
-import {ACTION_TYPES} from './constants';
+import {ACTION_TYPES, RANGE} from './constants';
 import helpers from './helpers';
 
 module.exports = {
@@ -13,11 +13,12 @@ module.exports = {
    * NUMBER HANDLER
    * @param {keyInfo} Information about the keypress/action
    */
-  onNumber: function(keyInfo) {
+  onNumber: function(keyInfo, options) {
     const allowedNumber =
       !(keyInfo.currentValue[0] === '-'
       && keyInfo.caretStart === 0
-      && keyInfo.caretEnd === 0);
+      && keyInfo.caretEnd === 0)
+      && helpers.allowedZero(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, options);
 
     if (allowedNumber) {
       keyInfo.newValue = helpers.editString(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, keyInfo.caretEnd);
@@ -30,9 +31,10 @@ module.exports = {
    * MINUS HANDLER
    * @param {keyInfo} Information about the keypress/action
    */
-  onMinus: function(keyInfo) {
-    const minusAllowed = keyInfo.caretStart === 0 &&
-      (keyInfo.currentValue[0] !== '-' || keyInfo.caretEnd > 0);
+  onMinus: function(keyInfo, options) {
+    const minusAllowed = keyInfo.caretStart === 0
+      && (keyInfo.currentValue[0] !== '-' || keyInfo.caretEnd > 0)
+      && options.range !== RANGE.POSITIVE;
 
      if (minusAllowed) {
        keyInfo.newValue = helpers.editString(
@@ -49,23 +51,24 @@ module.exports = {
   /**
    * DECIMAL HANDLER
    * @param {keyInfo} Information about the keypress/action
-   * @param {languageData} Language specific info for the selected language
+   * @param {options} Configuration options for the input
    */
-  onDecimal: function(keyInfo, languageData) {
-    const decimalIndex = keyInfo.currentValue.indexOf(languageData.decimal);
+  onDecimal: function(keyInfo, options) {
+    const decimalIndex = keyInfo.currentValue.indexOf(options.decimal);
 
     // If there is not already a decimal or the original would be replaced
     // Add the decimal
     const decimalAllowed =
-      (decimalIndex === -1) ||
-        (decimalIndex >= keyInfo.caretStart &&
-         decimalIndex < keyInfo.caretEnd);
+      options.scale > 0
+      && (decimalIndex === -1
+          || (decimalIndex >= keyInfo.caretStart
+              && decimalIndex < keyInfo.caretEnd))
 
     if (decimalAllowed)
     {
       keyInfo.newValue = helpers.editString(
         keyInfo.currentValue,
-        languageData.decimal,
+        options.decimal,
         keyInfo.caretStart,
         keyInfo.caretEnd
       );
@@ -78,10 +81,10 @@ module.exports = {
   /**
    * SHORTCUT HANDLER
    * @param {keyInfo} Information about the keypress/action
-   * @param {languageData} Language specific info for the selected language
+   * @param {options} Configuration options for the input
    */
-  onShortcut: function(keyInfo, languageData) {
-    const power = languageData.shortcuts[keyInfo.keyName.toLowerCase()];
+  onShortcut: function(keyInfo, options) {
+    const power = options.shortcuts[keyInfo.keyName.toLowerCase()];
 
     if (power) {
       // TODO - multiply current value by shortcut
@@ -96,6 +99,7 @@ module.exports = {
   /**
    * BACKSPACE HANDLER
    * @param {keyInfo} Information about the keypress/action
+   * @param {thousands} Character used for the thousands delimiter
    */
   onBackspace: function(keyInfo, thousands) {
     let firstHalf, lastHalf;
@@ -128,7 +132,7 @@ module.exports = {
   /**
    * DELETE HANDLER
    * @param {keyInfo} Information about the keypress/action
-   * @param {languageData} Language specific info for the selected language
+   * @param {thousands} Character used for the thousands delimiter
    */
   onDelete: function(keyInfo, thousands) {
     let firstHalf, lastHalf;

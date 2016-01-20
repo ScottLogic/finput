@@ -21,3 +21,8 @@ exports.DRAG_STATES = {
   INTERNAL: 'INTERNAL',
   EXTERNAL: 'EXTERNAL'
 }
+
+exports.RANGE = {
+  ALL: 'ALL',
+  POSITIVE: 'POSITIVE'
+}

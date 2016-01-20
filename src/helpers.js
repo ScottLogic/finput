@@ -16,17 +16,62 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
  * Fully format the value
  */
 exports.fullFormat = function(val, options) {
+  const decimalIndex = val.indexOf(options.decimal) > -1
+    ? val.indexOf(options.decimal)
+    : val.length;
 
-  // TODO - Full format
+  const integerPart = val.slice(0, decimalIndex);
+  let decimalPart = val.slice(decimalIndex + 1);
 
-  return val;
+  if (options.fixed) {
+    // If there should be some decimals
+    if (options.scale > 0) {
+      decimalPart = decimalPart.length >= options.scale
+        ? decimalPart.slice(0, options.scale)
+        : decimalPart + Array(options.scale - decimalPart.length + 1).join('0');
+      return `${integerPart}${options.decimal}${decimalPart}`;
+    } else {
+      return integerPart;
+    }
+  } else {
+    return val;
+  }
+}
+
+/**
+ * Remove any surplus zeros from the beginning of the integer part of the number
+ * @param {str} The string value (with no thousand separators)
+ */
+function removeleadingZeros(val, options) {
+  // Remove unnecessary zeros
+  const decimalIndex = val.indexOf(options.decimal) > -1
+    ? val.indexOf(options.decimal)
+    : val.length;
+
+  let integerPart = val.slice(0, decimalIndex + 1);
+  const decimalPart = val.slice(decimalIndex + 1);
+
+  let i = (integerPart[0] === '-') ? 1 : 0;
+
+  while (
+    integerPart[i] == 0
+      && integerPart[i + 1] !== options.decimal
+      && integerPart.length > 1
+  ) {
+    integerPart = integerPart.slice(0, i) + integerPart.slice(i + 1);
+  }
+
+  return `${integerPart}${decimalPart}`;
 }
 
 /**
  * Partially format the value, only adding commas as needed (Done on keypress/keyup)
  */
 exports.partialFormat = function(val, options) {
-  let str = val.replace(new RegExp(`[${(options.currency || '')}${options.thousands}]`, 'g'), '');
+  let str = val.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
+
+  str = removeleadingZeros(str, options);
+
   const startIndex = str.indexOf(options.decimal) > -1
     ? str.indexOf(options.decimal) - 1
     : str.length - 1;
@@ -41,12 +86,8 @@ exports.partialFormat = function(val, options) {
       str = this.editString(str, ',', i);
     }
   }
-  // Only add currency symbol on if value has any numbers
-  if (options.currency && str && str.match(/\d/)) {
-    return str[0] === '-' ? str.replace('-', `-${options.currency}`) : `${options.currency}${str}`
-  } else {
-    return str;
-  }
+
+  return str;
 }
 
 /**
@@ -57,14 +98,40 @@ exports.partialFormat = function(val, options) {
 exports.calculateOffset = function(prev, curr, pos, options) {
   let i, prevSymbols = 0, currentSymbols = 0;
   for (i=0; i < pos; i++) {
-    if (prev[i] === options.thousands || (options.currency && prev[i] === options.currency)) {
+    if (prev[i] === options.thousands) {
       prevSymbols++;
     }
   }
   for (i=0; i < pos; i++) {
-    if (curr[i] === options.thousands || (options.currency && curr[i] === options.currency)) {
+    if (curr[i] === options.thousands) {
       currentSymbols++;
     }
   }
   return currentSymbols - prevSymbols;
+}
+
+/**
+ * Check (if the char is a zero) whether or not a zero can be placed at this
+ * position in the value. If it is an unncessary zero - do not allow it
+ */
+exports.allowedZero = function(val, char, caretPos, options) {
+  if (char != 0) {
+    return true;
+  }
+
+  const decimalIndex = val.indexOf(options.decimal) > -1
+    ? val.indexOf(options.decimal)
+    : val.length;
+
+  const isNegative = val[0] === '-';
+  let integerPart = val.slice((isNegative ? 1 : 0), decimalIndex);
+  caretPos = isNegative ? caretPos - 1 : caretPos;
+
+  if (integerPart) {
+    // IF integer part is just a zero then no zeros can be added
+    // ELSE the zero can not be added at the front of the value
+    return integerPart == 0 ? false : caretPos > 0;
+  } else {
+    return true;
+  }
 }

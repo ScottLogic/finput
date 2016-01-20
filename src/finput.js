@@ -4,25 +4,25 @@ import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
 import ValueHistory from './valueHistory';
-import {ACTION_TYPES, DRAG_STATES} from './constants';
+import {ACTION_TYPES, DRAG_STATES, RANGE} from './constants';
 
 
 /**
  * CONSTANTS
  */
 const DEFAULTS = {
-  format: '0,0.00',
-  maxValue: 10e+12,
-  minValue: -10e+12,
-  maxLength: 15,
-  valueStep: 1,
+  scale: 2,
+  range: RANGE.ALL,
+  fixed: true,
   thousands: ',',
   decimal: '.',
   shortcuts: {
     'k': 3,
     'm': 6,
     'b': 9
-  }
+  },
+  currency: null,
+  valueStep: 1
 }
 
 /**
@@ -37,7 +37,12 @@ class Finput {
    * @param {Options} Options for the number input's behaviour
    *
    * Detailed list of possible options:
-   * @param {Options.format} The format of the number to be displayed by the input
+   * @param {Options.scale} maximum number of decimal digits
+   * @param {Options.range} Whether number can take any value or must be positive
+   * @param {Options.fixed} After focus is lost - value is formatted to *scale* number of decimal places
+   * @param {Options.thousands} Character to use for the thousands separator
+   * @param {Options.decimal} Character to use for the decimal point
+   * @param {Options.shortcuts} Object map of shortcut characters to multiplier (e.g. { k: 1000 })
    * @param {Options.currency} Optional currency to prepend to value
    * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
    */
@@ -290,13 +295,13 @@ class Finput {
 
     switch (actionType) {
       case ACTION_TYPES.NUMBER:
-        keyHandlers.onNumber(keyInfo);
+        keyHandlers.onNumber(keyInfo, this.options);
         break;
       case ACTION_TYPES.DECIMAL:
         keyHandlers.onDecimal(keyInfo, this.options);
         break;
       case ACTION_TYPES.MINUS:
-        keyHandlers.onMinus(keyInfo);
+        keyHandlers.onMinus(keyInfo, this.options);
         break;
       case ACTION_TYPES.SHORTCUT:
         keyHandlers.onShortcut(keyInfo, this.options);
