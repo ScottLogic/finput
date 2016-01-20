@@ -113,6 +113,10 @@ exports.calculateOffset = function(prev, curr, pos, options) {
 /**
  * Check (if the char is a zero) whether or not a zero can be placed at this
  * position in the value. If it is an unncessary zero - do not allow it
+ * @param {val} value to check against
+ * @param {char} the character being added
+ * @param {caretPos} Current caret position in input
+ * @param {options} Finput options object
  */
 exports.allowedZero = function(val, char, caretPos, options) {
   if (char != 0) {
@@ -134,4 +138,13 @@ exports.allowedZero = function(val, char, caretPos, options) {
   } else {
     return true;
   }
+}
+
+/**
+ * Convert a string value to its number equivalent
+ * @param {val} string value to convert to a number
+ * @param {options} Finput options object
+ */
+exports.toNumber = function(val, options) {
+  return val && Number(val.replace(new RegExp(`[${options.thousands}]`, 'g'), ''));
 }

@@ -84,13 +84,13 @@ module.exports = {
    * @param {options} Configuration options for the input
    */
   onShortcut: function(keyInfo, options) {
-    const power = options.shortcuts[keyInfo.keyName.toLowerCase()];
+    const multiplier = options.shortcuts[keyInfo.keyName.toLowerCase()];
+    const adjustedVal = helpers.editString(keyInfo.currentValue, '', keyInfo.caretStart, keyInfo.caretEnd);
+    const rawValue = helpers.toNumber(adjustedVal, options);
 
-    if (power) {
-      // TODO - multiply current value by shortcut
-
-      // TODO - BEHAVIOUR: should caret to jump to end? as whole value is
-      // muliplied by the multipler - (doesn't just chuck zeros in the middle)
+    if (multiplier) {
+      // If whole value is selected
+      keyInfo.newValue = String((rawValue || 1) * multiplier);
       keyInfo.caretStart = keyInfo.newValue.length;
     }
     keyInfo.event.preventDefault();

@@ -17,9 +17,9 @@ const DEFAULTS = {
   thousands: ',',
   decimal: '.',
   shortcuts: {
-    'k': 3,
-    'm': 6,
-    'b': 9
+    'k': 1000,
+    'm': 1000000,
+    'b': 1000000000
   },
   currency: null,
   valueStep: 1
