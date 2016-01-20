@@ -1,6 +1,7 @@
 'use strict';
 
 const input = '#number-input';
+const otherInput = '#text-numbers';
 
 const keyMap = {
   '↚': '\u{e003}', // BACKSPACE
@@ -36,6 +37,7 @@ module.exports = function(options) {
   return function(initialKeys) {
     let activeKeys = initialKeys;
     let keys = activeKeys;
+    let unfocusAfter = false;
     const chainFunctions = {};
 
     chainFunctions.shouldShow = function(expected) {
@@ -45,6 +47,11 @@ module.exports = function(options) {
           .clearElement(input)
           .leftClick(input)
           .keys(mappedKeys);
+
+        if (unfocusAfter) {
+          yield client.leftClick(otherInput);
+        }
+
         const value = yield client.getValue(input);
         expect(value).toBe(expected);
       });
@@ -57,6 +64,10 @@ module.exports = function(options) {
     chainFunctions.thenTyping = function(newKeys) {
       activeKeys = newKeys;
       keys += newKeys;
+      return chainFunctions;
+    }
+    chainFunctions.thenFocusingOut = function() {
+      unfocusAfter = true;
       return chainFunctions;
     }
 

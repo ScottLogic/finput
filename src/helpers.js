@@ -12,23 +12,63 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
   return `${firstHalf}${toAdd}${secondHalf}`;
 }
 
+exports.formatThousands = function(val, options) {
+  const startIndex = val.indexOf(options.decimal) > -1
+    ? val.indexOf(options.decimal) - 1
+    : val.length - 1;
+  const endIndex = val[0] === '-' ? 1 : 0;
+
+  // i must be greater than zero because number cannot start with comma
+  let i = startIndex;
+  let j = 1;
+  for (i, j; i > endIndex; i--, j++) {
+    // Every 3 characers, add a comma
+    if (j % 3 === 0) {
+      val = this.editString(val, ',', i);
+    }
+  }
+
+  return val;
+}
+
+/**
+ * Partially format the value, only adding commas as needed (Done on keypress/keyup)
+ */
+exports.partialFormat = function(val, options) {
+  val = val.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
+  val = this.removeleadingZeros(val, options);
+  val = this.removeExtraDecimals(val, options);
+  val = this.formatThousands(val, options);
+
+  return val;
+}
+
 /**
  * Fully format the value
  */
 exports.fullFormat = function(val, options) {
+  val = this.partialFormat(val, options);
+
+  // Fully format decimal places
   const decimalIndex = val.indexOf(options.decimal) > -1
     ? val.indexOf(options.decimal)
     : val.length;
 
-  const integerPart = val.slice(0, decimalIndex);
+  let integerPart = val.slice(0, decimalIndex);
   let decimalPart = val.slice(decimalIndex + 1);
 
   if (options.fixed) {
+
     // If there should be some decimals
     if (options.scale > 0) {
       decimalPart = decimalPart.length >= options.scale
         ? decimalPart.slice(0, options.scale)
         : decimalPart + Array(options.scale - decimalPart.length + 1).join('0');
+
+      if (!integerPart.length) {
+        integerPart = '0';
+      }
+
       return `${integerPart}${options.decimal}${decimalPart}`;
     } else {
       return integerPart;
@@ -74,34 +114,6 @@ exports.removeExtraDecimals = function(val, options) {
     .slice(0, options.scale == null ? decimalPart.length : options.scale);
 
   return `${integerPart}${decimalPart}`;
-}
-
-/**
- * Partially format the value, only adding commas as needed (Done on keypress/keyup)
- */
-exports.partialFormat = function(val, options) {
-  let str =
-    val.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
-
-  str = this.removeleadingZeros(str, options);
-  str = this.removeExtraDecimals(str, options);
-
-  const startIndex = str.indexOf(options.decimal) > -1
-    ? str.indexOf(options.decimal) - 1
-    : str.length - 1;
-  const endIndex = str[0] === '-' ? 1 : 0;
-
-  // i must be greater than zero because number cannot start with comma
-  let i = startIndex;
-  let j = 1;
-  for (i, j; i > endIndex; i--, j++) {
-    // Every 3 characers, add a comma
-    if (j % 3 === 0) {
-      str = this.editString(str, ',', i);
-    }
-  }
-
-  return str;
 }
 
 /**
