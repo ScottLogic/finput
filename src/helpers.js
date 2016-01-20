@@ -42,7 +42,7 @@ exports.fullFormat = function(val, options) {
  * Remove any surplus zeros from the beginning of the integer part of the number
  * @param {str} The string value (with no thousand separators)
  */
-function removeleadingZeros(val, options) {
+exports.removeleadingZeros = function(val, options) {
   // Remove unnecessary zeros
   const decimalIndex = val.indexOf(options.decimal) > -1
     ? val.indexOf(options.decimal)
@@ -64,13 +64,27 @@ function removeleadingZeros(val, options) {
   return `${integerPart}${decimalPart}`;
 }
 
+exports.removeExtraDecimals = function(val, options) {
+  const decimalIndex = val.indexOf(options.decimal) > -1
+    ? val.indexOf(options.decimal)
+    : val.length;
+
+  const integerPart = val.slice(0, decimalIndex + 1);
+  let decimalPart = val.slice(decimalIndex + 1)
+    .slice(0, options.scale == null ? decimalPart.length : options.scale);
+
+  return `${integerPart}${decimalPart}`;
+}
+
 /**
  * Partially format the value, only adding commas as needed (Done on keypress/keyup)
  */
 exports.partialFormat = function(val, options) {
-  let str = val.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
+  let str =
+    val.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
 
-  str = removeleadingZeros(str, options);
+  str = this.removeleadingZeros(str, options);
+  str = this.removeExtraDecimals(str, options);
 
   const startIndex = str.indexOf(options.decimal) > -1
     ? str.indexOf(options.decimal) - 1
@@ -131,7 +145,9 @@ exports.allowedZero = function(val, char, caretPos, options) {
   let integerPart = val.slice((isNegative ? 1 : 0), decimalIndex);
   caretPos = isNegative ? caretPos - 1 : caretPos;
 
-  if (integerPart) {
+  // If there is some integer part and the caret is to the left of
+  // the decimal point
+  if (integerPart && caretPos < integerPart.length + 1) {
     // IF integer part is just a zero then no zeros can be added
     // ELSE the zero can not be added at the front of the value
     return integerPart == 0 ? false : caretPos > 0;
@@ -139,6 +155,7 @@ exports.allowedZero = function(val, char, caretPos, options) {
     return true;
   }
 }
+
 
 /**
  * Convert a string value to its number equivalent

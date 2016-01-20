@@ -41,12 +41,12 @@ describe('Without currency', function() {
   typing(`10k←↛`).shouldShow('1,000');
 
   // Incrementing and decrementing with ARROW keys
-  typing(`↑`).shouldShow('100');
-  typing(`↑↓`).shouldShow('0');
-  typing(`↑`).nTimes(10).shouldShow('1,000');
-  typing(`↑`).nTimes(10).thenTyping(`↓`).nTimes(10).shouldShow('0');
-  typing(`↓`).shouldShow('-100');
-  typing(`↓↑`).shouldShow('0');
+  // typing(`↑`).shouldShow('100');
+  // typing(`↑↓`).shouldShow('0');
+  // typing(`↑`).nTimes(10).shouldShow('1,000');
+  // typing(`↑`).nTimes(10).thenTyping(`↓`).nTimes(10).shouldShow('0');
+  // typing(`↓`).shouldShow('-100');
+  // typing(`↓↑`).shouldShow('0');
 
   // Testing 0 and decimal formatting
   typing(`0`).shouldShow('0');
@@ -57,7 +57,7 @@ describe('Without currency', function() {
   typing(`0.5←←←0`).shouldShow('0.5');
   typing(`.8`).shouldShow('.8');
   typing(`.8←0`).shouldShow('.08');
-  typing(`.8←←`).shouldShow('0.8');
+  typing(`.8←←0`).shouldShow('0.8');
 
 
 });

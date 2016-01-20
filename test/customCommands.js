@@ -31,6 +31,7 @@ function initFinput(options) {
 }
 
 module.exports = function(options) {
+  const client = browser.url('/').execute(initFinput, options);
 
   return function(initialKeys) {
     let activeKeys = initialKeys;
@@ -40,11 +41,11 @@ module.exports = function(options) {
     chainFunctions.shouldShow = function(expected) {
       it(`should show ${expected} when ${keys} are pressed`, function*() {
         const mappedKeys = keys.replace(/./g, (c) => keyMap[c] || c);
-        yield browser.url('/')
-          .execute(initFinput, options)
+        yield client
+          .clearElement(input)
           .leftClick(input)
           .keys(mappedKeys);
-        const value = yield browser.getValue(input);
+        const value = yield client.getValue(input);
         expect(value).toBe(expected);
       });
       return chainFunctions;

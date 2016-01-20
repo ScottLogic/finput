@@ -73,7 +73,7 @@ module.exports = function(grunt) {
         key: browserstackKey,
         hosts: [{
           name: 'localhost',
-          port: 300,
+          port: 3000,
           sslFlag: 0
         }],
         forcelocal: true,
