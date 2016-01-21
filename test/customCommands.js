@@ -22,6 +22,7 @@ const keyMap = {
   '⑦': '\u{e021}',
   '⑧': '\u{e022}',
   '⑨': '\u{e023}',
+  'ctrl': '\uE009a'
 };
 
 function initFinput(options) {
@@ -31,7 +32,7 @@ function initFinput(options) {
   var myFinput = new window.Finput(elClone, options);
 }
 
-module.exports = function(options) {
+exports.type = function(options) {
   const client = browser.url('/').execute(initFinput, options);
 
   return function(initialKeys) {
@@ -74,3 +75,80 @@ module.exports = function(options) {
     return chainFunctions;
   };
 };
+
+exports.copyAndPaste = function(options) {
+  const client = browser.url('/').execute(initFinput, options);
+
+  return function(text) {
+    const chainFunctions = {};
+
+    chainFunctions.shouldShow = function(expected) {
+      it(`should show ${expected} when ${text} is dragged and dropped`, function*() {
+        let offset;
+
+        yield client
+          .clearElement(input)
+          .clearElement(otherInput)
+          .leftClick(otherInput)
+          .keys(text)
+          .keys(['Control', 'a', 'NULL'])
+          .keys(['Control', 'c', 'NULL'])
+          .leftClick(input)
+          .keys(['Control', 'v', 'NULL']);
+
+        const value = yield client.getValue(input);
+        expect(value).toBe(expected);
+      });
+      return chainFunctions;
+    }
+    chainFunctions.thenFocusingOut = function() {
+      unfocusAfter = true;
+      return chainFunctions;
+    }
+
+    return chainFunctions;
+  };
+}
+
+exports.cut = function(options) {
+  const client = browser.url('/').execute(initFinput, options);
+
+  return function(count) {
+    const charCount = count;
+    let startPos, text;
+    const chainFunctions = {};
+
+    chainFunctions.shouldShow = function(expected) {
+      it(`should show ${expected} when ${text} is cropped`, function*() {
+        let offset;
+
+        yield client
+          .clearElement(input)
+          .clearElement(otherInput)
+          .leftClick(input)
+          .keys(text)
+          .keys(['Control', 'a', 'NULL', keyMap['←']])
+          .keys(Array(startPos + 1).join(keyMap['→']))
+          .keys(['Shift', Array(count + 1).join(keyMap['→']), 'NULL'])  // Select chars
+          .keys(['Control', 'x', 'NULL']);
+
+        const value = yield client.getValue(input);
+        expect(value).toBe(expected);
+      });
+      return chainFunctions;
+    }
+    chainFunctions.characters = function(t) {
+      return chainFunctions;
+    }
+    chainFunctions.from = function(t) {
+      text = t;
+      return chainFunctions;
+    }
+    chainFunctions.startingFrom = function(start) {
+      startPos = start;
+      return chainFunctions;
+    }
+
+    return chainFunctions;
+  };
+}

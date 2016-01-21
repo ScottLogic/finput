@@ -49,6 +49,10 @@ exports.partialFormat = function(val, options) {
 exports.fullFormat = function(val, options) {
   val = this.partialFormat(val, options);
 
+  if (val == null || val == '') {
+    return '';
+  }
+
   // Fully format decimal places
   const decimalIndex = val.indexOf(options.decimal) > -1
     ? val.indexOf(options.decimal)
@@ -168,7 +172,6 @@ exports.allowedZero = function(val, char, caretPos, options) {
   }
 }
 
-
 /**
  * Convert a string value to its number equivalent
  * @param {val} string value to convert to a number
@@ -176,4 +179,32 @@ exports.allowedZero = function(val, char, caretPos, options) {
  */
 exports.toNumber = function(val, options) {
   return val && Number(val.replace(new RegExp(`[${options.thousands}]`, 'g'), ''));
+}
+
+exports.parseString = function(str, options) {
+  let multiplier = 1;
+  let parsed = '';
+
+  for (let c of str) {
+    // If a number
+    if (!isNaN(c)) {
+      parsed += c;
+    }
+    // If a decimal (and no decimals exist so far)
+    else if (c === options.decimal && parsed.indexOf(c) === -1) {
+      parsed += options.decimal;
+    }
+    // If a shortcut
+    else if (options.shortcuts[c]) {
+      multiplier *= options.shortcuts[c];
+    }
+    // If a minus sign (and parsed string is currently empty)
+    else if (c === '-' && !parsed.length) {
+      parsed = c;
+    } else {
+      // Otherwise ignore the character
+    }
+  }
+
+  return parsed ? String(Number(parsed) * multiplier) : '';
 }

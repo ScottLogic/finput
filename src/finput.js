@@ -58,7 +58,6 @@ class Finput {
     this.element.addEventListener('drop', (e) => this.onDrop(e));
     this.element.addEventListener('paste', (e) => this.onPaste(e));
     this.element.addEventListener('keydown', (e) => this.onKeydown(e));
-    this.element.addEventListener('keypress', (e) => this.onKeypress(e));
     this.element.addEventListener('input', (e) => this.onInput(e));
 
     // Dragging listeners
@@ -227,7 +226,11 @@ class Finput {
         // This case is handled by the 'onInput' function
         break;
       case DRAG_STATES.EXTERNAL:
-        this.setValue(e.dataTransfer.getData('text'));
+        const val = helpers.parseString(e.dataTransfer.getData('text'), this.options);
+        const formatted = helpers.fullFormat(val, this.options);
+        if (formatted) {
+          this.element.value = formatted;
+        }
         e.preventDefault();
         break;
       default:
@@ -259,20 +262,12 @@ class Finput {
    * @param {e} Clipboard event
    */
   onPaste(e) {
-    console.debug('Paste event', e);
-    const chars = e.clipboardData.getData('text');
-    const potentialValue = helpers.editString(
-      this.element.value,
-      chars,
-      this.element.selectionStart,
-      this.element.selectionEnd
-    );
-
-    this.setValue(potentialValue);
+    const val = helpers.parseString(e.clipboardData.getData('text'), this.options);
+    const formatted = helpers.fullFormat(val, this.options);
+    if (formatted) {
+      this.element.value = formatted;
+    }
     e.preventDefault();
-  }
-  onKeypress(e) {
-   console.debug('keypress', e);
   }
   /**
    * On pressing any key inside the input

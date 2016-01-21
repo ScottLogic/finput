@@ -1,10 +1,15 @@
 'use strict';
 
-const typing = require('../customCommands')({
+const commands = require('../customCommands');
+
+const options = {
   valueStep: 100,
   currency: '£',
   delimiterDeleteStrategy: 'DELETE_NUMBER'
-});
+}
+
+const typing = commands.type(options);
+const copyingAndPasting = commands.copyAndPaste(options);
 
 describe('With currency', function() {
 

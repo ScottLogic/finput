@@ -1,9 +1,14 @@
 'use strict';
 
-const typing = require('../customCommands')({
+const commands = require('../customCommands');
+const options = {
   valueStep: 100,
   delimiterDeleteStrategy: 'DELETE_NUMBER'
-});
+}
+
+const typing = commands.type(options);
+const copyingAndPasting = commands.copyAndPaste(options);
+const cutting = commands.cut(options);
 
 describe('Without currency', function() {
 
@@ -70,5 +75,24 @@ describe('Without currency', function() {
   typing(`0.8`).thenFocusingOut().shouldShow('0.80');
   typing(`.8`).thenFocusingOut().shouldShow('0.80');
   typing(`8.88`).thenFocusingOut().shouldShow('8.88');
+
+  // Negative values
+
+
+  // Copy and Paste
+  copyingAndPasting('aaaaa').shouldShow('');
+  copyingAndPasting('-12').shouldShow('-12.00');
+  copyingAndPasting('-.9').shouldShow('-0.90');
+  copyingAndPasting('7a7a.8a.').shouldShow('77.80');
+
+  // Cutting from input (should fully format unless no characters selected)
+
+  // None selected
+  cutting(0).characters().from('123456').startingFrom(0).shouldShow('123,456');
+  cutting(2).characters().from('12').startingFrom(2).shouldShow('12');
+
+  cutting(4).characters().from('123456').startingFrom(1).shouldShow('156.00');
+  cutting(5).characters().from('1234').startingFrom(0).shouldShow('');
+
 
 });
