@@ -1,5 +1,3 @@
-// Copyright Ali Sheehan-Dare, all rights and profits reserved.
-
 import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
