@@ -3,7 +3,7 @@
 
 var element = document.getElementById('number-input');
 
-new Finput(element, {
+new finput(element, {
   valueStep: 100,
   // scale: 0
 });

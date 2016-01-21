@@ -20,9 +20,7 @@ const DEFAULTS = {
     'k': 1000,
     'm': 1000000,
     'b': 1000000000
-  },
-  currency: null,
-  valueStep: 1
+  }
 }
 
 /**
@@ -43,8 +41,6 @@ class Finput {
    * @param {Options.thousands} Character to use for the thousands separator
    * @param {Options.decimal} Character to use for the decimal point
    * @param {Options.shortcuts} Object map of shortcut characters to multiplier (e.g. { k: 1000 })
-   * @param {Options.currency} Optional currency to prepend to value
-   * @param {Options.valueStep OR false} Change how much the value changes when pressing up/down arrow keys
    */
   constructor(element, options) {
     this._element = element;

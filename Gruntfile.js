@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         options: {
           browserifyOptions: {
             debug: true,
-            standalone: 'Finput'
+            standalone: 'finput'
           },
           transform: [
             ["babelify", {
