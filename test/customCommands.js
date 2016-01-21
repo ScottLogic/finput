@@ -56,7 +56,7 @@ exports.type = function(options) {
         const value = yield client.getValue(input);
         expect(value).toBe(expected);
       });
-      return chainFunctions;
+      return client;
     }
     chainFunctions.nTimes = function(times) {
       keys += Array(times).join(activeKeys);
@@ -99,11 +99,43 @@ exports.copyAndPaste = function(options) {
         const value = yield client.getValue(input);
         expect(value).toBe(expected);
       });
-      return chainFunctions;
+      return client;
     }
     chainFunctions.thenFocusingOut = function() {
       unfocusAfter = true;
       return chainFunctions;
+    }
+
+    return chainFunctions;
+  };
+}
+
+exports.dragAndDrop = function(options) {
+  const client = browser.url('/').execute(initFinput, options);
+
+  return function(text) {
+    const chainFunctions = {};
+
+    chainFunctions.shouldShow = function(expected) {
+      it(`should show ${expected} when ${text} is dragged and dropped`, function*() {
+        let offset;
+
+        yield client
+          .clearElement(input)
+          .clearElement(otherInput)
+          .leftClick(input)
+          .keys(text)
+          .keys(['Control', 'a', 'NULL'])
+          .moveToObject(input, 18, 24)
+          .buttonDown()
+          .moveToObject(otherInput, 18, 24)
+          .buttonUp()
+          // .dragAndDrop(input, otherInput).pause(3000);
+
+        const value = yield client.getValue(input);
+        expect(value).toBe(expected);
+      });
+      return client;
     }
 
     return chainFunctions;

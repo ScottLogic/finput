@@ -1,16 +1,14 @@
 'use strict';
 
 const commands = require('../customCommands');
-const options = {
-  valueStep: 100,
-  delimiterDeleteStrategy: 'DELETE_NUMBER'
-}
+const options = {};
 
 const typing = commands.type(options);
 const copyingAndPasting = commands.copyAndPaste(options);
+const draggingAndDropping = commands.dragAndDrop(options);
 const cutting = commands.cut(options);
 
-describe('Without currency', function() {
+describe('Default options', function() {
 
   // Shortcuts
   typing('k').shouldShow('1,000');
@@ -71,13 +69,26 @@ describe('Without currency', function() {
   typing(`12.34←←↚`).shouldShow('1,234');
   typing(`12.34←←↚`).shouldShow('1,234');
 
-  // Formatting on focus out
   typing(`0.8`).thenFocusingOut().shouldShow('0.80');
   typing(`.8`).thenFocusingOut().shouldShow('0.80');
   typing(`8.88`).thenFocusingOut().shouldShow('8.88');
 
   // Negative values
+  typing(`-`).shouldShow('-');
+  typing(`-0`).shouldShow('-0');
+  typing(`--`).shouldShow('-');
+  typing(`-←0`).shouldShow('-');
+  typing(`0-`).shouldShow('0');
+  typing(`0-`).shouldShow('0');
+  typing(`-1000`).shouldShow('-1,000');
+  typing(`-1k`).shouldShow('-1,000');
 
+  typing(`-.`).thenFocusingOut().shouldShow('-0.00');
+  typing(`-`).thenFocusingOut().shouldShow('-0.00');
+  typing(`-0`).thenFocusingOut().shouldShow('-0.00');
+  typing(`-0.`).thenFocusingOut().shouldShow('-0.00');
+  typing(`-.66`).thenFocusingOut().shouldShow('-0.66');
+  typing(`-1000`).thenFocusingOut().shouldShow('-1,000.00');
 
   // Copy and Paste
   copyingAndPasting('aaaaa').shouldShow('');
@@ -94,5 +105,6 @@ describe('Without currency', function() {
   cutting(4).characters().from('123456').startingFrom(1).shouldShow('156.00');
   cutting(5).characters().from('1234').startingFrom(0).shouldShow('');
 
-
+  // Drag and Drop
+  // draggingAndDropping('12').shouldShow('12');
 });

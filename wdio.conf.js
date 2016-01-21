@@ -19,8 +19,8 @@ exports.config = {
     exclude: [
         // 'path/to/excluded/files'
     ],
-    user: config.browserstackUsername,
-    key: config.browserstackKey,
+    // user: config.browserstackUsername,
+    // key: config.browserstackKey,
     //
     // ============
     // Capabilities
@@ -36,7 +36,7 @@ exports.config = {
     //
     capabilities: [{
         browserName: 'chrome',
-        'browserstack.local': true
+        // 'browserstack.local': true
     }],
     //
     // ===================

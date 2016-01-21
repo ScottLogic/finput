@@ -48,7 +48,10 @@ class Finput {
    */
   constructor(element, options) {
     this._element = element;
-    this._options = Object.assign(DEFAULTS, options);
+    this._options = {
+      ...DEFAULTS,
+      ...options
+    };
     this._actionTypes = this.createActionTypes();
     this._history = new ValueHistory();
 

@@ -58,7 +58,8 @@ exports.fullFormat = function(val, options) {
     ? val.indexOf(options.decimal)
     : val.length;
 
-  let integerPart = val.slice(0, decimalIndex);
+  let sign = val[0] === '-' ? val[0] : '';
+  let integerPart = val.slice(sign ? 1 : 0, decimalIndex);
   let decimalPart = val.slice(decimalIndex + 1);
 
   if (options.fixed) {
@@ -73,9 +74,9 @@ exports.fullFormat = function(val, options) {
         integerPart = '0';
       }
 
-      return `${integerPart}${options.decimal}${decimalPart}`;
+      return `${sign}${integerPart}${options.decimal}${decimalPart}`;
     } else {
-      return integerPart;
+      return `${sign}${integerPart}`;
     }
   } else {
     return val;
@@ -92,10 +93,11 @@ exports.removeleadingZeros = function(val, options) {
     ? val.indexOf(options.decimal)
     : val.length;
 
-  let integerPart = val.slice(0, decimalIndex + 1);
+  let sign = val[0] === '-' ? val[0] : '';
+  let integerPart = val.slice(sign ? 1 : 0, decimalIndex + 1);
   const decimalPart = val.slice(decimalIndex + 1);
 
-  let i = (integerPart[0] === '-') ? 1 : 0;
+  let i = 0;
 
   while (
     integerPart[i] == 0
@@ -105,7 +107,7 @@ exports.removeleadingZeros = function(val, options) {
     integerPart = integerPart.slice(0, i) + integerPart.slice(i + 1);
   }
 
-  return `${integerPart}${decimalPart}`;
+  return `${sign}${integerPart}${decimalPart}`;
 }
 
 exports.removeExtraDecimals = function(val, options) {
@@ -163,7 +165,7 @@ exports.allowedZero = function(val, char, caretPos, options) {
 
   // If there is some integer part and the caret is to the left of
   // the decimal point
-  if (integerPart && caretPos < integerPart.length + 1) {
+  if ((integerPart.length > 0) && (caretPos < integerPart.length + 1)) {
     // IF integer part is just a zero then no zeros can be added
     // ELSE the zero can not be added at the front of the value
     return integerPart == 0 ? false : caretPos > 0;
