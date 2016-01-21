@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Finput by alisd23</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Finput</h1>
+      <h2 class="project-tagline">Financial number input</h2>
+      <a href="https://github.com/alisd23/finput" class="btn">View on GitHub</a>
+      <a href="https://github.com/alisd23/finput/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/alisd23/finput/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="finput" class="anchor" href="#finput" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>finput</h1>
+
+<p>A vanilla-JS financial amount input control. Supports the following features -</p>
+
+<ul>
+<li>auto-formatting</li>
+<li>prevents invalid input whether typed, dragged or pasted</li>
+<li>'k', 'm', 'b', etc. multiplier keys</li>
+</ul>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="install-package" class="anchor" href="#install-package" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install package</h3>
+
+<p><code>npm install finput</code></p>
+
+<h3>
+<a id="initialise-input" class="anchor" href="#initialise-input" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initialise input</h3>
+
+<p>To initialise the finput, simply pass the element and any options into the finput constructor.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> myInput <span class="pl-k">=</span> <span class="pl-en">finput</span>(element, options)</pre></div>
+
+<h3>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h3>
+
+<h4>
+<a id="scale" class="anchor" href="#scale" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>scale</h4>
+
+<p>Type: <code>Number</code><br>
+Default: <code>2</code></p>
+
+<p>Maximum number of decimal digits the value can take</p>
+
+<h4>
+<a id="range" class="anchor" href="#range" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>range</h4>
+
+<p>Type: <code>Number</code><br>
+Default: <code>ALL</code></p>
+
+<p>The possible range of values that the value can take</p>
+
+<p>Possible Values:  </p>
+
+<ul>
+<li>
+<code>'ALL'</code>: Number can take any value<br>
+</li>
+<li>
+<code>'POSITIVE'</code>: Number can only be positive</li>
+</ul>
+
+<h4>
+<a id="fixed" class="anchor" href="#fixed" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>fixed</h4>
+
+<p>Type: <code>Boolean</code><br>
+Default: <code>true</code><br>
+If true, after focus is lost value is formatted to <em>scale</em> number of decimal places</p>
+
+<h4>
+<a id="thousands" class="anchor" href="#thousands" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>thousands</h4>
+
+<p>Type: <code>string</code><br>
+Default: <code>,</code><br>
+The character used to separate thousands in the formatted value.
+<code>E.g. 1,000</code></p>
+
+<h4>
+<a id="decimal" class="anchor" href="#decimal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>decimal</h4>
+
+<p>Type: <code>string</code><br>
+Default: <code>.</code><br>
+The character used for the decimal point</p>
+
+<h4>
+<a id="shortcuts" class="anchor" href="#shortcuts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>shortcuts</h4>
+
+<p>Type: <code>Object { character: multiplier }</code><br>
+Default: <code>{
+  'k': 1000,
+  'm': 1000000,
+  'b': 1000000000
+}</code><br>
+An object mapping of shortcuts that the user can use to quickly enter common values.
+E.g. with the default shortcuts, typing <code>k</code> will multiply the number value by 1000</p>
+
+<h2>
+<a id="install-dependencies" class="anchor" href="#install-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install Dependencies</h2>
+
+<p><code>npm install -g grunt-cli</code>
+<code>npm install</code></p>
+
+<h2>
+<a id="developing" class="anchor" href="#developing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Developing</h2>
+
+<p><code>grunt serve</code></p>
+
+<h2>
+<a id="running-tests" class="anchor" href="#running-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running tests</h2>
+
+<p>Build and run the server -</p>
+
+<p><code>grunt serve</code></p>
+
+<h3>
+<a id="with-browserstack" class="anchor" href="#with-browserstack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WITH browserstack</h3>
+
+<p>Set browserstack config</p>
+
+<ul>
+<li>Copy <code>config.example.json</code> to a new file: <code>config.json</code>
+</li>
+<li>Update the correct browserstack information</li>
+</ul>
+
+<p>Execute the tests -</p>
+
+<p><code>grunt test:browserstack</code></p>
+
+<h3>
+<a id="without-browserstack" class="anchor" href="#without-browserstack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WITHOUT browserstack</h3>
+
+<p>Install and run an instance of webdriver e.g. -</p>
+
+<p><code>npm run webdriver update</code>
+<code>npm run webdriver start</code></p>
+
+<p>Execute the tests -</p>
+
+<p><code>npm run test</code></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/alisd23/finput">Finput</a> is maintained by <a href="https://github.com/alisd23">alisd23</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
