@@ -72,8 +72,8 @@ Accessing input value
 
 The formatted value (the inputs value) and raw numeric value can be access directly on the dom element
 as follows:  
-*Formatted value* - `element.value` _(the normal input value)_
-*Raw numeric value* - `element.rawValue`
+**Formatted value** - `element.value` _(the normal input value)_  
+**Raw numeric value** - `element.rawValue`
 
 
 Functions
