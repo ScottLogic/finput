@@ -21,8 +21,7 @@ const keyMap = {
   '⑥': '\u{e020}',
   '⑦': '\u{e021}',
   '⑧': '\u{e022}',
-  '⑨': '\u{e023}',
-  'ctrl': '\uE009a'
+  '⑨': '\u{e023}'
 };
 
 function initFinput(options) {
