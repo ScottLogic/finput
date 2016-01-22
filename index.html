@@ -117,6 +117,17 @@ Default: <code>{
 An object mapping of shortcuts that the user can use to quickly enter common values.
 E.g. with the default shortcuts, typing <code>k</code> will multiply the number value by 1000</p>
 
+<h3><a id="user-content-functions" class="anchor" href="#functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Functions</h3>
+<p>The object returned when initialising the finput contains a cleanup function called <code>destroy</code>. For example:  </p>
+
+<div class="highlight highlight-source-js">
+  <pre><span class="pl-k">var</span> myInput <span class="pl-k">=</span> <span class="pl-en">finput</span>(element, options);
+<span class="pl-smi">myInput</span>.<span class="pl-en">destroy</span>()</pre>
+</div>
+<p>This function removes all the event listeners, making the input behaviour like the default browser
+input once again.</p>
+
+
 <h2>
 <a id="install-dependencies" class="anchor" href="#install-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install Dependencies</h2>
 
