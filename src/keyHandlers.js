@@ -197,7 +197,7 @@ module.exports = {
    * @param {event} The keydown event which triggered the undo
    */
   onUndo: function(finput, event) {
-    finput.element.value = finput.history.undo();
+    finput.element.value = finput._history.undo();
     finput.element.setSelectionRange(finput.element.value.length, finput.element.value.length);
     event.preventDefault();
   },
@@ -207,7 +207,7 @@ module.exports = {
    * @param {event} The keydown event which triggered the redo
    */
   onRedo: function(finput, event) {
-    finput.element.value = finput.history.redo();
+    finput.element.value = finput._history.redo();
     finput.element.setSelectionRange(finput.element.value.length, finput.element.value.length);
     event.preventDefault();
   }

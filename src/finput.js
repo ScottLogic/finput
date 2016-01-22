@@ -76,16 +76,6 @@ class Finput {
   get formattedValue() {
     return this.element.value;
   }
-  get actionTypes() {
-    return this._actionTypes;
-  }
-  get dragState() {
-    return this._dragState;
-  }
-  get history() {
-    return this._history;
-  }
-
 
   // SETTERS
   set dragState(state) {
@@ -166,7 +156,7 @@ class Finput {
    * @param {e} Keyboard event
    */
   getActionType(name, e) {
-    for (let actionType of this.actionTypes) {
+    for (let actionType of this._actionTypes) {
       const index = actionType.names.indexOf(name);
       const typeMatch = index > -1;
 
@@ -185,7 +175,7 @@ class Finput {
     const newValue = helpers.fullFormat(val, this.options);
 
     this.element.value = newValue;
-    this.history.addValue(newValue);
+    this._history.addValue(newValue);
   }
 
 
@@ -217,8 +207,7 @@ class Finput {
    */
   onDrop(e) {
     console.debug('Drop event', e);
-
-    switch (this.dragState) {
+    switch (this._dragState) {
       case DRAG_STATES.INTERNAL:
         // This case is handled by the 'onInput' function
         break;
@@ -241,18 +230,18 @@ class Finput {
    * @param {e} Drag event
    */
   onDragstart(e) {
-    this.dragState = (e.target === this.element)
+    this._dragState = (e.target === this.element)
       ? DRAG_STATES.INTERNAL
       : DRAG_STATES.EXTERNAL;
-    console.debug('Drag STARTED', this.dragState, e);
+    console.debug('Drag STARTED', this._dragState, e);
   }
   /**
    * On end of ANY drag on page
    * @param {e} Drag event
    */
   onDragend(e) {
-    console.debug('Drag ENDED', this.dragState, e);
-    this.dragState = DRAG_STATES.NONE;
+    console.debug('Drag ENDED', this._dragState, e);
+    this._dragState = DRAG_STATES.NONE;
   }
   /**
    * On pasting something into the input
@@ -341,7 +330,7 @@ class Finput {
     );
     const newCaretPos = keyInfo.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
-    this.history.addValue(newValue);
+    this._history.addValue(newValue);
   }
   /**
    * Backup event if input changes for any other reason, just format value

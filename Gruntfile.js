@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-webdriver');
   grunt.loadNpmTasks('grunt-browserstacktunnel-wrapper');
+  grunt.loadNpmTasks("grunt-remove-logging");
 
   var fs = require("fs");
   var browserstackKey = JSON.parse(fs.readFileSync("./config.json")).browserstackKey;
@@ -63,6 +64,15 @@ module.exports = function(grunt) {
         }
       }
     },
+    removelogging: {
+      dist: {
+        src: "dist/*.js",
+
+        options: {
+          // see below for options. this is optional.
+        }
+      }
+    },
     webdriver: {
       test: {
         configFile: './wdio.conf.js'
@@ -83,7 +93,7 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('compile', ['browserify:dev', 'uglify']);
+  grunt.registerTask('compile', ['browserify:dev', 'uglify', 'removelogging']);
   grunt.registerTask('serve', ['compile', 'browserSync', 'watch']);
 
   grunt.registerTask('test:browserstack', browserstackKey ?
