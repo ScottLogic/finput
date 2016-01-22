@@ -77,17 +77,6 @@ class Finput {
     return this.element.value;
   }
 
-  // SETTERS
-  set dragState(state) {
-    this._dragState = state;
-  }
-  set value(val) {
-    this._value = val;
-  }
-  set formattedValue(val) {
-    this._formattedValue = val;
-  }
-
   /**
    * Creates the correct action type to char/key codes array with the
    * correct decimal and thousand separator characters (depending on language)
