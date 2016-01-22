@@ -170,28 +170,6 @@ module.exports = {
   },
 
   /**
-   * VERTICAL ARROW HANDLER
-   * @param {keyInfo} Information about the keypress/action
-   * @param {step} How much to increase/decrease value by
-   */
-  onVerticalArrow: function(keyInfo, step) {
-    // If step is 0 (or falsey) then assume arrow key value changing is disabled
-    if (step && !isNaN(step)) {
-      switch (keyInfo.keyName) {
-        case 'up':
-          // TODO - Up arrow step
-          break;
-        case 'down':
-          // TODO - Down arrow step
-          break;
-        default:
-          // Do nothing
-      }
-      keyInfo.event.preventDefault();
-    }
-  },
-
-  /**
    * UNDO HANDLER
    * @param {finput} the Finput object
    * @param {event} The keydown event which triggered the undo

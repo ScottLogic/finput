@@ -66,6 +66,19 @@ An object mapping of shortcuts that the user can use to quickly enter common val
 E.g. with the default shortcuts, typing `k` will multiply the number value by 1000
 
 
+### Functions
+The object returned when initialising the finput contains a cleanup function called `destroy`.
+For example:  
+
+```javascript
+var myInput = finput(element, options);
+myInput.destroy()
+```
+
+This function removes all the event listeners, making the input behaviour like the default browser
+input once again.
+
+
 Install Dependencies
 --------------------
 

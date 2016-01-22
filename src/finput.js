@@ -49,18 +49,22 @@ class Finput {
     this._actionTypes = this.createActionTypes();
     this._history = new ValueHistory();
 
-    // Setup listeners
-    this.element.addEventListener('blur', (e) => this.onFocusout(e));
-    this.element.addEventListener('focus', (e) => this.onFocusin(e));
-    this.element.addEventListener('drop', (e) => this.onDrop(e));
-    this.element.addEventListener('paste', (e) => this.onPaste(e));
-    this.element.addEventListener('keydown', (e) => this.onKeydown(e));
-    this.element.addEventListener('input', (e) => this.onInput(e));
+    this._listeners = {
+      blur:     { element: this.element, handler: this.onFocusout.bind(this) },
+      focus:    { element: this.element, handler: this.onFocusin.bind(this) },
+      drop:     { element: this.element, handler: this.onDrop.bind(this) },
+      paste:    { element: this.element, handler: this.onPaste.bind(this) },
+      keydown:  { element: this.element, handler: this.onKeydown.bind(this) },
+      input:    { element: this.element, handler: this.onInput.bind(this) },
 
-    // Dragging listeners
-    // Keep track of whether a drag started internally or externally
-    document.addEventListener('dragstart', (e) => this.onDragstart(e));
-    document.addEventListener('dragend', (e) => this.onDragend(e));
+      dragstart:    { element: document, handler: this.onDragstart.bind(this) },
+      dragend:    { element: document, handler: this.onDragend.bind(this) }
+    }
+
+    // Setup listeners
+    for (let e in this._listeners) {
+      this._listeners[e].element.addEventListener(e, this._listeners[e].handler);
+    }
   }
 
   // GETTERS
@@ -69,12 +73,6 @@ class Finput {
   }
   get options() {
     return this._options;
-  }
-  get value() {
-    return Number(this.element.value.replace(new RegExp(',', 'g'), ''));
-  }
-  get formattedValue() {
-    return this.element.value;
   }
 
   /**
@@ -157,16 +155,27 @@ class Finput {
   }
 
   /**
+   * Get numerical value of the given value
+   * @param {val} Value to convert
+   */
+  getRawValue(val) {
+    return Number(this.element.value.replace(new RegExp(',', 'g'), ''));
+  }
+
+
+  /**
    * Sets the value, fully formatted, for the input
    * @param {val} New value to set
    */
-  setValue(val) {
+  setValue(val, notNull) {
     const newValue = helpers.fullFormat(val, this.options);
 
-    this.element.value = newValue;
-    this._history.addValue(newValue);
+    if (notNull ? val : true) {
+      this.element.value = newValue;
+      this.element.rawValue = this.getRawValue(this.element.value);
+      this._history.addValue(newValue);
+    }
   }
-
 
   //
   // EVENT HANDLERS
@@ -202,10 +211,7 @@ class Finput {
         break;
       case DRAG_STATES.EXTERNAL:
         const val = helpers.parseString(e.dataTransfer.getData('text'), this.options);
-        const formatted = helpers.fullFormat(val, this.options);
-        if (formatted) {
-          this.element.value = formatted;
-        }
+        this.setValue(val, true);
         e.preventDefault();
         break;
       default:
@@ -238,10 +244,7 @@ class Finput {
    */
   onPaste(e) {
     const val = helpers.parseString(e.clipboardData.getData('text'), this.options);
-    const formatted = helpers.fullFormat(val, this.options);
-    if (formatted) {
-      this.element.value = formatted;
-    }
+    this.setValue(val, true);
     e.preventDefault();
   }
   /**
@@ -277,14 +280,12 @@ class Finput {
         keyHandlers.onShortcut(keyInfo, this.options);
         break;
       case ACTION_TYPES.HORIZONTAL_ARROW:
+      case ACTION_TYPES.VERTICAL_ARROW:
       case ACTION_TYPES.HOME:
       case ACTION_TYPES.END:
         console.debug(actionType);
         // Default behaviour
         return;
-      case ACTION_TYPES.VERTICAL_ARROW:
-        keyHandlers.onVerticalArrow(keyInfo, this.options.valueStep);
-        break;
       case ACTION_TYPES.BACKSPACE:
         keyHandlers.onBackspace(keyInfo, this.options.thousands);
         break;
@@ -310,6 +311,7 @@ class Finput {
     const currentValue = keyInfo.newValue;
 
     this.element.value = newValue;
+    this.element.rawValue = this.getRawValue(this.element.value);
 
     const offset = helpers.calculateOffset(
       currentValue,
@@ -330,6 +332,28 @@ class Finput {
     this.setValue(this.element.value);
   }
 
+  /**
+   * Removes all listeners from the input
+   */
+  removeListeners() {
+    for (let e in this._listeners) {
+      this._listeners[e].element.removeEventListener(e, this._listeners[e].handler);
+    }
+  }
 }
 
-export default Finput;
+// Factory function
+export default function(element, options) {
+
+  if (!element) {
+    throw error('Input element must be supplied as first argument');
+  }
+
+  const input = new Finput(element, options || {});
+
+  return {
+    destroy: () => {
+      input.removeListeners();
+    }
+  }
+};
