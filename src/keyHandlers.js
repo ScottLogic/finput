@@ -87,14 +87,16 @@ module.exports = {
    * @param {options} Configuration options for the input
    */
   onShortcut: function(keyInfo, options) {
-    const multiplier = options.shortcuts[keyInfo.keyName.toLowerCase()];
+    const multiplier = options.shortcuts[keyInfo.keyName.toLowerCase()] || 1;
     const adjustedVal = helpers.editString(keyInfo.currentValue, '', keyInfo.caretStart, keyInfo.caretEnd);
-    const rawValue = helpers.toNumber(adjustedVal, options);
+    const rawValue = (helpers.toNumber(adjustedVal, options) || 1) * multiplier;
 
     if (multiplier) {
-      // If whole value is selected
-      keyInfo.newValue = String((rawValue || 1) * multiplier);
-      keyInfo.caretStart = keyInfo.newValue.length;
+      // If number contains 'e' then it is too large to display
+      if (rawValue.toString().indexOf('e') === -1) {
+        keyInfo.newValue = String(rawValue);
+      }
+      keyInfo.caretStart = keyInfo.newValue.length + Math.log10(1000);
     }
     keyInfo.event.preventDefault();
   },

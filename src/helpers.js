@@ -208,5 +208,14 @@ exports.parseString = function(str, options) {
     }
   }
 
-  return parsed ? String(Number(parsed) * multiplier) : '';
+  if (!parsed.length) { return '' }
+
+  const adjusted = String(Number(parsed * multiplier));
+  const tooLarge = adjusted.indexOf('e') !== -1;
+
+  if (tooLarge) {
+    return ''
+  } else {
+    return adjusted;
+  }
 }

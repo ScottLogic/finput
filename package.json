@@ -1,12 +1,11 @@
 {
-  "private": true,
   "name": "finput",
   "version": "1.5.3",
   "dependencies": {
     "numeral": "^1.5.3",
     "keycode": "^2.1.0"
   },
-  "main": "./finput.js",
+  "main": "./dist/finput.js",
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.3.13",

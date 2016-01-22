@@ -28,7 +28,7 @@ function initFinput(options) {
   var el = window.document.getElementById('number-input');
   var elClone = el.cloneNode(true);
   el.parentNode.replaceChild(elClone, el);
-  var myFinput = new window.Finput(elClone, options);
+  var myFinput = new window.finput(elClone, options);
 }
 
 exports.type = function(options) {
