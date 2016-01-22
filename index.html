@@ -51,9 +51,12 @@
 <h4>
 <a id="initialise-input" class="anchor" href="#initialise-input" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initialise input</h4>
 
-<p>To initialise the finput, simply pass the element and any options into the finput constructor.</p>
+<p>To initialise the finput, simply pass the element and any options into the finput constructor.<br>
+The function returned is the cleanup function which removes all the added finput listeners from the input,
+making it act like the default browser input once again.</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> myInput <span class="pl-k">=</span> <span class="pl-en">finput</span>(element, options)</pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> destroy <span class="pl-k">=</span> <span class="pl-en">finput</span>(element, options);
+<span class="pl-en">destroy</span>();  <span class="pl-c">// Stops finput behaviour</span></pre></div>
 
 <h2>
 <a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
@@ -125,18 +128,6 @@ E.g. with the default shortcuts, typing <code>k</code> will multiply the number 
 as follows:<br>
 <strong>Formatted value</strong> - <code>element.value</code> <em>(the normal input value)</em><br>
 <strong>Raw numeric value</strong> - <code>element.rawValue</code></p>
-
-<h2>
-<a id="functions" class="anchor" href="#functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Functions</h2>
-
-<p>The object returned when initialising the finput contains a cleanup function called <code>destroy</code>.
-For example:  </p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> myInput <span class="pl-k">=</span> <span class="pl-en">finput</span>(element, options);
-<span class="pl-smi">myInput</span>.<span class="pl-en">destroy</span>()</pre></div>
-
-<p>This function removes all the event listeners, making the input behaviour like the default browser
-input once again.</p>
 
 <h2>
 <a id="install-dependencies" class="anchor" href="#install-dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install Dependencies</h2>
