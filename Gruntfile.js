@@ -66,7 +66,7 @@ module.exports = function(grunt) {
     },
     removelogging: {
       dist: {
-        src: "dist/*.js",
+        src: "dist/finput.js",
 
         options: {
           // see below for options. this is optional.
@@ -93,7 +93,7 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('compile', ['browserify:dev', 'uglify', 'removelogging']);
+  grunt.registerTask('compile', ['browserify:dev', 'removelogging', 'uglify']);
   grunt.registerTask('serve', ['compile', 'browserSync', 'watch']);
 
   grunt.registerTask('test:browserstack', browserstackKey ?
