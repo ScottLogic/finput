@@ -8,7 +8,7 @@ element.addEventListener('keydown', function() {
 });
 
 
-window.myFinput = new finput(element, {});
+window.destroy = new finput(element, {});
 
 element.addEventListener('keydown', function() {
   console.log("KEYED DOWN after");
@@ -17,4 +17,4 @@ element.addEventListener('input', function(val) {
   console.log("Changed to:" + val);
 });
 
-// myFinput.destroy();
+// destroy();

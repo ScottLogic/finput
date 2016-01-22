@@ -15,10 +15,13 @@ See an example finput [here](http://alisd23.github.io/finput)
 `npm install finput`
 
 #### Initialise input
-To initialise the finput, simply pass the element and any options into the finput constructor.
+To initialise the finput, simply pass the element and any options into the finput constructor.  
+The function returned is the cleanup function which removes all the added finput listeners from the input,
+making it act like the default browser input once again.
 
 ```javascript
-var myInput = finput(element, options)
+var destroy = finput(element, options);
+destroy();  // Stops finput behaviour
 ```
 
 Options
@@ -75,17 +78,6 @@ as follows:
 **Formatted value** - `element.value` _(the normal input value)_  
 **Raw numeric value** - `element.rawValue`
 
-
-Functions
----------
-
-The object returned when initialising the finput contains a cleanup function called `destroy`.
-For example:  
-
-```javascript
-var myInput = finput(element, options);
-myInput.destroy()
-```
 
 This function removes all the event listeners, making the input behaviour like the default browser
 input once again.

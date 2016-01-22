@@ -351,9 +351,7 @@ export default function(element, options) {
 
   const input = new Finput(element, options || {});
 
-  return {
-    destroy: () => {
-      input.removeListeners();
-    }
+  return () => {
+    input.removeListeners();
   }
 };
