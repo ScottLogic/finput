@@ -8,6 +8,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" media="screen">
   </head>
   <body>
     <section class="page-header">
@@ -20,7 +21,7 @@
 
     <section class="main-content">
       <h1>
-<a id="finput" class="anchor" href="#finput" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>finput</h1>
+    <a id="finput-top" class="anchor" href="#finput" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>finput</h1>
 
 <p>A vanilla-JS financial amount input control. Supports the following features -</p>
 
@@ -29,6 +30,13 @@
 <li>prevents invalid input whether typed, dragged or pasted</li>
 <li>'k', 'm', 'b', etc. multiplier keys</li>
 </ul>
+
+<div class="card p-a-2 m-t-2" style="background-color: #eee; border-color: #eee;">
+<div class="card-block">
+<h2 class="card-title"><a id="try-it" class="anchor" href="#try-it" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Try it!</h2>
+<input id="number-input" class="form-control form-control-lg" />
+</div>
+</div>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
@@ -183,6 +191,11 @@ input once again.</p>
 
     </section>
 
-  
+
+    <script src="https://rawgit.com/alisd23/finput/master/dist/finput.min.js"></script>
+    <script>
+    new finput(document.getElementById('number-input', {}));
+    </script>
+
   </body>
 </html>
