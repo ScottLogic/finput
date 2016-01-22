@@ -9,6 +9,7 @@ A vanilla-JS financial amount input control. Supports the following features -
 
 Usage
 -----
+See an example finput [here](http://alisd23.github.io/finput)
 
 ### Install package
 `npm install finput`
@@ -83,7 +84,7 @@ Build and run the server -
 
 `grunt serve`
 
-### WITH browserstack
+#### WITH browserstack
 
 Set browserstack config
 
@@ -94,7 +95,7 @@ Execute the tests -
 
 `grunt test:browserstack`
 
-### WITHOUT browserstack
+#### WITHOUT browserstack
 
 Install and run an instance of webdriver e.g. -
 
