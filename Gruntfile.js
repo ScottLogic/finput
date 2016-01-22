@@ -83,7 +83,7 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('compile', ['browserify:dev'/*, 'uglify'*/]);
+  grunt.registerTask('compile', ['browserify:dev', 'uglify']);
   grunt.registerTask('serve', ['compile', 'browserSync', 'watch']);
 
   grunt.registerTask('test:browserstack', browserstackKey ?
