@@ -71,10 +71,10 @@ class Finput {
     return this._options;
   }
   get value() {
-    return this._value;
+    return Number(this.element.value.replace(new RegExp(',', 'g'), ''));
   }
   get formattedValue() {
-    return this._formattedValue;
+    return this.element.value;
   }
   get actionTypes() {
     return this._actionTypes;
