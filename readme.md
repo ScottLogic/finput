@@ -11,25 +11,26 @@ Usage
 -----
 See an example finput [here](http://alisd23.github.io/finput)
 
-### Install package
+#### Install package
 `npm install finput`
 
-### Initialise input
+#### Initialise input
 To initialise the finput, simply pass the element and any options into the finput constructor.
 
 ```javascript
 var myInput = finput(element, options)
 ```
 
-### Options
+Options
+-----
 
-#### scale
+##### scale
 Type: `Number`  
 Default: `2`
 
 Maximum number of decimal digits the value can take
 
-#### range
+##### range
 Type: `Number`  
 Default: `ALL`
 
@@ -39,23 +40,23 @@ Possible Values:
 - `'ALL'`: Number can take any value  
 - `'POSITIVE'`: Number can only be positive
 
-#### fixed
+##### fixed
 Type: `Boolean`  
 Default: `true`  
 If true, after focus is lost value is formatted to *scale* number of decimal places
 
-#### thousands
+##### thousands
 Type: `string`  
 Default: `,`  
 The character used to separate thousands in the formatted value.
 `E.g. 1,000`
 
-#### decimal
+##### decimal
 Type: `string`  
 Default: `.`  
 The character used for the decimal point
 
-#### shortcuts
+##### shortcuts
 Type: `Object { character: multiplier }`  
 Default: `{
   'k': 1000,
@@ -66,7 +67,18 @@ An object mapping of shortcuts that the user can use to quickly enter common val
 E.g. with the default shortcuts, typing `k` will multiply the number value by 1000
 
 
-### Functions
+Accessing input value
+---------------------
+
+The formatted value (the inputs value) and raw numeric value can be access directly on the dom element
+as follows:  
+*Formatted value* - `element.value` _(the normal input value)_
+*Raw numeric value* - `element.rawValue`
+
+
+Functions
+---------
+
 The object returned when initialising the finput contains a cleanup function called `destroy`.
 For example:  
 
@@ -97,7 +109,7 @@ Build and run the server -
 
 `grunt serve`
 
-#### WITH browserstack
+##### WITH browserstack
 
 Set browserstack config
 
@@ -108,7 +120,7 @@ Execute the tests -
 
 `grunt test:browserstack`
 
-#### WITHOUT browserstack
+##### WITHOUT browserstack
 
 Install and run an instance of webdriver e.g. -
 
