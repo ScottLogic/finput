@@ -46,6 +46,7 @@ class Finput {
       ...DEFAULTS,
       ...options
     };
+
     this._actionTypes = this.createActionTypes();
     this._history = new ValueHistory();
 
@@ -62,6 +63,7 @@ class Finput {
     }
 
     // Setup listeners
+    this.removeListeners();
     for (let e in this._listeners) {
       this._listeners[e].element.addEventListener(e, this._listeners[e].handler);
     }
@@ -159,7 +161,7 @@ class Finput {
    * @param {val} Value to convert
    */
   getRawValue(val) {
-    return Number(this.element.value.replace(new RegExp(',', 'g'), ''));
+    return Number(this.element.value.replace(new RegExp(this.options.thousands, 'g'), ''));
   }
 
 
@@ -346,7 +348,7 @@ class Finput {
 export default function(element, options) {
 
   if (!element) {
-    throw error('Input element must be supplied as first argument');
+    throw 'Input element must be supplied as first argument';
   }
 
   const input = new Finput(element, options || {});

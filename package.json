@@ -1,6 +1,6 @@
 {
   "name": "finput",
-  "version": "1.5.3",
+  "version": "0.0.1",
   "dependencies": {
     "numeral": "^1.5.3",
     "keycode": "^2.1.0"

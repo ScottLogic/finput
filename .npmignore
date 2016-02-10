@@ -1,0 +1,35 @@
+# --------------------
+# OSX Files
+# --------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# --------------------
+# IntelliJ Files
+# --------------------
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# --------------------
+# Sublime Files
+# --------------------
+*.sublime-project
+*.sublime-workspace
+
+# --------------------
+# App Files
+# --------------------
+node_modules/
+config.*
+Gruntfile.js
+main.js
+pakmanaged.js
+wdio.conf.js
+selenium-debug.log

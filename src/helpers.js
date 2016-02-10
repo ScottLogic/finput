@@ -24,7 +24,7 @@ exports.formatThousands = function(val, options) {
   for (i, j; i > endIndex; i--, j++) {
     // Every 3 characers, add a comma
     if (j % 3 === 0) {
-      val = this.editString(val, ',', i);
+      val = this.editString(val, options.thousands, i);
     }
   }
 
@@ -210,7 +210,10 @@ exports.parseString = function(str, options) {
 
   if (!parsed.length) { return '' }
 
-  const adjusted = String(Number(parsed * multiplier));
+  // Need to ensure that delimiter is a '.' before parsing to number
+  const normalisedNumber = Number(parsed.replace(new RegExp(`[${options.decimal}]`, 'g'), '.'));
+  // Then swap it back in
+  const adjusted = String(normalisedNumber * multiplier).replace(new RegExp(`[\.]`, 'g'), options.decimal);
   const tooLarge = adjusted.indexOf('e') !== -1;
 
   if (tooLarge) {

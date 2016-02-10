@@ -8,13 +8,10 @@ element.addEventListener('keydown', function() {
 });
 
 
-window.destroy = new window.finput(element, {});
+window.destroy = finput(element, {
+  thousands: '.',
+  decimal: ','
+});
 
-element.addEventListener('keydown', function() {
-  console.log("KEYED DOWN after");
-});
-element.addEventListener('input', function(val) {
-  console.log("Changed to:" + val);
-});
 
 // destroy();

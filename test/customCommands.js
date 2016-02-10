@@ -32,7 +32,6 @@ function initFinput(options) {
 }
 
 exports.type = function(options) {
-  const client = browser.url('/').execute(initFinput, options);
 
   return function(initialKeys) {
     let activeKeys = initialKeys;
@@ -41,7 +40,10 @@ exports.type = function(options) {
     const chainFunctions = {};
 
     chainFunctions.shouldShow = function(expected) {
+      let client;
+
       it(`should show ${expected} when ${keys} are pressed`, function*() {
+        client = browser.url('/').execute(initFinput, options);
         const mappedKeys = keys.replace(/./g, (c) => keyMap[c] || c);
         yield client
           .clearElement(input)
@@ -76,13 +78,15 @@ exports.type = function(options) {
 };
 
 exports.copyAndPaste = function(options) {
-  const client = browser.url('/').execute(initFinput, options);
 
   return function(text) {
     const chainFunctions = {};
 
     chainFunctions.shouldShow = function(expected) {
-      it(`should show ${expected} when ${text} is dragged and dropped`, function*() {
+      let client;
+
+      it(`should show ${expected} when ${text} is copied and pasted`, function*() {
+        client = browser.url('/').execute(initFinput, options);
         let offset;
 
         yield client
@@ -110,13 +114,15 @@ exports.copyAndPaste = function(options) {
 }
 
 exports.dragAndDrop = function(options) {
-  const client = browser.url('/').execute(initFinput, options);
 
   return function(text) {
     const chainFunctions = {};
 
     chainFunctions.shouldShow = function(expected) {
+      let client;
+
       it(`should show ${expected} when ${text} is dragged and dropped`, function*() {
+        client = browser.url('/').execute(initFinput, options);
         let offset;
 
         yield client
@@ -142,7 +148,6 @@ exports.dragAndDrop = function(options) {
 }
 
 exports.cut = function(options) {
-  const client = browser.url('/').execute(initFinput, options);
 
   return function(count) {
     const charCount = count;
@@ -150,7 +155,10 @@ exports.cut = function(options) {
     const chainFunctions = {};
 
     chainFunctions.shouldShow = function(expected) {
+      let client;
+
       it(`should show ${expected} when ${text} is cropped`, function*() {
+        client = browser.url('/').execute(initFinput, options);
         let offset;
 
         yield client
