@@ -72,7 +72,8 @@ module.exports = function(grunt) {
     },
     babel: {
       options: {
-        presets: ['es2015', 'stage-2']
+        presets: ['es2015', 'stage-2'],
+        plugins: ["add-module-exports"]
       },
       dist: {
         files: [
