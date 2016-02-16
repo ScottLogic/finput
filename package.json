@@ -2,7 +2,6 @@
   "name": "finput",
   "version": "0.1.0",
   "dependencies": {
-    "numeral": "^1.5.3",
     "keycode": "^2.1.0"
   },
   "main": "./dist/finput.js",
