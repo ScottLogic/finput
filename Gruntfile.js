@@ -2,8 +2,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-webdriver');
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-browserstacktunnel-wrapper');
   grunt.loadNpmTasks("grunt-remove-logging");
 
@@ -11,6 +13,10 @@ module.exports = function(grunt) {
   var browserstackKey = JSON.parse(fs.readFileSync("./config.json")).browserstackKey;
 
   grunt.initConfig({
+    clean: {
+      libs: ['lib'],
+      dist: ['dist']
+    },
     browserify: {
       dev: {
         files: {
@@ -64,6 +70,21 @@ module.exports = function(grunt) {
         }
       }
     },
+    babel: {
+      options: {
+        presets: ['es2015', 'stage-2']
+      },
+      dist: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.js'],
+            dest: 'lib/'
+          }
+        ]
+      }
+    },
     removelogging: {
       dist: {
         src: "dist/finput.js",
@@ -93,7 +114,8 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('compile', ['browserify:dev', 'removelogging', 'uglify']);
+  grunt.registerTask('createLibFolder', ['clean:libs', 'babel']);
+  grunt.registerTask('compile', ['createLibFolder', 'clean:dist', 'browserify:dev', 'removelogging', 'uglify']);
   grunt.registerTask('serve', ['compile', 'browserSync', 'watch']);
 
   grunt.registerTask('test:browserstack', browserstackKey ?

@@ -7,13 +7,18 @@
 * @param {Options.decimal} Character to use for the decimal point
 * @param {Options.shortcuts} Object map of shortcut characters to multiplier (e.g. { k: 1000 })
 */
+
+interface shortcutsType {
+  [name: string]: number;
+}
+
 interface Options {
   scale?: number;
   range?: number;
   fixed?: boolean;
   thousands?: string;
   decimal?: string;
-  shortcuts?: [string: number];
+  shortcuts?: shortcutsType;
 }
 
 interface finputFn {
