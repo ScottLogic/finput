@@ -9,7 +9,7 @@ A vanilla-JS financial amount input control. Supports the following features -
 
 Usage
 -----
-See an example finput [here](http://alisd23.github.io/finput)
+See an example finput [here](http://scottlogic.github.io/finput)
 
 #### Install package
 `npm install finput`
