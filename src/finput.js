@@ -168,6 +168,7 @@ class Finput {
   /**
    * Sets the value, fully formatted, for the input
    * @param {val} New value to set
+   * @param {notNull} When true, restricts setting the value if it is null.
    */
   setValue(val, notNull) {
     const newValue = helpers.fullFormat(val, this.options);
@@ -177,6 +178,26 @@ class Finput {
       this.element.rawValue = this.getRawValue(this.element.value);
       this._history.addValue(newValue);
     }
+  }
+
+  /**
+   * Sets and formats the value for the input
+   * @param {val} New value to set
+   */
+  setRawValue(val) {
+    let value;
+    if (!val) {
+      value = '';
+    } else if (typeof val === 'number' && !isNaN(val)) {
+      value = val.toString();
+    } else if (typeof val === 'string') {
+      value = val;
+    } else {
+      return;
+    }
+
+    const newValue = helpers.parseString(value, this.options);
+    this.setValue(newValue, false);
   }
 
   //
@@ -352,8 +373,12 @@ export default function(element, options) {
   }
 
   const input = new Finput(element, options || {});
+  element.setRawValue = (v) => input.setRawValue(v);
+  element.setValue = (v) => input.setValue(v);
 
   return () => {
     input.removeListeners();
+    delete element.setRawValue;
+    delete element.setValue;
   }
 };
