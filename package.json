@@ -1,6 +1,14 @@
 {
   "name": "finput",
   "version": "0.1.2",
+  "description": "A vanilla-JS financial amount input control",
+  "license": "MIT",
+  "homepage": "http://scottlogic.github.io/finput/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scottlogic/finput.git"
+  },
+  "bugs": "https://github.com/scottlogic/finput/issues",
   "dependencies": {
     "keycode": "^2.1.0"
   },
