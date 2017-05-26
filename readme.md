@@ -82,6 +82,19 @@ as follows:
 This function removes all the event listeners, making the input behaviour like the default browser
 input once again.
 
+API
+--------------------
+
+The following functions are exposed on the `element` for direct, controlled manipulation of the input value.
+
+##### setValue
+Sets the value, fully formatted, for the input
+ * `val` New value to set
+ * `notNull` When true, restricts setting the value if it is null.
+
+##### setRawValue
+Sets and formats the value for the input
+ * `val` New value to set
 
 Install Dependencies
 --------------------
