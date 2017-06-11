@@ -100,6 +100,10 @@ class Finput {
         names: ['end']
       },
       {
+        type: ACTION_TYPES.TAB,
+        names: ['tab']
+      },
+      {
         type: ACTION_TYPES.DECIMAL,
         names: [this.options.decimal]
       },
@@ -306,6 +310,7 @@ class Finput {
       case ACTION_TYPES.VERTICAL_ARROW:
       case ACTION_TYPES.HOME:
       case ACTION_TYPES.END:
+      case ACTION_TYPES.TAB:
         console.debug(actionType);
         // Default behaviour
         return;
