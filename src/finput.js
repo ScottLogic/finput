@@ -149,7 +149,8 @@ class Finput {
    * @param {e} Keyboard event
    */
   getActionType(name, e) {
-    for (let actionType of this._actionTypes) {
+    for (let i = 0; i < this._actionTypes.length; i++) {
+      const actionType = this._actionTypes[i];
       const index = actionType.names.indexOf(name);
       const typeMatch = index > -1;
 
