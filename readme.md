@@ -24,6 +24,9 @@ var destroy = finput(element, options);
 destroy();  // Stops finput behaviour
 ```
 
+#### IE11
+To function correctly with IE11 you will need to include `babel-polyfill` in your project
+
 Options
 -----
 
