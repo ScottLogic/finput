@@ -4,7 +4,6 @@ import helpers from './helpers';
 import ValueHistory from './valueHistory';
 import {ACTION_TYPES, DRAG_STATES, RANGE} from './constants';
 
-
 /**
  * CONSTANTS
  */
@@ -149,8 +148,7 @@ class Finput {
    * @param {e} Keyboard event
    */
   getActionType(name, e) {
-    for (let i = 0; i < this._actionTypes.length; i++) {
-      const actionType = this._actionTypes[i];
+    for (let actionType of this._actionTypes) {
       const index = actionType.names.indexOf(name);
       const typeMatch = index > -1;
 
