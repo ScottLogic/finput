@@ -343,7 +343,7 @@ class Finput {
         // If ctrl key modifier is pressed then allow specific event handler
         // to handle this
         if (!e.ctrlKey) {
-          this.options.invalidKeyCallback(createInvalidKeyInfo(keyInfo));
+          this.options.invalidKeyCallback(this.createInvalidKeyInfo(keyInfo));
           e.preventDefault();
         }
         return;
