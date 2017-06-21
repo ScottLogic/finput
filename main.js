@@ -10,7 +10,10 @@ element.addEventListener('keydown', function() {
 
 window.destroy = finput(element, {
   thousands: '.',
-  decimal: ','
+  decimal: ',',
+  invalidKeyCallback: (invalidKeyInfo) => {
+    console.log({message:"Invalid keypress", invalidKeyInfo});
+  }
 });
 
 

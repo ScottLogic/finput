@@ -72,6 +72,17 @@ Default: `{
 An object mapping of shortcuts that the user can use to quickly enter common values.
 E.g. with the default shortcuts, typing `k` will multiply the number value by 1000
 
+##### invalidKeyCallback
+Type: `Function(invalidKeyInfo)`
+Default: `{}`
+a Callback function that is fired everytime a invalid key is pressed.
+the callback is called with the `invalidKeyInfo` object.
+
+`{
+  event: KeyboardEvent
+  keyName: "f"
+  code: 70
+}`
 
 Accessing input value
 ---------------------
