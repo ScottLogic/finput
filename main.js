@@ -13,6 +13,9 @@ window.destroy = finput(element, {
   decimal: ',',
   invalidKeyCallback: (invalidKeyInfo) => {
     console.log({message:"Invalid keypress", invalidKeyInfo});
+  },
+  onFocusinCallback: (e) => {
+    return {start: 0, end:1}
   }
 });
 
