@@ -17,7 +17,8 @@ const DEFAULTS = {
     'k': 1000,
     'm': 1000000,
     'b': 1000000000
-  }
+  },
+  invalidKeyCallback: () => {}
 }
 
 /**
@@ -38,6 +39,7 @@ class Finput {
    * @param {Options.thousands} Character to use for the thousands separator
    * @param {Options.decimal} Character to use for the decimal point
    * @param {Options.shortcuts} Object map of shortcut characters to multiplier (e.g. { k: 1000 })
+   * @param {Options.invalidKeyCallback} Object callback to handle an invalid keypress
    */
   constructor(element, options) {
     this._element = element;
@@ -141,6 +143,18 @@ class Finput {
         ctrl: true
       }
     ]
+  }
+  /**
+   * Creates the invalidKeyInfo object used to call the invalidKeyCallback
+   * function
+   * @param {keyInfo} keyInfo object created in onKeyPress function
+   */
+  createInvalidKeyInfo(keyInfo) {
+    return {
+      event: keyInfo.event,
+      keyName: keyInfo.keyName,
+      code: keyInfo.code
+    }
   }
   /**
    * Determines what type of action needs to be dealt with from the current
@@ -329,6 +343,7 @@ class Finput {
         // If ctrl key modifier is pressed then allow specific event handler
         // to handle this
         if (!e.ctrlKey) {
+          this.options.invalidKeyCallback(createInvalidKeyInfo(keyInfo));
           e.preventDefault();
         }
         return;
