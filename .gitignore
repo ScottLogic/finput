@@ -7,3 +7,5 @@ npm-debug.log
 selenium-debug.log
 tests/nightwatch/report
 config.json
+dist/
+lib/
