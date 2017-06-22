@@ -126,11 +126,11 @@ class Finput {
       },
       {
         type: ACTION_TYPES.HORIZONTAL_ARROW,
-        names: ['left', 'right']
+        names: ['arrowleft', 'arrowright']
       },
       {
         type: ACTION_TYPES.VERTICAL_ARROW,
-        names: ['up', 'down']
+        names: ['arrowup', 'arrowdown']
       },
       {
         type: ACTION_TYPES.UNDO,
@@ -295,7 +295,7 @@ class Finput {
     const keyInfo = {
       event: e,
       code: e.which || e.keyCode,
-      keyName: keycode(e) ? keycode(e).replace('numpad ', '') : null,
+      keyName: e.key.toLowerCase(),
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
       currentValue: this.element.value,
