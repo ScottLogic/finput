@@ -9,9 +9,7 @@
     "url": "https://github.com/scottlogic/finput.git"
   },
   "bugs": "https://github.com/scottlogic/finput/issues",
-  "dependencies": {
-    "keycode": "^2.1.0"
-  },
+  "dependencies": {},
   "main": "./lib/finput.js",
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.2",
