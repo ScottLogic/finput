@@ -1,4 +1,3 @@
-import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
 import ValueHistory from './valueHistory';
