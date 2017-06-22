@@ -142,6 +142,10 @@ class Finput {
         type: ACTION_TYPES.REDO,
         names: ['y'],
         ctrl: true
+      },
+      {
+        type: ACTION_TYPES.FUNCTIONKEYS,
+        names: ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12']
       }
     ]
   }
@@ -336,6 +340,7 @@ class Finput {
       case ACTION_TYPES.HOME:
       case ACTION_TYPES.END:
       case ACTION_TYPES.TAB:
+      case ACTION_TYPES.FUNCTIONKEYS:
         console.debug(actionType);
         // Default behaviour
         return;

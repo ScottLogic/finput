@@ -14,7 +14,8 @@ exports.ACTION_TYPES = {
   REDO: 'REDO',
   HOME: 'HOME',
   END: 'END',
-  TAB: 'TAB'
+  TAB: 'TAB',
+  FUNCTIONKEYS: 'FUNCTIONKEYS',
 }
 
 exports.DRAG_STATES = {
