@@ -122,7 +122,7 @@ class Finput {
         type: ACTION_TYPES.REDO,
         names: ['y'],
         ctrl: true
-      },
+      }
     ]
   }
   /**
@@ -328,7 +328,7 @@ class Finput {
         // if a character has got this far it is an invalid character
         if(e.key.length === 1 && !e.ctrlKey){
           this.options.invalidKeyCallback(this.createInvalidKeyInfo(keyInfo));
-          e.preventDefault()
+          e.preventDefault();
         }
         return;
     }
