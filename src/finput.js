@@ -39,7 +39,8 @@ class Finput {
    * @param {Options.thousands} Character to use for the thousands separator
    * @param {Options.decimal} Character to use for the decimal point
    * @param {Options.shortcuts} Object map of shortcut characters to multiplier (e.g. { k: 1000 })
-   * @param {Options.invalidKeyCallback} Object callback to handle an invalid keypress
+   * @param {Options.invalidKeyCallback} Function callback that will be called on an invalid keypress
+   * @param {Options.onFocusinCallback} Function callback that will be called via the onFocusin event
    */
   constructor(element, options) {
     this._element = element;
@@ -230,13 +231,24 @@ class Finput {
     this.setValue(this.element.value);
   }
   /**
-   * On focus of the input - Select all text
+   * On focusing IN of the input
+   * DEFAULT:  Select all text
    * @param {e} Focus event
    */
   onFocusin(e) {
-    console.debug('Focus IN event', e);
-    this.element.selectionStart = 0;
-    this.element.selectionEnd = this.element.value.length;
+    if(this.options.onFocusinCallback){
+      console.debug('Custom Focus IN event', e);
+      let selection = this.options.onFocusinCallback(e);
+      if(selection){
+        this.element.selectionStart = selection.start;
+        this.element.selectionEnd = selection.end;
+      }
+    }
+    else {
+      console.debug('Focus IN event', e);
+      this.element.selectionStart = 0;
+      this.element.selectionEnd = this.element.value.length;
+    }
   }
   /**
    * On dropping something into the input - replace the WHOLE value
@@ -343,7 +355,7 @@ class Finput {
         // If ctrl key modifier is pressed then allow specific event handler
         // to handle this
         if (!e.ctrlKey) {
-          this.options.invalidKeyCallback(createInvalidKeyInfo(keyInfo));
+          this.options.invalidKeyCallback(this.createInvalidKeyInfo(keyInfo));
           e.preventDefault();
         }
         return;

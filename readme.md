@@ -79,10 +79,26 @@ a Callback function that is fired everytime a invalid key is pressed.
 the callback is called with the `invalidKeyInfo` object.
 
 `{
-  event: KeyboardEvent
-  keyName: "f"
+  event: KeyboardEvent,
+  keyName: "f",
   code: 70
 }`
+
+##### onFocusinCallback
+Type: `Function(e)`
+Default: `{}`
+a Callback function that is fired everytime the input is brought into focus.
+the callback is called with the `Event` object.
+
+the function used needs to return an object with a start and end value, a numerical
+representation of the postions to select. 
+
+`{
+  start: 0,
+  end: 1
+}`
+
+setting both values to 0 or failing to return both values will disable selecting functionality
 
 Accessing input value
 ---------------------
