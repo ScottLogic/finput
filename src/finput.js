@@ -239,8 +239,10 @@ class Finput {
     if(this.options.onFocusinCallback){
       console.debug('Custom Focus IN event', e);
       let selection = this.options.onFocusinCallback(e);
-      this.element.selectionStart = selection.start;
-      this.element.selectionEnd = selection.end;
+      if(selection){
+        this.element.selectionStart = selection.start;
+        this.element.selectionEnd = selection.end;
+      }
     }
     else {
       console.debug('Focus IN event', e);
