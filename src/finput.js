@@ -1,4 +1,3 @@
-import keycode from 'keycode';
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
 import ValueHistory from './valueHistory';
@@ -113,7 +112,6 @@ class Finput {
         type: ACTION_TYPES.DELETE,
         names: ['delete']
       },
-      {
         type: ACTION_TYPES.UNDO,
         names: ['z'],
         ctrl: true
@@ -287,7 +285,7 @@ class Finput {
     const keyInfo = {
       event: e,
       code: e.which || e.keyCode,
-      keyName: keycode(e) ? keycode(e).replace('numpad ', '') : null,
+      keyName: e.key.toLowerCase(),
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
       currentValue: this.element.value,
