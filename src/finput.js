@@ -93,18 +93,6 @@ class Finput {
         names: ['-']
       },
       {
-        type: ACTION_TYPES.HOME,
-        names: ['home']
-      },
-      {
-        type: ACTION_TYPES.END,
-        names: ['end']
-      },
-      {
-        type: ACTION_TYPES.TAB,
-        names: ['tab']
-      },
-      {
         type: ACTION_TYPES.DECIMAL,
         names: [this.options.decimal]
       },
@@ -124,15 +112,6 @@ class Finput {
         type: ACTION_TYPES.DELETE,
         names: ['delete']
       },
-      {
-        type: ACTION_TYPES.HORIZONTAL_ARROW,
-        names: ['arrowleft', 'arrowright']
-      },
-      {
-        type: ACTION_TYPES.VERTICAL_ARROW,
-        names: ['arrowup', 'arrowdown']
-      },
-      {
         type: ACTION_TYPES.UNDO,
         names: ['z'],
         ctrl: true
@@ -330,14 +309,6 @@ class Finput {
       case ACTION_TYPES.SHORTCUT:
         keyHandlers.onShortcut(keyInfo, this.options);
         break;
-      case ACTION_TYPES.HORIZONTAL_ARROW:
-      case ACTION_TYPES.VERTICAL_ARROW:
-      case ACTION_TYPES.HOME:
-      case ACTION_TYPES.END:
-      case ACTION_TYPES.TAB:
-        console.debug(actionType);
-        // Default behaviour
-        return;
       case ACTION_TYPES.BACKSPACE:
         keyHandlers.onBackspace(keyInfo, this.options.thousands);
         break;
@@ -351,9 +322,9 @@ class Finput {
         keyHandlers.onRedo(this, e);
         return;
       default:
-        // If ctrl key modifier is pressed then allow specific event handler
-        // to handle this
-        if (!e.ctrlKey) {
+        // all printable characters have a key with length of 1 
+        // if a character has got this far it is an invalid character
+        if(e.key.length === 1 && !e.ctrlKey){
           this.options.invalidKeyCallback(this.createInvalidKeyInfo(keyInfo));
           e.preventDefault();
         }
@@ -375,7 +346,7 @@ class Finput {
     const newCaretPos = keyInfo.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
     this._history.addValue(newValue);
-  }
+  }  
   /**
    * Backup event if input changes for any other reason, just format value
    * @param {e} Event
@@ -384,7 +355,6 @@ class Finput {
     console.debug('on INPUT', e);
     this.setValue(this.element.value);
   }
-
   /**
    * Removes all listeners from the input
    */
