@@ -4,7 +4,7 @@
 // All functions dealing with keypresses (listened to on the keydown event)
 // are here, with specific implementations for most types of key
 
-import {ACTION_TYPES, RANGE} from './constants';
+import {RANGE} from './constants';
 import helpers from './helpers';
 
 module.exports = {

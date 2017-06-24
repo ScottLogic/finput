@@ -112,6 +112,7 @@ class Finput {
         type: ACTION_TYPES.DELETE,
         names: ['delete']
       },
+      {
         type: ACTION_TYPES.UNDO,
         names: ['z'],
         ctrl: true
@@ -156,7 +157,7 @@ class Finput {
    * Get numerical value of the given value
    * @param {val} Value to convert
    */
-  getRawValue(val) {
+  getRawValue() {
     return Number(this.element.value.replace(new RegExp(this.options.thousands, 'g'), ''));
   }
 
