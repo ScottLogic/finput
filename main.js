@@ -1,6 +1,4 @@
 
-// import finput from './src/finput.js';
-
 var element = document.getElementById('number-input');
 
 element.addEventListener('keydown', function() {
