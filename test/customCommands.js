@@ -80,6 +80,7 @@ exports.type = function(options) {
 exports.copyAndPaste = function(options) {
 
   return function(text) {
+    let unfocusAfter = false;
     const chainFunctions = {};
 
     chainFunctions.shouldShow = function(expected) {
