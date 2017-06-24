@@ -2,28 +2,76 @@
 <html>
 
   <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css">
-    <style>
-      .finput-droppable {
-        border-color: blue;
-        color: rgba(0, 0, 0, 0.4);
-      }
-    </style>
+    <title>Finput</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
   </head>
 
   <body>
-    <h1 class="display-3 text-xs-center text-primary m-y-3">Finput test</h2>
+    <div class="jumbotron">
+        <div class="container">
+            <h1>FINPUT</h1>
+            <p>A test harness for the vanilla-JS financial amount input control</p>
+        </div>
+    </div>
     <div class="container">
-      <input id="number-input" class="form-control form-control-lg" />
-      <input id="text-numbers" class="form-control m-t-3" />
+        <h2>Controls</h2>
+        <br>
+        <form>
+            <div class="form-group">
+                <label for="finput-default">Default</label>
+                <input type="text" id="finput-default" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="finput-custom-focus">Custom Focus Behaviour</label>
+                <input type="text" id="finput-custom-focus" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="finput-invalid-key-callback">Invalid Key Callback</label>
+                <input type="text" id="finput-invalid-key-callback" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="finput-reversed-delimiters">Reversed Delimiters</label>
+                <input type="text" id="finput-reversed-delimiters" class="form-control">
+            </div>
+        </form>
+
+        <h2>Native Controls</h2>
+        <br>
+        <form>
+            <div class="form-group">
+                <label for="native-text">Text</label>
+                <input type="text" id="native-text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="native-number">Number</label>
+                <input type="number" id="native-number" class="form-control">
+            </div>
+        </form>
     </div>
   </body>
 
-  <!-- Scripts -->
-  <script src="dist\finput.js"></script>
-  <script src="main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.23.0/polyfill.min.js"></script>
-  <!-- <script src="build/bundle.js"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/1.5.3/numeral.min.js"></script>
+  <script src="dist\finput.js"></script>
+  <script>
+      var finputDefault = document.getElementById('finput-default');
+      var finputCustomFocus = document.getElementById('finput-custom-focus');
+      var finputInvalidKeyCallback = document.getElementById('finput-invalid-key-callback');
+      var finputReversedDelimiters = document.getElementById('finput-reversed-delimiters');
 
+      finput(finputDefault, {});
+
+      finput(finputCustomFocus, {
+          onFocusinCallback: function () { return { start: 0, end: 1 }; }
+      });
+
+      finput(finputInvalidKeyCallback, {
+          invalidKeyCallback: function(info) { console.log('invalid keypress', info); }
+      });
+
+      finput(finputReversedDelimiters, {
+          thousands: '.',
+          decimals: ','
+      });
+  </script>
+ou
 </html>
