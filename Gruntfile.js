@@ -20,7 +20,6 @@ module.exports = function(grunt) {
     browserify: {
       dev: {
         files: {
-          'build/bundle.js': ['main.js'],
           'dist/finput.js': ['src/finput.js']
         },
         options: {
@@ -39,7 +38,7 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: ['src/**/*.js', 'main.js'],
+        files: ['src/**/*.js'],
         tasks: ['compile'],
         options: {
           // for grunt-contrib-watch v0.5.0+, 'nospawn: true' for lower versions.
@@ -53,7 +52,7 @@ module.exports = function(grunt) {
     browserSync: {
       dev: {
         bsFiles: {
-          src : ['build/bundle.js', 'index.html']
+          src : ['index.html']
         },
         options: {
           watchTask: true,
