@@ -112,6 +112,7 @@ class Finput {
         type: ACTION_TYPES.DELETE,
         names: ['delete']
       },
+      {
         type: ACTION_TYPES.UNDO,
         names: ['z'],
         ctrl: true
