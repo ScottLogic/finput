@@ -1,6 +1,6 @@
 {
   "name": "finput",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "A vanilla-JS financial amount input control",
   "license": "MIT",
   "homepage": "http://scottlogic.github.io/finput/",
