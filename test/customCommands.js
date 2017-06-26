@@ -31,6 +31,15 @@ function initFinput(options) {
   var myFinput = new window.finput(elClone, options);
 }
 
+function getModifierKey() {
+  var isMac = window.navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  if (isMac) {
+    return 'Command';
+  } else {
+    return 'Control';
+  }
+}
+
 exports.type = function(options) {
 
   return function(initialKeys) {
@@ -88,6 +97,7 @@ exports.copyAndPaste = function(options) {
 
       it(`should show ${expected} when ${text} is copied and pasted`, function*() {
         client = browser.url('/').execute(initFinput, options);
+        const modifierKey = (yield browser.execute(getModifierKey)).value;
         let offset;
 
         yield client
@@ -95,10 +105,10 @@ exports.copyAndPaste = function(options) {
           .clearElement(otherInput)
           .leftClick(otherInput)
           .keys(text)
-          .keys(['Control', 'a', 'NULL'])
-          .keys(['Control', 'c', 'NULL'])
+          .keys([modifierKey, 'a', 'NULL'])
+          .keys([modifierKey, 'c', 'NULL'])
           .leftClick(input)
-          .keys(['Control', 'v', 'NULL']);
+          .keys([modifierKey, 'v', 'NULL']);
 
         const value = yield client.getValue(input);
         expect(value).toBe(expected);
@@ -124,6 +134,7 @@ exports.dragAndDrop = function(options) {
 
       it(`should show ${expected} when ${text} is dragged and dropped`, function*() {
         client = browser.url('/').execute(initFinput, options);
+        const modifierKey = (yield browser.execute(getModifierKey)).value;
         let offset;
 
         yield client
@@ -131,7 +142,7 @@ exports.dragAndDrop = function(options) {
           .clearElement(otherInput)
           .leftClick(input)
           .keys(text)
-          .keys(['Control', 'a', 'NULL'])
+          .keys([modifierKey, 'a', 'NULL'])
           .moveToObject(input, 18, 24)
           .buttonDown()
           .moveToObject(otherInput, 18, 24)
@@ -160,6 +171,7 @@ exports.cut = function(options) {
 
       it(`should show ${expected} when ${text} is cropped`, function*() {
         client = browser.url('/').execute(initFinput, options);
+        const modifierKey = (yield browser.execute(getModifierKey)).value;
         let offset;
 
         yield client
@@ -167,10 +179,10 @@ exports.cut = function(options) {
           .clearElement(otherInput)
           .leftClick(input)
           .keys(text)
-          .keys(['Control', 'a', 'NULL', keyMap['←']])
+          .keys([modifierKey, 'a', 'NULL', keyMap['←']])
           .keys(Array(startPos + 1).join(keyMap['→']))
           .keys(['Shift', Array(count + 1).join(keyMap['→']), 'NULL'])  // Select chars
-          .keys(['Control', 'x', 'NULL']);
+          .keys([modifierKey, 'x', 'NULL']);
 
         const value = yield client.getValue(input);
         expect(value).toBe(expected);
