@@ -278,6 +278,7 @@ class Finput {
     this.setValue(val, true);
     e.preventDefault();
   }
+
   /**
    * On pressing any key inside the input
    * @param {e} Keyboard event
@@ -323,9 +324,14 @@ class Finput {
         keyHandlers.onRedo(this, e);
         return;
       default:
+        const isModifierKeyPressed = (e) => {
+          const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+          return isMac ? e.metaKey : e.ctrlKey;
+        }
+
         // all printable characters have a key with length of 1 
         // if a character has got this far it is an invalid character
-        if(e.key.length === 1 && !e.ctrlKey){
+        if(e.key.length === 1 && !isModifierKeyPressed(e)){
           this.options.invalidKeyCallback(this.createInvalidKeyInfo(keyInfo));
           e.preventDefault();
         }
