@@ -346,6 +346,12 @@ class Finput {
     );
     const newCaretPos = keyInfo.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
+
+    // calculates a rough estimate of where it caret is. should keep the caret in view
+    let scrollRatio = newCaretPos / this.element.value.length;
+    let scrollArea = this.element.scrollWidth - this.element.clientWidth;
+    this.element.scrollLeft = scrollRatio * scrollArea;
+
     this._history.addValue(newValue);
   }  
   /**
