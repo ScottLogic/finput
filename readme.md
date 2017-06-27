@@ -74,7 +74,7 @@ E.g. with the default shortcuts, typing `k` will multiply the number value by 10
 
 ##### invalidKeyCallback
 Type: `Function(invalidKeyInfo)`  
-Default: `undefined`  
+Default: `() => {}`  
 A Callback function that is fired everytime a invalid key is pressed.
 the callback is called with the `invalidKeyInfo` object.
 
@@ -86,7 +86,7 @@ the callback is called with the `invalidKeyInfo` object.
 
 ##### onFocusinCallback
 Type: `Function(e)`  
-Default: `{}`  
+Default: `undefined`  
 A Callback function that is fired everytime the input is brought into focus.
 the callback is called with the `Event` object.
 
