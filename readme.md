@@ -1,7 +1,7 @@
 finput
 ======
 
-A vanilla-JS financial amount input control. Supports the following features -
+A vanilla-JS financial amount input control. Supports the following features:
 
 * auto-formatting
 * prevents invalid input whether typed, dragged or pasted
@@ -37,7 +37,7 @@ Default: `2`
 Maximum number of decimal digits the value can take
 
 ##### range
-Type: `Number`  
+Type: `string`  
 Default: `ALL`
 
 The possible range of values that the value can take
@@ -73,9 +73,9 @@ An object mapping of shortcuts that the user can use to quickly enter common val
 E.g. with the default shortcuts, typing `k` will multiply the number value by 1000
 
 ##### invalidKeyCallback
-Type: `Function(invalidKeyInfo)`
-Default: `{}`
-a Callback function that is fired everytime a invalid key is pressed.
+Type: `Function(invalidKeyInfo)`  
+Default: `undefined`  
+A Callback function that is fired everytime a invalid key is pressed.
 the callback is called with the `invalidKeyInfo` object.
 
 `{
@@ -85,9 +85,9 @@ the callback is called with the `invalidKeyInfo` object.
 }`
 
 ##### onFocusinCallback
-Type: `Function(e)`
-Default: `{}`
-a Callback function that is fired everytime the input is brought into focus.
+Type: `Function(e)`  
+Default: `{}`  
+A Callback function that is fired everytime the input is brought into focus.
 the callback is called with the `Event` object.
 
 the function used needs to return an object with a start and end value, a numerical
