@@ -7,6 +7,16 @@ A vanilla-JS financial amount input control. Supports the following features:
 * prevents invalid input whether typed, dragged or pasted
 * 'k', 'm', 'b', etc. multiplier keys
 
+Required Browser Features
+-------------------------
+
+The below table lists features that `finput` requires in order to function properly. If you wish to use `finput` with a browser that does not support a required feature then using the suggested polyfill may help. Note that there may be more appropriate polyfills than the ones listed.
+
+| Required Feature | Suggested Polyfill |
+|-|-|
+| [KeyboardEvent.key](https://caniuse.com/#feat=keyboardevent-key) | [keyboardevent-key-polyfill](https://www.npmjs.com/package/keyboardevent-key-polyfill) |
+| [Symbol](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Symbol) | [babel-polyfill](http://babeljs.io/docs/usage/polyfill)
+
 Usage
 -----
 See an example finput [here](http://scottlogic.github.io/finput)
@@ -23,9 +33,6 @@ making it act like the default browser input once again.
 var destroy = finput(element, options);
 destroy();  // Stops finput behaviour
 ```
-
-#### IE11
-To function correctly with IE11 you will need to include `babel-polyfill` in your project
 
 Options
 -----
@@ -126,16 +133,15 @@ Sets the value, fully formatted, for the input
 Sets and formats the value for the input
  * `val` New value to set
 
-Install Dependencies
---------------------
-
-`npm install -g grunt-cli`
-`npm install`
-
 Developing
 ----------
 
-`grunt serve`
+Install dependencies: 
+- `npm install -g grunt-cli`
+- `npm install`
+
+Run dev server:
+- `grunt serve`
 
 Running tests
 -------------
