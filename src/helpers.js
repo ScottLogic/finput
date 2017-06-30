@@ -1,6 +1,12 @@
 
 import {ACTION_TYPES, DRAG_STATES} from './constants';
 
+function getDecimalIndex(val, decimal) {
+  return val.indexOf(decimal) > -1
+    ? val.indexOf(decimal)
+    : val.length;
+};
+
 /**
  * Edit a string with a new string to add.
  * Handles the case if text is highlighted also, in which case that text
@@ -54,10 +60,7 @@ exports.fullFormat = function(val, options) {
   }
 
   // Fully format decimal places
-  const decimalIndex = val.indexOf(options.decimal) > -1
-    ? val.indexOf(options.decimal)
-    : val.length;
-
+  const decimalIndex = getDecimalIndex(val, options.decimal);
   let sign = val[0] === '-' ? val[0] : '';
   let integerPart = val.slice(sign ? 1 : 0, decimalIndex);
   let decimalPart = val.slice(decimalIndex + 1);
@@ -89,10 +92,7 @@ exports.fullFormat = function(val, options) {
  */
 exports.removeleadingZeros = function(val, options) {
   // Remove unnecessary zeros
-  const decimalIndex = val.indexOf(options.decimal) > -1
-    ? val.indexOf(options.decimal)
-    : val.length;
-
+  const decimalIndex = getDecimalIndex(val, options.decimal);
   let sign = val[0] === '-' ? val[0] : '';
   let integerPart = val.slice(sign ? 1 : 0, decimalIndex + 1);
   const decimalPart = val.slice(decimalIndex + 1);
@@ -111,10 +111,7 @@ exports.removeleadingZeros = function(val, options) {
 }
 
 exports.removeExtraDecimals = function(val, options) {
-  const decimalIndex = val.indexOf(options.decimal) > -1
-    ? val.indexOf(options.decimal)
-    : val.length;
-
+  const decimalIndex = getDecimalIndex(val, options.decimal);
   const integerPart = val.slice(0, decimalIndex + 1);
   let decimalPart = val.slice(decimalIndex + 1)
     .slice(0, options.scale);
@@ -128,10 +125,7 @@ exports.removeExtraDecimals = function(val, options) {
  * @param {options} Finput options object
  */
 exports.allowedDecimal = function (val, options) {
-  const decimalIndex = val.indexOf(options.decimal) > -1
-    ? val.indexOf(options.decimal)
-    : val.length;
-  let decimalPart = val.slice(decimalIndex + 1);
+  let decimalPart = val.slice(getDecimalIndex(val, options.decimal) + 1);
 
   return decimalPart.length <= options.scale;
 }
@@ -169,12 +163,8 @@ exports.allowedZero = function(val, char, caretPos, options) {
     return true;
   }
 
-  const decimalIndex = val.indexOf(options.decimal) > -1
-    ? val.indexOf(options.decimal)
-    : val.length;
-
   const isNegative = val[0] === '-';
-  let integerPart = val.slice((isNegative ? 1 : 0), decimalIndex);
+  let integerPart = val.slice((isNegative ? 1 : 0), getDecimalIndex(val, options.decimal));
   caretPos = isNegative ? caretPos - 1 : caretPos;
 
   // If there is some integer part and the caret is to the left of
