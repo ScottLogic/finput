@@ -32,12 +32,14 @@ function initFinput(options) {
 }
 
 function getModifierKey() {
-  var isMac = window.navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-  if (isMac) {
-    return 'Command';
-  } else {
-    return 'Control';
-  }
+  const isMac = window.navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  return isMac ? 'Command' : 'Control';
+}
+
+function shouldSkip() {
+  const isMac = window.navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const isChrome = window.navigator.appName.toUpperCase().indexOf('CHROME') >= 0;
+  return isMac && isChrome;
 }
 
 exports.type = function(options) {
@@ -97,6 +99,8 @@ exports.copyAndPaste = function(options) {
 
       it(`should show ${expected} when ${text} is copied and pasted`, function*() {
         client = browser.url('/').execute(initFinput, options);
+        if (yield browser.execute(shouldSkip)) return client;
+
         const modifierKey = (yield browser.execute(getModifierKey)).value;
         let offset;
 
@@ -171,6 +175,8 @@ exports.cut = function(options) {
 
       it(`should show ${expected} when ${text} is cropped`, function*() {
         client = browser.url('/').execute(initFinput, options);
+        if (yield browser.execute(shouldSkip)) return client;
+        
         const modifierKey = (yield browser.execute(getModifierKey)).value;
         let offset;
 
