@@ -117,9 +117,23 @@ exports.removeExtraDecimals = function(val, options) {
 
   const integerPart = val.slice(0, decimalIndex + 1);
   let decimalPart = val.slice(decimalIndex + 1)
-    .slice(0, options.scale == null ? decimalPart.length : options.scale);
+    .slice(0, options.scale);
 
   return `${integerPart}${decimalPart}`;
+}
+
+/**
+ * Check if the number of decimals is allowed.
+ * @param {val} value to check against
+ * @param {options} Finput options object
+ */
+exports.allowedDecimal = function (val, options) {
+  const decimalIndex = val.indexOf(options.decimal) > -1
+    ? val.indexOf(options.decimal)
+    : val.length;
+  let decimalPart = val.slice(decimalIndex + 1);
+
+  return decimalPart.length <= options.scale;
 }
 
 /**
