@@ -15,17 +15,21 @@ module.exports = {
    */
   onNumber: function(keyInfo, options) {
     // Remove characters in current selection
-    const temp = helpers.editString(keyInfo.currentValue, '', keyInfo.caretStart, keyInfo.caretEnd);
+    const tempCurrent = helpers.editString(keyInfo.currentValue, '', keyInfo.caretStart, keyInfo.caretEnd);
+    const tempNew = helpers.editString(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, keyInfo.caretEnd);
 
     const allowedNumber =
       !(keyInfo.currentValue[0] === '-'
       && keyInfo.caretStart === 0
       && keyInfo.caretEnd === 0)
-      && helpers.allowedZero(temp, keyInfo.keyName, keyInfo.caretStart, options);
+      && helpers.allowedZero(tempCurrent, keyInfo.keyName, keyInfo.caretStart, options)
+      && helpers.allowedDecimal(tempNew, options);
 
     if (allowedNumber) {
       keyInfo.newValue = helpers.editString(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, keyInfo.caretEnd);
       keyInfo.caretStart += 1;
+    } else {
+      keyInfo.valid = false;
     }
     keyInfo.event.preventDefault();
   },
@@ -47,6 +51,8 @@ module.exports = {
          keyInfo.caretEnd
        );
        keyInfo.caretStart += 1;
+     } else {
+       keyInfo.valid = false;
      }
      keyInfo.event.preventDefault();
   },
@@ -76,6 +82,8 @@ module.exports = {
         keyInfo.caretEnd
       );
       keyInfo.caretStart += 1;
+    } else {
+      keyInfo.valid = false;
     }
 
     keyInfo.event.preventDefault();

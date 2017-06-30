@@ -279,12 +279,11 @@ class Finput {
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
       currentValue: this.element.value,
-      newValue: this.element.value
+      newValue: this.element.value,
+      valid: true
     }
 
     const actionType = this.getActionType(keyInfo.keyName, e);
-
-    console.debug(actionType);
 
     switch (actionType) {
       case ACTION_TYPES.NUMBER:
@@ -319,11 +318,14 @@ class Finput {
 
         // all printable characters have a key with length of 1 
         // if a character has got this far it is an invalid character
-        if(e.key.length === 1 && !isModifierKeyPressed(e)){
-          this.options.invalidKeyCallback(e);
-          e.preventDefault();
-        }
-        return;
+        const isInvalid = e.key.length === 1 && !isModifierKeyPressed(e);
+        keyInfo.valid = !isInvalid;
+    }
+
+    if (!keyInfo.valid) {
+      this.options.invalidKeyCallback(e);
+      e.preventDefault();
+      return;
     }
 
     const newValue = helpers.partialFormat(keyInfo.newValue, this.options);
