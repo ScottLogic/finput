@@ -124,18 +124,7 @@ class Finput {
       }
     ]
   }
-  /**
-   * Creates the invalidKeyInfo object used to call the invalidKeyCallback
-   * function
-   * @param {keyInfo} keyInfo object created in onKeyPress function
-   */
-  createInvalidKeyInfo(keyInfo) {
-    return {
-      event: keyInfo.event,
-      keyName: keyInfo.keyName,
-      code: keyInfo.code
-    }
-  }
+  
   /**
    * Determines what type of action needs to be dealt with from the current
    * keydown event. E.g. vertical arrow pressed, number pressed etc...
@@ -286,7 +275,6 @@ class Finput {
   onKeydown(e) {
     const keyInfo = {
       event: e,
-      code: e.which || e.keyCode,
       keyName: e.key.toLowerCase(),
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
@@ -332,7 +320,7 @@ class Finput {
         // all printable characters have a key with length of 1 
         // if a character has got this far it is an invalid character
         if(e.key.length === 1 && !isModifierKeyPressed(e)){
-          this.options.invalidKeyCallback(this.createInvalidKeyInfo(keyInfo));
+          this.options.invalidKeyCallback(e);
           e.preventDefault();
         }
         return;
