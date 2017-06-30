@@ -1,7 +1,7 @@
 'use strict';
 
-const input = '#number-input';
-const otherInput = '#text-numbers';
+const input = '#finput-default';
+const otherInput = '#native-text';
 
 const keyMap = {
   '↚': '\u{e003}', // BACKSPACE
@@ -25,7 +25,7 @@ const keyMap = {
 };
 
 function initFinput(options) {
-  var el = window.document.getElementById('number-input');
+  var el = window.document.getElementById('finput-default');
   var elClone = el.cloneNode(true);
   el.parentNode.replaceChild(elClone, el);
   var myFinput = new window.finput(elClone, options);
