@@ -74,8 +74,17 @@ class Finput {
   get element() {
     return this._element;
   }
+
   get options() {
-    return this._options;
+    return {
+      ...this._options
+    };
+  }
+  set options(options) {
+    this._options = {
+      ...this._options,
+      ...options
+    };
   }
 
   /**
@@ -377,10 +386,14 @@ export default function(element, options) {
   const input = new Finput(element, options || {});
   element.setRawValue = (v) => input.setRawValue(v);
   element.setValue = (v) => input.setValue(v);
+  element.getOptions = () => input.options;
+  element.setOptions = (o) => input.options = o;
 
   return () => {
     input.removeListeners();
     delete element.setRawValue;
     delete element.setValue;
+    delete element.getOptions;
+    delete element.setOptions;
   }
 };

@@ -116,8 +116,27 @@ input once again.
 API
 --------------------
 
-The following functions are exposed on the `element` for direct, controlled manipulation of the input value.
+The following functions are exposed on the `element`:
 
+##### getOptions
+Gets a copy of the options from the input
+
+##### setOptions
+Sets the options on the input
+* `options` New options to set. Copied before being set.
+
+Note that `setOptions` supplements the current options rather than replacing. 
+```
+element.setOptions({ thousands: '.' });
+element.setOptions({ decimal: ',' });
+```
+The above therefore results in the following `options`:
+```
+{
+  thousands: '.',
+  decimal: ','
+} 
+```
 ##### setValue
 Sets the value, fully formatted, for the input
  * `val` New value to set
