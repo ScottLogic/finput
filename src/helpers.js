@@ -183,8 +183,34 @@ exports.allowedZero = function(val, char, caretPos, options) {
  * @param {val} string value to convert to a number
  * @param {options} Finput options object
  */
-exports.toNumber = function(val, options) {
-  return val && Number(val.replace(new RegExp(`[${options.thousands}]`, 'g'), ''));
+exports.toNumber = function(stringValue, options) {
+  if (!stringValue) return null;
+
+  // Number(...) accepts thousands ',' or '' and decimal '.' so we must:
+
+  // 1. Remove thousands delimiter to cover case it is not ','
+  // Cannot replace with ',' in case decimal uses this
+  stringValue = stringValue.replace(new RegExp(`[${options.thousands}]`, 'g'), '')
+  
+  // 2. Replace decimal with '.' to cover case it is not '.'
+  // Ok to replace as thousands delimiter removed above
+  stringValue = stringValue.replace(new RegExp(`[${options.decimal}]`, 'g'), '.')
+  return Number(stringValue);
+}
+
+exports.toString = function (numberValue, options) {
+  if (!numberValue) return null;
+  let stringValue = String(numberValue);
+
+  // String(...) has normalised formatting of:
+  const rawThousands = ',';
+  const rawDecimal = '.';
+
+  // ensure string we are returning adheres to options
+  stringValue = stringValue.replace(new RegExp(`[${rawThousands}]`, 'g'), options.thousands);
+  stringValue = stringValue.replace(new RegExp(`[${rawDecimal}]`, 'g'), options.decimal);
+
+  return stringValue;
 }
 
 exports.parseString = function(str, options) {
@@ -215,9 +241,9 @@ exports.parseString = function(str, options) {
   if (!parsed.length) { return '' }
 
   // Need to ensure that delimiter is a '.' before parsing to number
-  const normalisedNumber = Number(parsed.replace(new RegExp(`[${options.decimal}]`, 'g'), '.'));
+  const normalisedNumber = this.toNumber(parsed, options);
   // Then swap it back in
-  const adjusted = String(normalisedNumber * multiplier).replace(new RegExp(`[\.]`, 'g'), options.decimal);
+  const adjusted = this.toString(normalisedNumber * multiplier, options);
   const tooLarge = adjusted.indexOf('e') !== -1;
 
   if (tooLarge) {
