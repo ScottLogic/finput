@@ -33,6 +33,11 @@
                 <label for="finput-reversed-delimiters">Reversed Delimiters</label>
                 <input type="text" id="finput-reversed-delimiters" class="form-control">
             </div>
+            <div class="form-group">
+                <label for="finput-switch-options">Switch Options</label>
+                <input type="text" id="finput-switch-options" class="form-control">
+                <button type="button" id="finput-switch-options-button">Switch Options</button>
+            </div>
         </form>
 
         <h2>Native Controls</h2>
@@ -57,6 +62,8 @@
       var finputCustomFocus = document.getElementById('finput-custom-focus');
       var finputInvalidKeyCallback = document.getElementById('finput-invalid-key-callback');
       var finputReversedDelimiters = document.getElementById('finput-reversed-delimiters');
+      var finputSwitchOptions = document.getElementById('finput-switch-options');
+      var finputSwitchOptionsButton = document.getElementById('finput-switch-options-button');
 
       finput(finputDefault, {});
 
@@ -72,5 +79,18 @@
           thousands: '.',
           decimal: ','
       });
+
+      finput(finputSwitchOptions, {});
+
+      finputSwitchOptionsButton.onclick = function () {
+          var options = finputSwitchOptions.getOptions();
+          var tempThousands = options.thousands;
+          options.thousands = options.decimal;
+          options.decimal = tempThousands;
+
+          finputSwitchOptions.setOptions(options);
+          // redraw
+          finputSwitchOptions.setRawValue(finputSwitchOptions.rawValue);
+      }
   </script>
 </html>
