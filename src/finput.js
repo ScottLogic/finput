@@ -169,10 +169,10 @@ class Finput {
 
   /**
    * Get numerical value of the given value
-   * @param {val} Value to convert
+   * @param {value} Value to convert
    */
-  getRawValue() {
-    return Number(this.element.value.replace(new RegExp(this.options.thousands, 'g'), ''));
+  getRawValue(value) {
+    return helpers.toNumber(value, this.options);
   }
 
 
@@ -200,7 +200,7 @@ class Finput {
     if (!val) {
       value = '';
     } else if (typeof val === 'number' && !isNaN(val)) {
-      value = val.toString();
+      value = helpers.toString(val, this.options);
     } else if (typeof val === 'string') {
       value = val;
     } else {
