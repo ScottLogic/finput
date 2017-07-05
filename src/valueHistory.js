@@ -8,7 +8,7 @@ const MAX_BUFFER_SIZE = 50;
 export default class ValueHistory {
 
   constructor() {
-    this._history = [null];
+    this._history = [""];
     this._currentIndex = 0;
   }
 
