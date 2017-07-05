@@ -4,198 +4,239 @@
 // All functions dealing with keypresses (listened to on the keydown event)
 // are here, with specific implementations for most types of key
 
-import {RANGE} from './constants';
+import { RANGE } from './constants';
 import helpers from './helpers';
 
 module.exports = {
 
   /**
    * NUMBER HANDLER
-   * @param {keyInfo} Information about the keypress/action
+   * @param {currentState} Information about current finput state
+   * @param {options} Configuration options for the input
    */
-  onNumber: function(keyInfo, options) {
+  onNumber: function (currentState, event, options) {
     // Remove characters in current selection
-    const tempCurrent = helpers.editString(keyInfo.currentValue, '', keyInfo.caretStart, keyInfo.caretEnd);
-    const tempNew = helpers.editString(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, keyInfo.caretEnd);
+    const tempCurrent = helpers.editString(currentState.value, '', currentState.caretStart, currentState.caretEnd);
+    const tempNew = helpers.editString(currentState.value, event.keyName, currentState.caretStart, currentState.caretEnd);
 
     const allowedNumber =
-      !(keyInfo.currentValue[0] === '-'
-      && keyInfo.caretStart === 0
-      && keyInfo.caretEnd === 0)
-      && helpers.allowedZero(tempCurrent, keyInfo.keyName, keyInfo.caretStart, options)
+      !(currentState.value[0] === '-'
+        && currentState.caretStart === 0
+        && currentState.caretEnd === 0)
+      && helpers.allowedZero(tempCurrent, event.keyName, currentState.caretStart, options)
       && helpers.allowedDecimal(tempNew, options);
 
+    const newState = { ...currentState };
     if (allowedNumber) {
-      keyInfo.newValue = helpers.editString(keyInfo.currentValue, keyInfo.keyName, keyInfo.caretStart, keyInfo.caretEnd);
-      keyInfo.caretStart += 1;
+      newState.value = helpers.editString(currentState.value, event.keyName, currentState.caretStart, currentState.caretEnd);
+      newState.caretStart += 1;
     } else {
-      keyInfo.valid = false;
+      newState.valid = false;
     }
-    keyInfo.event.preventDefault();
+
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   },
 
   /**
    * MINUS HANDLER
-   * @param {keyInfo} Information about the keypress/action
+   * @param {currentState} Information about current finput state
+   * @param {options} Configuration options for the input
    */
-  onMinus: function(keyInfo, options) {
-    const minusAllowed = keyInfo.caretStart === 0
-      && (keyInfo.currentValue[0] !== '-' || keyInfo.caretEnd > 0)
+  onMinus: function (currentState, event, options) {
+    const minusAllowed = currentState.caretStart === 0
+      && (currentState.value[0] !== '-' || currentState.caretEnd > 0)
       && options.range !== RANGE.POSITIVE;
 
-     if (minusAllowed) {
-       keyInfo.newValue = helpers.editString(
-         keyInfo.currentValue,
-         '-',
-         keyInfo.caretStart,
-         keyInfo.caretEnd
-       );
-       keyInfo.caretStart += 1;
-     } else {
-       keyInfo.valid = false;
-     }
-     keyInfo.event.preventDefault();
+    const newState = { ...currentState };
+    if (minusAllowed) {
+      newState.value = helpers.editString(
+        currentState.value,
+        '-',
+        currentState.caretStart,
+        currentState.caretEnd
+      );
+      newState.caretStart += 1;
+    } else {
+      newState.valid = false;
+    }
+
+    //TODO: remove side effects
+    event.preventDefault();
+
+    return newState;
   },
 
   /**
    * DECIMAL HANDLER
-   * @param {keyInfo} Information about the keypress/action
+   * @param {currentState} Information about current finput state
    * @param {options} Configuration options for the input
    */
-  onDecimal: function(keyInfo, options) {
-    const decimalIndex = keyInfo.currentValue.indexOf(options.decimal);
+  onDecimal: function (currentState, event, options) {
+    const decimalIndex = currentState.value.indexOf(options.decimal);
 
     // If there is not already a decimal or the original would be replaced
     // Add the decimal
     const decimalAllowed =
       options.scale > 0
       && (decimalIndex === -1
-          || (decimalIndex >= keyInfo.caretStart
-              && decimalIndex < keyInfo.caretEnd))
+        || (decimalIndex >= currentState.caretStart
+          && decimalIndex < currentState.caretEnd))
 
-    if (decimalAllowed)
-    {
-      keyInfo.newValue = helpers.editString(
-        keyInfo.currentValue,
+    const newState = { ...currentState };
+    if (decimalAllowed) {
+      newState.value = helpers.editString(
+        currentState.value,
         options.decimal,
-        keyInfo.caretStart,
-        keyInfo.caretEnd
+        currentState.caretStart,
+        currentState.caretEnd
       );
-      keyInfo.caretStart += 1;
+      newState.caretStart += 1;
     } else {
-      keyInfo.valid = false;
+      newState.valid = false;
     }
 
-    keyInfo.event.preventDefault();
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   },
 
   /**
    * SHORTCUT HANDLER
-   * @param {keyInfo} Information about the keypress/action
+   * @param {currentState} Information about current finput state
    * @param {options} Configuration options for the input
    */
-  onShortcut: function(keyInfo, options) {
-    const multiplier = options.shortcuts[keyInfo.keyName.toLowerCase()] || 1;
-    const adjustedVal = helpers.editString(keyInfo.currentValue, '', keyInfo.caretStart, keyInfo.caretEnd);
+  onShortcut: function (currentState, event, options) {
+    const multiplier = options.shortcuts[event.keyName] || 1;
+    const adjustedVal = helpers.editString(currentState.value, '', currentState.caretStart, currentState.caretEnd);
     const rawValue = (helpers.toNumber(adjustedVal, options) || 1) * multiplier;
 
+    const newState = { ...currentState };    
     if (multiplier) {
       // If number contains 'e' then it is too large to display
       if (rawValue.toString().indexOf('e') === -1) {
-        keyInfo.newValue = String(rawValue);
+        newState.value = String(rawValue);
       }
-      keyInfo.caretStart = keyInfo.newValue.length + Math.log10(1000);
+      newState.caretStart = newState.value.length + Math.log10(1000);
     }
-    keyInfo.event.preventDefault();
+
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   },
 
   /**
    * BACKSPACE HANDLER
-   * @param {keyInfo} Information about the keypress/action
+   * @param {currentState} Information about current finput state
    * @param {thousands} Character used for the thousands delimiter
    */
-  onBackspace: function(keyInfo, thousands) {
+  onBackspace: function (currentState, event, thousands) {
     let firstHalf, lastHalf;
 
-    if (keyInfo.caretStart === keyInfo.caretEnd) {
-      if (keyInfo.event.ctrlKey) {
+    const newState = { ...currentState };    
+    if (currentState.caretStart === currentState.caretEnd) {
+      if (event.modifierKey) {
         // If CTRL key is held down - delete everything BEFORE caret
         firstHalf = '';
-        lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
-        keyInfo.caretStart = 0;
+        lastHalf = currentState.value.slice(currentState.caretStart, currentState.value.length);
+        newState.caretStart = 0;
       } else {
         // Assume as there is a comma then there must be a number before it
         let caretJump = 1;
 
-        caretJump = ((keyInfo.caretStart - caretJump) >= 0) ? caretJump : 0;
-        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart - caretJump);
-        lastHalf = keyInfo.currentValue.slice(keyInfo.caretStart, keyInfo.currentValue.length);
-        keyInfo.caretStart += -caretJump;
+        caretJump = ((currentState.caretStart - caretJump) >= 0) ? caretJump : 0;
+        firstHalf = currentState.value.slice(0, currentState.caretStart - caretJump);
+        lastHalf = currentState.value.slice(currentState.caretStart, currentState.value.length);
+        newState.caretStart += -caretJump;
       }
     } else {
       // Same code as onDelete handler for deleting a selection range
-      firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
-      lastHalf = keyInfo.currentValue.slice(keyInfo.caretEnd, keyInfo.currentValue.length);
+      firstHalf = currentState.value.slice(0, currentState.caretStart);
+      lastHalf = currentState.value.slice(currentState.caretEnd, currentState.value.length);
     }
 
-    keyInfo.newValue = firstHalf + lastHalf;
-    keyInfo.event.preventDefault();
+    newState.value = firstHalf + lastHalf;
+
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   },
 
   /**
    * DELETE HANDLER
-   * @param {keyInfo} Information about the keypress/action
+   * @param {currentState} Information about current finput state
    * @param {thousands} Character used for the thousands delimiter
    */
-  onDelete: function(keyInfo, thousands) {
+  onDelete: function (currentState, event, thousands) {
     let firstHalf, lastHalf;
 
-    if (keyInfo.caretStart === keyInfo.caretEnd) {
-      const nextChar = keyInfo.currentValue[keyInfo.caretStart];
+    const newState = { ...currentState };
+    if (currentState.caretStart === currentState.caretEnd) {
+      const nextChar = currentState.value[currentState.caretStart];
 
-      if (keyInfo.event.ctrlKey) {
+      if (event.modifierKey) {
         // If CTRL key is held down - delete everything AFTER caret
-        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
+        firstHalf = currentState.value.slice(0, currentState.caretStart);
         lastHalf = '';
       } else {
         // Assume as there is a comma then there must be a number after it
         const thousandsNext = nextChar === thousands;
 
         // If char to delete is thousands and number is not to be deleted - skip over it
-        keyInfo.caretStart += thousandsNext ? 1 : 0;
+        newState.caretStart += thousandsNext ? 1 : 0;
 
-        const lastHalfStart = keyInfo.caretStart
+        const lastHalfStart = newState.caretStart
           + (thousandsNext ? 0 : 1);
-        firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
-        lastHalf = keyInfo.currentValue.slice(lastHalfStart, keyInfo.currentValue.length);
+        firstHalf = currentState.value.slice(0, newState.caretStart);
+        lastHalf = currentState.value.slice(lastHalfStart, currentState.value.length);
       }
     } else {
       // Same code as onBackspace handler for deleting a selection range
-      firstHalf = keyInfo.currentValue.slice(0, keyInfo.caretStart);
-      lastHalf = keyInfo.currentValue.slice(keyInfo.caretEnd, keyInfo.currentValue.length);
+      firstHalf = currentState.value.slice(0, currentState.caretStart);
+      lastHalf = currentState.value.slice(currentState.caretEnd, currentState.value.length);
     }
 
-    keyInfo.newValue = firstHalf + lastHalf;
-    keyInfo.event.preventDefault();
+    newState.value = firstHalf + lastHalf;
+    
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   },
 
   /**
    * UNDO HANDLER
-   * @param {keyInfo} information about the key press being handled
+   * @param {currentState} Information about current finput state
    * @param {history} the history manager
    */
-  onUndo: function(keyInfo, history) {
-    keyInfo.newValue = history.undo();
-    keyInfo.caretStart = keyInfo.newValue.length;
-    keyInfo.event.preventDefault();
+  onUndo: function (currentState, event, history) {
+    const newState = { ...currentState };
+    newState.value = history.undo();
+    newState.caretStart = currentState.value.length;
+
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   },
   /**
    * REDO HANDLER
-   * @param {finput} the Finput object
+   * @param {currentState} Information about current finput state
+   * @param {history} the history manager
    */
-  onRedo: function(keyInfo, history) {
-    keyInfo.newValue = history.redo();
-    keyInfo.caretStart = keyInfo.newValue.length;
-    keyInfo.event.preventDefault();
+  onRedo: function (currentState, event, history) {
+    const newState = { ...currentState };
+    newState.value = history.redo();
+    newState.caretStart = currentState.value.length;
+
+    // TODO: remove side effect
+    event.preventDefault();
+
+    return newState;
   }
 }

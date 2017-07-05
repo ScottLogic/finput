@@ -273,42 +273,45 @@ class Finput {
    * @param {e} Keyboard event
    */
   onKeydown(e) {
-    const keyInfo = {
-      event: e,
-      keyName: e.key.toLowerCase(),
+    const currentState = {
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
-      currentValue: this.element.value,
-      newValue: this.element.value,
+      value: this.element.value,
       valid: true
-    }
+    };
+    const keyEvent = {
+      keyName: e.key.toLowerCase(),
+      modifierKey: e.ctrlKey,
+      preventDefault: e.preventDefault.bind(e)
+    };
 
-    const actionType = this.getActionType(keyInfo.keyName, e);
+    const actionType = this.getActionType(keyEvent.keyName, e);
 
+    let newState;
     switch (actionType) {
       case ACTION_TYPES.NUMBER:
-        keyHandlers.onNumber(keyInfo, this.options);
+        newState = keyHandlers.onNumber(currentState, keyEvent, this.options);
         break;
       case ACTION_TYPES.DECIMAL:
-        keyHandlers.onDecimal(keyInfo, this.options);
+        newState = keyHandlers.onDecimal(currentState, keyEvent, this.options);
         break;
       case ACTION_TYPES.MINUS:
-        keyHandlers.onMinus(keyInfo, this.options);
+        newState = keyHandlers.onMinus(currentState, keyEvent, this.options);
         break;
       case ACTION_TYPES.SHORTCUT:
-        keyHandlers.onShortcut(keyInfo, this.options);
+        newState = keyHandlers.onShortcut(currentState, keyEvent, this.options);
         break;
       case ACTION_TYPES.BACKSPACE:
-        keyHandlers.onBackspace(keyInfo, this.options.thousands);
+        newState = keyHandlers.onBackspace(currentState, keyEvent, this.options.thousands);
         break;
       case ACTION_TYPES.DELETE:
-        keyHandlers.onDelete(keyInfo, this.options.thousands);
+        newState = keyHandlers.onDelete(currentState, keyEvent, this.options.thousands);
         break;
       case ACTION_TYPES.UNDO:
-        keyHandlers.onUndo(keyInfo, this._history, e);
+        newState = keyHandlers.onUndo(currentState, keyEvent, this._history);
         break;
       case ACTION_TYPES.REDO:
-        keyHandlers.onRedo(keyInfo, this._history, e);
+        newState = keyHandlers.onRedo(currentState, keyEvent, this._history);
         break;
       default:
         const isModifierKeyPressed = (e) => {
@@ -319,17 +322,18 @@ class Finput {
         // all printable characters have a key with length of 1 
         // if a character has got this far it is an invalid character
         const isInvalid = e.key.length === 1 && !isModifierKeyPressed(e);
-        keyInfo.valid = !isInvalid;
+        newState = { ...currentState };  
+        newState.valid = !isInvalid;
     }
 
-    if (!keyInfo.valid) {
+    if (!newState.valid) {
       this.options.invalidKeyCallback(e);
       e.preventDefault();
       return;
     }
 
-    const valueWithTDelimiter = helpers.partialFormat(keyInfo.newValue, this.options);
-    const valueWithoutTDelimiter = keyInfo.newValue;
+    const valueWithTDelimiter = helpers.partialFormat(newState.value, this.options);
+    const valueWithoutTDelimiter = newState.value;
 
     this.element.value = valueWithTDelimiter;
     this.element.rawValue = this.getRawValue(this.element.value);
@@ -337,10 +341,10 @@ class Finput {
     const offset = helpers.calculateOffset(
       valueWithoutTDelimiter,
       valueWithTDelimiter,
-      keyInfo.caretStart,
+      newState.caretStart,
       this.options
     );
-    const newCaretPos = keyInfo.caretStart + offset;
+    const newCaretPos = newState.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
 
     switch (actionType) {
