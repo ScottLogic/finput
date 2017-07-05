@@ -305,11 +305,11 @@ class Finput {
         keyHandlers.onDelete(keyInfo, this.options.thousands);
         break;
       case ACTION_TYPES.UNDO:
-        keyHandlers.onUndo(this, e);
-        return;
+        keyHandlers.onUndo(keyInfo, this._history, e);
+        break;
       case ACTION_TYPES.REDO:
-        keyHandlers.onRedo(this, e);
-        return;
+        keyHandlers.onRedo(keyInfo, this._history, e);
+        break;
       default:
         const isModifierKeyPressed = (e) => {
           const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -328,21 +328,28 @@ class Finput {
       return;
     }
 
-    const newValue = helpers.partialFormat(keyInfo.newValue, this.options);
-    const currentValue = keyInfo.newValue;
+    const valueWithTDelimiter = helpers.partialFormat(keyInfo.newValue, this.options);
+    const valueWithoutTDelimiter = keyInfo.newValue;
 
-    this.element.value = newValue;
+    this.element.value = valueWithTDelimiter;
     this.element.rawValue = this.getRawValue(this.element.value);
 
     const offset = helpers.calculateOffset(
-      currentValue,
-      this.element.value,
+      valueWithoutTDelimiter,
+      valueWithTDelimiter,
       keyInfo.caretStart,
       this.options
     );
     const newCaretPos = keyInfo.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
-    this._history.addValue(newValue);
+
+    switch (actionType) {
+      case ACTION_TYPES.UNDO:
+      case ACTION_TYPES.REDO:
+        break;
+      default:
+        this._history.addValue(valueWithTDelimiter);
+    }
   }  
   /**
    * Backup event if input changes for any other reason, just format value

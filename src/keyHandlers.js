@@ -181,22 +181,21 @@ module.exports = {
 
   /**
    * UNDO HANDLER
-   * @param {finput} the Finput object
-   * @param {event} The keydown event which triggered the undo
+   * @param {keyInfo} information about the key press being handled
+   * @param {history} the history manager
    */
-  onUndo: function(finput, event) {
-    finput.element.value = finput._history.undo();
-    finput.element.setSelectionRange(finput.element.value.length, finput.element.value.length);
-    event.preventDefault();
+  onUndo: function(keyInfo, history) {
+    keyInfo.newValue = history.undo();
+    keyInfo.caretStart = keyInfo.newValue.length;
+    keyInfo.event.preventDefault();
   },
   /**
    * REDO HANDLER
    * @param {finput} the Finput object
-   * @param {event} The keydown event which triggered the redo
    */
-  onRedo: function(finput, event) {
-    finput.element.value = finput._history.redo();
-    finput.element.setSelectionRange(finput.element.value.length, finput.element.value.length);
-    event.preventDefault();
+  onRedo: function(keyInfo, history) {
+    keyInfo.newValue = history.redo();
+    keyInfo.caretStart = keyInfo.newValue.length;
+    keyInfo.event.preventDefault();
   }
 }
