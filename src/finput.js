@@ -130,16 +130,32 @@ class Finput {
    * keydown event. E.g. vertical arrow pressed, number pressed etc...
    * @param {e} Keyboard event
    */
-  getActionType(name, e) {
+  getActionType(event) {
     for (let actionType of this._actionTypes) {
-      const index = actionType.names.indexOf(name);
+      const index = actionType.names.indexOf(event.keyName);
       const typeMatch = index > -1;
 
-      if (typeMatch && (actionType.ctrl ? e.ctrlKey : true)) {
+      if (typeMatch && (actionType.modifierKey ? event.modifierKey : true)) {
         return actionType.type;
       }
     }
     return ACTION_TYPES.UNKNOWN;
+  }
+
+  getHandlerForAction(action) {
+    const handlerForAction = {
+      [ACTION_TYPES.NUMBER]: keyHandlers.onNumber,
+      [ACTION_TYPES.DECIMAL]: keyHandlers.onDecimal,
+      [ACTION_TYPES.MINUS]: keyHandlers.onMinus,
+      [ACTION_TYPES.SHORTCUT]: keyHandlers.onShortcut,
+      [ACTION_TYPES.BACKSPACE]: keyHandlers.onBackspace,
+      [ACTION_TYPES.DELETE]: keyHandlers.onDelete,
+      [ACTION_TYPES.UNDO]: keyHandlers.onUndo,
+      [ACTION_TYPES.REDO]: keyHandlers.onRedo,
+      [ACTION_TYPES.UNKNOWN]: keyHandlers.onUnknown
+    };
+
+    return handlerForAction[action];
   }
 
   /**
@@ -184,6 +200,11 @@ class Finput {
 
     const newValue = helpers.parseString(value, this.options);
     this.setValue(newValue, false);
+  }
+
+  isModifierKeyPressed(originalEvent) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    return isMac ? originalEvent.metaKey : originalEvent.ctrlKey;
   }
 
   //
@@ -281,50 +302,12 @@ class Finput {
     };
     const keyEvent = {
       keyName: e.key.toLowerCase(),
-      modifierKey: e.ctrlKey,
-      preventDefault: e.preventDefault.bind(e)
+      modifierKey: this.isModifierKeyPressed(e)
     };
 
-    const actionType = this.getActionType(keyEvent.keyName, e);
-
-    let newState;
-    switch (actionType) {
-      case ACTION_TYPES.NUMBER:
-        newState = keyHandlers.onNumber(currentState, keyEvent, this.options);
-        break;
-      case ACTION_TYPES.DECIMAL:
-        newState = keyHandlers.onDecimal(currentState, keyEvent, this.options);
-        break;
-      case ACTION_TYPES.MINUS:
-        newState = keyHandlers.onMinus(currentState, keyEvent, this.options);
-        break;
-      case ACTION_TYPES.SHORTCUT:
-        newState = keyHandlers.onShortcut(currentState, keyEvent, this.options);
-        break;
-      case ACTION_TYPES.BACKSPACE:
-        newState = keyHandlers.onBackspace(currentState, keyEvent, this.options.thousands);
-        break;
-      case ACTION_TYPES.DELETE:
-        newState = keyHandlers.onDelete(currentState, keyEvent, this.options.thousands);
-        break;
-      case ACTION_TYPES.UNDO:
-        newState = keyHandlers.onUndo(currentState, keyEvent, this._history);
-        break;
-      case ACTION_TYPES.REDO:
-        newState = keyHandlers.onRedo(currentState, keyEvent, this._history);
-        break;
-      default:
-        const isModifierKeyPressed = (e) => {
-          const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-          return isMac ? e.metaKey : e.ctrlKey;
-        }
-
-        // all printable characters have a key with length of 1 
-        // if a character has got this far it is an invalid character
-        const isInvalid = e.key.length === 1 && !isModifierKeyPressed(e);
-        newState = { ...currentState };  
-        newState.valid = !isInvalid;
-    }
+    const actionType = this.getActionType(keyEvent);
+    const handler = this.getHandlerForAction(actionType);
+    const newState = handler(currentState, keyEvent, this.options, this._history);
 
     if (!newState.valid) {
       this.options.invalidKeyCallback(e);
@@ -346,13 +329,15 @@ class Finput {
     );
     const newCaretPos = newState.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
+    
+    const shouldRecord = actionType !== ACTION_TYPES.UNDO && actionType !== ACTION_TYPES.REDO;
+    if (shouldRecord) {
+      this._history.addValue(valueWithTDelimiter);
+    }
 
-    switch (actionType) {
-      case ACTION_TYPES.UNDO:
-      case ACTION_TYPES.REDO:
-        break;
-      default:
-        this._history.addValue(valueWithTDelimiter);
+    const shouldPreventDefault = actionType !== ACTION_TYPES.UNKNOWN;
+    if (shouldPreventDefault) {
+      e.preventDefault();
     }
   }  
   /**

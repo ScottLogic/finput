@@ -34,9 +34,6 @@ module.exports = {
       newState.valid = false;
     }
 
-    // TODO: remove side effect
-    event.preventDefault();
-
     return newState;
   },
 
@@ -62,9 +59,6 @@ module.exports = {
     } else {
       newState.valid = false;
     }
-
-    //TODO: remove side effects
-    event.preventDefault();
 
     return newState;
   },
@@ -98,9 +92,6 @@ module.exports = {
       newState.valid = false;
     }
 
-    // TODO: remove side effect
-    event.preventDefault();
-
     return newState;
   },
 
@@ -123,9 +114,6 @@ module.exports = {
       newState.caretStart = newState.value.length + Math.log10(1000);
     }
 
-    // TODO: remove side effect
-    event.preventDefault();
-
     return newState;
   },
 
@@ -134,7 +122,8 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {thousands} Character used for the thousands delimiter
    */
-  onBackspace: function (currentState, event, thousands) {
+  onBackspace: function (currentState, event, options) {
+    const thousands = options.thousands;
     let firstHalf, lastHalf;
 
     const newState = { ...currentState };    
@@ -161,9 +150,6 @@ module.exports = {
 
     newState.value = firstHalf + lastHalf;
 
-    // TODO: remove side effect
-    event.preventDefault();
-
     return newState;
   },
 
@@ -172,7 +158,8 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {thousands} Character used for the thousands delimiter
    */
-  onDelete: function (currentState, event, thousands) {
+  onDelete: function (currentState, event, options) {
+    const thousands = options.thousands;
     let firstHalf, lastHalf;
 
     const newState = { ...currentState };
@@ -203,9 +190,6 @@ module.exports = {
 
     newState.value = firstHalf + lastHalf;
     
-    // TODO: remove side effect
-    event.preventDefault();
-
     return newState;
   },
 
@@ -214,13 +198,10 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {history} the history manager
    */
-  onUndo: function (currentState, event, history) {
+  onUndo: function (currentState, event, options, history) {
     const newState = { ...currentState };
     newState.value = history.undo();
-    newState.caretStart = currentState.value.length;
-
-    // TODO: remove side effect
-    event.preventDefault();
+    newState.caretStart = newState.value.length;
 
     return newState;
   },
@@ -229,13 +210,20 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {history} the history manager
    */
-  onRedo: function (currentState, event, history) {
+  onRedo: function (currentState, event, options, history) {
     const newState = { ...currentState };
     newState.value = history.redo();
-    newState.caretStart = currentState.value.length;
+    newState.caretStart = newState.value.length;
 
-    // TODO: remove side effect
-    event.preventDefault();
+    return newState;
+  },
+
+  onUnknown: function (currentState, event) {
+    // all printable characters have a key with length of 1 
+    // if a character has got this far it is an invalid character
+    const isInvalid = event.keyName.length === 1 && !event.modifierKey;
+    const newState = { ...currentState };
+    newState.valid = !isInvalid;
 
     return newState;
   }
