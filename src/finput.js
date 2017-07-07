@@ -300,14 +300,14 @@ class Finput {
       value: this.element.value,
       valid: true
     };
-    const keyEvent = {
+    const keyInfo = {
       keyName: e.key.toLowerCase(),
       modifierKey: this.isModifierKeyPressed(e)
     };
 
-    const actionType = this.getActionType(keyEvent);
+    const actionType = this.getActionType(keyInfo);
     const handler = this.getHandlerForAction(actionType);
-    const newState = handler(currentState, keyEvent, this.options, this._history);
+    const newState = handler(currentState, keyInfo, this.options, this._history);
 
     if (!newState.valid) {
       this.options.invalidKeyCallback(e);
