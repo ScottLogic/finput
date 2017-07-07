@@ -315,15 +315,15 @@ class Finput {
       return;
     }
 
-    const valueWithTDelimiter = helpers.partialFormat(newState.value, this.options);
-    const valueWithoutTDelimiter = newState.value;
+    const valueWithThousandsDelimiter = helpers.partialFormat(newState.value, this.options);
+    const valueWithoutThousandsDelimiter = newState.value;
 
-    this.element.value = valueWithTDelimiter;
+    this.element.value = valueWithThousandsDelimiter;
     this.element.rawValue = this.getRawValue(this.element.value);
 
     const offset = helpers.calculateOffset(
-      valueWithoutTDelimiter,
-      valueWithTDelimiter,
+      valueWithoutThousandsDelimiter,
+      valueWithThousandsDelimiter,
       newState.caretStart,
       this.options
     );
@@ -332,7 +332,7 @@ class Finput {
     
     const shouldRecord = actionType !== ACTION_TYPES.UNDO && actionType !== ACTION_TYPES.REDO;
     if (shouldRecord) {
-      this._history.addValue(valueWithTDelimiter);
+      this._history.addValue(valueWithThousandsDelimiter);
     }
 
     const shouldPreventDefault = actionType !== ACTION_TYPES.UNKNOWN;
