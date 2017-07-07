@@ -31,5 +31,4 @@ config.*
 Gruntfile.js
 main.js
 pakmanaged.js
-wdio.conf.js
 selenium-debug.log

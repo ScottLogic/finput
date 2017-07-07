@@ -8,4 +8,3 @@ selenium-debug.log
 tests/nightwatch/report
 config.json
 dist/
-lib/
