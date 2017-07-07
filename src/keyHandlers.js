@@ -14,21 +14,21 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {options} Configuration options for the input
    */
-  onNumber: function (currentState, event, options) {
+  onNumber: function (currentState, keyInfo, options) {
     // Remove characters in current selection
     const tempCurrent = helpers.editString(currentState.value, '', currentState.caretStart, currentState.caretEnd);
-    const tempNew = helpers.editString(currentState.value, event.keyName, currentState.caretStart, currentState.caretEnd);
+    const tempNew = helpers.editString(currentState.value, keyInfo.keyName, currentState.caretStart, currentState.caretEnd);
 
     const allowedNumber =
       !(currentState.value[0] === '-'
         && currentState.caretStart === 0
         && currentState.caretEnd === 0)
-      && helpers.allowedZero(tempCurrent, event.keyName, currentState.caretStart, options)
+      && helpers.allowedZero(tempCurrent, keyInfo.keyName, currentState.caretStart, options)
       && helpers.allowedDecimal(tempNew, options);
 
     const newState = { ...currentState };
     if (allowedNumber) {
-      newState.value = helpers.editString(currentState.value, event.keyName, currentState.caretStart, currentState.caretEnd);
+      newState.value = helpers.editString(currentState.value, keyInfo.keyName, currentState.caretStart, currentState.caretEnd);
       newState.caretStart += 1;
     } else {
       newState.valid = false;
@@ -42,7 +42,7 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {options} Configuration options for the input
    */
-  onMinus: function (currentState, event, options) {
+  onMinus: function (currentState, keyInfo, options) {
     const minusAllowed = currentState.caretStart === 0
       && (currentState.value[0] !== '-' || currentState.caretEnd > 0)
       && options.range !== RANGE.POSITIVE;
@@ -68,7 +68,7 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {options} Configuration options for the input
    */
-  onDecimal: function (currentState, event, options) {
+  onDecimal: function (currentState, keyInfo, options) {
     const decimalIndex = currentState.value.indexOf(options.decimal);
 
     // If there is not already a decimal or the original would be replaced
@@ -100,8 +100,8 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {options} Configuration options for the input
    */
-  onShortcut: function (currentState, event, options) {
-    const multiplier = options.shortcuts[event.keyName] || 1;
+  onShortcut: function (currentState, keyInfo, options) {
+    const multiplier = options.shortcuts[keyInfo.keyName] || 1;
     const adjustedVal = helpers.editString(currentState.value, '', currentState.caretStart, currentState.caretEnd);
     const rawValue = (helpers.toNumber(adjustedVal, options) || 1) * multiplier;
 
@@ -122,13 +122,13 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {thousands} Character used for the thousands delimiter
    */
-  onBackspace: function (currentState, event, options) {
+  onBackspace: function (currentState, keyInfo, options) {
     const thousands = options.thousands;
     let firstHalf, lastHalf;
 
     const newState = { ...currentState };    
     if (currentState.caretStart === currentState.caretEnd) {
-      if (event.modifierKey) {
+      if (keyInfo.modifierKey) {
         // If CTRL key is held down - delete everything BEFORE caret
         firstHalf = '';
         lastHalf = currentState.value.slice(currentState.caretStart, currentState.value.length);
@@ -158,7 +158,7 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {thousands} Character used for the thousands delimiter
    */
-  onDelete: function (currentState, event, options) {
+  onDelete: function (currentState, keyInfo, options) {
     const thousands = options.thousands;
     let firstHalf, lastHalf;
 
@@ -166,7 +166,7 @@ module.exports = {
     if (currentState.caretStart === currentState.caretEnd) {
       const nextChar = currentState.value[currentState.caretStart];
 
-      if (event.modifierKey) {
+      if (keyInfo.modifierKey) {
         // If CTRL key is held down - delete everything AFTER caret
         firstHalf = currentState.value.slice(0, currentState.caretStart);
         lastHalf = '';
@@ -198,7 +198,7 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {history} the history manager
    */
-  onUndo: function (currentState, event, options, history) {
+  onUndo: function (currentState, keyInfo, options, history) {
     const newState = { ...currentState };
     newState.value = history.undo();
     newState.caretStart = newState.value.length;
@@ -210,7 +210,7 @@ module.exports = {
    * @param {currentState} Information about current finput state
    * @param {history} the history manager
    */
-  onRedo: function (currentState, event, options, history) {
+  onRedo: function (currentState, keyInfo, options, history) {
     const newState = { ...currentState };
     newState.value = history.redo();
     newState.caretStart = newState.value.length;
@@ -218,10 +218,10 @@ module.exports = {
     return newState;
   },
 
-  onUnknown: function (currentState, event) {
+  onUnknown: function (currentState, keyInfo) {
     // all printable characters have a key with length of 1 
     // if a character has got this far it is an invalid character
-    const isInvalid = event.keyName.length === 1 && !event.modifierKey;
+    const isInvalid = keyInfo.keyName.length === 1 && !keyInfo.modifierKey;
     const newState = { ...currentState };
     newState.valid = !isInvalid;
 
