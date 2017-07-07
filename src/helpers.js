@@ -191,11 +191,11 @@ exports.formattedToRaw = function(formattedValue, options) {
 
   // 1. Remove thousands delimiter to cover case it is not ','
   // Cannot replace with ',' in case decimal uses this
-  formattedValue = formattedValue.replace(new RegExp(`[${options.thousands}]`, 'g'), '')
+  formattedValue = formattedValue.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
   
   // 2. Replace decimal with '.' to cover case it is not '.'
   // Ok to replace as thousands delimiter removed above
-  formattedValue = formattedValue.replace(new RegExp(`[${options.decimal}]`, 'g'), '.')
+  formattedValue = formattedValue.replace(new RegExp(`[${options.decimal}]`, 'g'), '.');
   return Number(formattedValue);
 }
 
