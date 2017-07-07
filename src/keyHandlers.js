@@ -12,6 +12,7 @@ module.exports = {
   /**
    * NUMBER HANDLER
    * @param {currentState} Information about current finput state
+   * @param {keyInfo} Information about the pressed key
    * @param {options} Configuration options for the input
    */
   onNumber: function (currentState, keyInfo, options) {
@@ -40,6 +41,7 @@ module.exports = {
   /**
    * MINUS HANDLER
    * @param {currentState} Information about current finput state
+   * @param {keyInfo} Information about the pressed key
    * @param {options} Configuration options for the input
    */
   onMinus: function (currentState, keyInfo, options) {
@@ -66,6 +68,7 @@ module.exports = {
   /**
    * DECIMAL HANDLER
    * @param {currentState} Information about current finput state
+   * @param {keyInfo} Information about the pressed key
    * @param {options} Configuration options for the input
    */
   onDecimal: function (currentState, keyInfo, options) {
@@ -98,6 +101,7 @@ module.exports = {
   /**
    * SHORTCUT HANDLER
    * @param {currentState} Information about current finput state
+   * @param {keyInfo} Information about the pressed key
    * @param {options} Configuration options for the input
    */
   onShortcut: function (currentState, keyInfo, options) {
@@ -120,7 +124,8 @@ module.exports = {
   /**
    * BACKSPACE HANDLER
    * @param {currentState} Information about current finput state
-   * @param {thousands} Character used for the thousands delimiter
+   * @param {keyInfo} Information about the pressed key
+   * @param {options} Configuration options for the input
    */
   onBackspace: function (currentState, keyInfo, options) {
     const thousands = options.thousands;
@@ -156,7 +161,8 @@ module.exports = {
   /**
    * DELETE HANDLER
    * @param {currentState} Information about current finput state
-   * @param {thousands} Character used for the thousands delimiter
+   * @param {keyInfo} Information about the pressed key
+   * @param {options} Configuration options for the input
    */
   onDelete: function (currentState, keyInfo, options) {
     const thousands = options.thousands;
@@ -196,7 +202,9 @@ module.exports = {
   /**
    * UNDO HANDLER
    * @param {currentState} Information about current finput state
-   * @param {history} the history manager
+   * @param {keyInfo} Information about the pressed key
+   * @param {options} Configuration options for the input
+   * @param {history} The history manager
    */
   onUndo: function (currentState, keyInfo, options, history) {
     const newState = { ...currentState };
@@ -208,7 +216,9 @@ module.exports = {
   /**
    * REDO HANDLER
    * @param {currentState} Information about current finput state
-   * @param {history} the history manager
+   * @param {keyInfo} Information about the pressed key
+   * @param {options} Configuration options for the input
+   * @param {history} The history manager
    */
   onRedo: function (currentState, keyInfo, options, history) {
     const newState = { ...currentState };
@@ -218,6 +228,11 @@ module.exports = {
     return newState;
   },
 
+  /**
+   * UNKNOWN HANDLER
+   * @param {currentState} Information about current finput state
+   * @param {keyInfo} Information about the pressed key
+   */
   onUnknown: function (currentState, keyInfo) {
     // all printable characters have a key with length of 1 
     // if a character has got this far it is an invalid character
