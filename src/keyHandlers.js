@@ -107,7 +107,7 @@ module.exports = {
   onShortcut: function (currentState, keyInfo, options) {
     const multiplier = options.shortcuts[keyInfo.keyName] || 1;
     const adjustedVal = helpers.editString(currentState.value, '', currentState.caretStart, currentState.caretEnd);
-    const rawValue = (helpers.toNumber(adjustedVal, options) || 1) * multiplier;
+    const rawValue = (helpers.formattedToRaw(adjustedVal, options) || 1) * multiplier;
 
     const newState = { ...currentState };    
     if (multiplier) {
