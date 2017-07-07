@@ -172,7 +172,7 @@ class Finput {
    * @param {value} Value to convert
    */
   getRawValue(value) {
-    return helpers.toNumber(value, this.options);
+    return helpers.formattedToRaw(value, this.options);
   }
 
 
@@ -200,7 +200,7 @@ class Finput {
     if (!val) {
       value = '';
     } else if (typeof val === 'number' && !isNaN(val)) {
-      value = helpers.toString(val, this.options);
+      value = helpers.rawToFormatted(val, this.options);
     } else if (typeof val === 'string') {
       value = val;
     } else {

@@ -1,5 +1,6 @@
 
 import {ACTION_TYPES, DRAG_STATES} from './constants';
+import is from 'is_js';
 
 function getDecimalIndex(val, decimal) {
   return val.indexOf(decimal) > -1
@@ -183,24 +184,25 @@ exports.allowedZero = function(val, char, caretPos, options) {
  * @param {val} string value to convert to a number
  * @param {options} Finput options object
  */
-exports.toNumber = function(stringValue, options) {
-  if (!stringValue) return null;
+exports.formattedToRaw = function(formattedValue, options) {
+  if (is.not.string(formattedValue)) return NaN;
 
   // Number(...) accepts thousands ',' or '' and decimal '.' so we must:
 
   // 1. Remove thousands delimiter to cover case it is not ','
   // Cannot replace with ',' in case decimal uses this
-  stringValue = stringValue.replace(new RegExp(`[${options.thousands}]`, 'g'), '')
+  formattedValue = formattedValue.replace(new RegExp(`[${options.thousands}]`, 'g'), '')
   
   // 2. Replace decimal with '.' to cover case it is not '.'
   // Ok to replace as thousands delimiter removed above
-  stringValue = stringValue.replace(new RegExp(`[${options.decimal}]`, 'g'), '.')
-  return Number(stringValue);
+  formattedValue = formattedValue.replace(new RegExp(`[${options.decimal}]`, 'g'), '.')
+  return Number(formattedValue);
 }
 
-exports.toString = function (numberValue, options) {
-  if (!numberValue) return null;
-  let stringValue = String(numberValue);
+exports.rawToFormatted = function (rawValue, options) {
+  if (is.not.number(rawValue)) return '';
+
+  let stringValue = String(rawValue);
 
   // String(...) has normalised formatting of:
   const rawThousands = ',';
@@ -241,9 +243,9 @@ exports.parseString = function(str, options) {
   if (!parsed.length) { return '' }
 
   // Need to ensure that delimiter is a '.' before parsing to number
-  const normalisedNumber = this.toNumber(parsed, options);
+  const normalisedNumber = this.formattedToRaw(parsed, options);
   // Then swap it back in
-  const adjusted = this.toString(normalisedNumber * multiplier, options);
+  const adjusted = this.rawToFormatted(normalisedNumber * multiplier, options);
   const tooLarge = adjusted.indexOf('e') !== -1;
 
   if (tooLarge) {
