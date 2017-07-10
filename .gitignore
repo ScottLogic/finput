@@ -8,3 +8,6 @@ selenium-debug.log
 tests/nightwatch/report
 config.json
 dist/
+
+# macOS
+.DS_Store
