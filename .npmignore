@@ -28,7 +28,6 @@ Icon
 # --------------------
 node_modules/
 config.*
-Gruntfile.js
 main.js
 pakmanaged.js
 selenium-debug.log
