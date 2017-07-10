@@ -234,7 +234,6 @@ class Finput {
    * @param {e} Focus event
    */
   onFocusout(e) {
-    console.debug('Focus OUT event', e);
     this.setValue(this.element.value);
   }
   /**
@@ -244,7 +243,6 @@ class Finput {
    */
   onFocusin(e) {
     if(this.options.onFocusinCallback){
-      console.debug('Custom Focus IN event', e);
       let selection = this.options.onFocusinCallback(e);
       if(selection){
         this.element.selectionStart = selection.start;
@@ -252,7 +250,6 @@ class Finput {
       }
     }
     else {
-      console.debug('Focus IN event', e);
       this.element.selectionStart = 0;
       this.element.selectionEnd = this.element.value.length;
     }
@@ -263,7 +260,6 @@ class Finput {
    * @param {e} Drag event
    */
   onDrop(e) {
-    console.debug('Drop event', e);
     switch (this._dragState) {
       case DRAG_STATES.INTERNAL:
         // This case is handled by the 'onInput' function
@@ -287,14 +283,12 @@ class Finput {
     this._dragState = (e.target === this.element)
       ? DRAG_STATES.INTERNAL
       : DRAG_STATES.EXTERNAL;
-    console.debug('Drag STARTED', this._dragState, e);
   }
   /**
    * On end of ANY drag on page
    * @param {e} Drag event
    */
   onDragend(e) {
-    console.debug('Drag ENDED', this._dragState, e);
     this._dragState = DRAG_STATES.NONE;
   }
   /**
@@ -365,7 +359,6 @@ class Finput {
    * @param {e} Event
    */
   onInput(e) {
-    console.debug('on INPUT', e);
     this.setValue(this.element.value);
   }
   /**
