@@ -155,6 +155,7 @@ class Finput {
     const handlerForAction = {
       [ACTION_TYPES.NUMBER]: keyHandlers.onNumber,
       [ACTION_TYPES.DECIMAL]: keyHandlers.onDecimal,
+      [ACTION_TYPES.THOUSANDS]: keyHandlers.onThousands,
       [ACTION_TYPES.MINUS]: keyHandlers.onMinus,
       [ACTION_TYPES.SHORTCUT]: keyHandlers.onShortcut,
       [ACTION_TYPES.BACKSPACE]: keyHandlers.onBackspace,
