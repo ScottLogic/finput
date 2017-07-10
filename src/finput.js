@@ -106,7 +106,7 @@ class Finput {
         names: [this.options.decimal]
       },
       {
-        type: ACTION_TYPES.DELIMITER,
+        type: ACTION_TYPES.THOUSANDS,
         names: [this.options.thousands]
       },
       {
