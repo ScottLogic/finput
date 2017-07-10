@@ -22,6 +22,14 @@ describe('Default options (standard delimiters)', () => {
   typing(`3b3`).shouldShow(`30,000,000,003`);
   typing(`1k1k`).shouldShow(`10,001,000`);
 
+  // Decimal with shortcuts
+  typing('.1k').shouldShow('100');
+  typing('.1m').shouldShow('100,000');
+  typing('.1b').shouldShow('100,000,000');
+  typing('1.1k').shouldShow('1,100');
+  typing('1.1m').shouldShow('1,100,000');
+  typing('1.1b').shouldShow('1,100,000,000');
+
   // Combining shortcuts
   typing(`bk`).shouldShow(`1,000,000,000,000`);
 
