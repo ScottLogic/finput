@@ -333,6 +333,13 @@ class Finput {
       return;
     }
 
+    const shouldHandleValue = actionType !== ACTION_TYPES.UNKNOWN;
+    if (!shouldHandleValue) {
+      return;
+    }
+
+    e.preventDefault();
+
     const valueWithThousandsDelimiter = helpers.partialFormat(newState.value, this.options);
     const valueWithoutThousandsDelimiter = newState.value;
 
@@ -351,11 +358,6 @@ class Finput {
     const shouldRecord = actionType !== ACTION_TYPES.UNDO && actionType !== ACTION_TYPES.REDO;
     if (shouldRecord) {
       this._history.addValue(valueWithThousandsDelimiter);
-    }
-
-    const shouldPreventDefault = actionType !== ACTION_TYPES.UNKNOWN;
-    if (shouldPreventDefault) {
-      e.preventDefault();
     }
   }  
   /**
