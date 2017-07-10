@@ -99,6 +99,16 @@ module.exports = {
   },
 
   /**
+   * THOUSANDS HANDLER
+   * @param {currentState} Information about current finput state
+   */
+  onThousands: function (currentState, keyInfo, options) {
+    const newState = { ...currentState };
+    newState.valid = false;
+    return newState;
+  },
+
+  /**
    * SHORTCUT HANDLER
    * @param {currentState} Information about current finput state
    * @param {keyInfo} Information about the pressed key
