@@ -347,6 +347,7 @@ class Finput {
       newState.caretStart,
       this.options
     );
+    )
     const newCaretPos = newState.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
     
