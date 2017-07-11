@@ -150,37 +150,27 @@ Developing
 ----------
 
 Install dependencies: 
-- `npm install -g grunt-cli`
 - `npm install`
 
 Run dev server:
-- `grunt serve`
+- `npm start`
+
+Building Library
+----------------
+- `npm run build`
 
 Running tests
 -------------
 
-Build and run the server -
+Build and run the server:
 
-`grunt serve`
+- `npm start`
 
-##### WITH browserstack
+Install and run an instance of webdriver:
 
-Set browserstack config
+- `npm run webdriver update`
+- `npm run webdriver start`
 
-- Copy `config.example.json` to a new file: `config.json`
-- Update the correct browserstack information
+Execute the tests:
 
-Execute the tests -
-
-`grunt test:browserstack`
-
-##### WITHOUT browserstack
-
-Install and run an instance of webdriver e.g. -
-
-`npm run webdriver update`
-`npm run webdriver start`
-
-Execute the tests -
-
-`npm run test`
+- `npm test`
