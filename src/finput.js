@@ -127,27 +127,27 @@ class Finput {
       {
         type: ACTION_TYPES.UNDO,
         names: ['z'],
-        ctrl: true
+        modifierKey: true
       },
       {
         type: ACTION_TYPES.REDO,
         names: ['y'],
-        ctrl: true
+        modifierKey: true
       }
     ]
   }
   
   /**
    * Determines what type of action needs to be dealt with from the current
-   * keydown event. E.g. vertical arrow pressed, number pressed etc...
-   * @param {e} Keyboard event
+   * key information. E.g. vertical arrow pressed, number pressed etc...
+   * @param {keyInfo} Information about the pressed key
    */
-  getActionType(event) {
+  getActionType(keyInfo) {
     for (let actionType of this._actionTypes) {
-      const index = actionType.names.indexOf(event.keyName);
+      const index = actionType.names.indexOf(keyInfo.keyName);
       const typeMatch = index > -1;
 
-      if (typeMatch && (actionType.modifierKey ? event.modifierKey : true)) {
+      if (typeMatch && (actionType.modifierKey ? keyInfo.modifierKey : true)) {
         return actionType.type;
       }
     }
