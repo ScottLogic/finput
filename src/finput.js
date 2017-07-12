@@ -95,34 +95,41 @@ class Finput {
     return [
       {
         type: ACTION_TYPES.NUMBER,
-        names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.MINUS,
-        names: ['-']
+        names: ['-'],
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.DECIMAL,
-        names: [this.options.decimal, 'decimal']
+        names: [this.options.decimal, 'decimal'],
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.THOUSANDS,
-        names: [this.options.thousands, 'separator']
+        names: [this.options.thousands, 'separator'],
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.SHORTCUT,
-        names: Object.keys(this.options.shortcuts)
+        names: Object.keys(this.options.shortcuts),
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.BACKSPACE,
-        names: ['backspace']
+        names: ['backspace'],
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.DELETE,
         names: [
           'delete', // Chrome & Firefox
           'del' // Edge & IE
-        ]
+        ],
+        modifierKey: false
       },
       {
         type: ACTION_TYPES.UNDO,
@@ -147,7 +154,7 @@ class Finput {
       const index = actionType.names.indexOf(keyInfo.keyName);
       const typeMatch = index > -1;
 
-      if (typeMatch && (actionType.modifierKey ? keyInfo.modifierKey : true)) {
+      if (typeMatch && (actionType.modifierKey === keyInfo.modifierKey)) {
         return actionType.type;
       }
     }
