@@ -119,7 +119,10 @@ class Finput {
       },
       {
         type: ACTION_TYPES.DELETE,
-        names: ['delete']
+        names: [
+          'delete', // Chrome & Firefox
+          'del' // Edge & IE
+        ]
       },
       {
         type: ACTION_TYPES.UNDO,
