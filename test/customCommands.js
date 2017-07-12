@@ -6,6 +6,7 @@ import { mapKeys } from './keys';
 export default (finputElement) => {
   const typing = (keys) => {
     let unfocusAfter = false;
+    let pressModifier = false;
     const chainFunctions = {};
 
     chainFunctions.thenFocusingOut = () => {
@@ -13,11 +14,30 @@ export default (finputElement) => {
       return chainFunctions;
     };
 
+    chainFunctions.whileModifierPressed = () => {
+      pressModifier = true;
+      return chainFunctions;
+    }
+
     chainFunctions.shouldShow = (expected) => {
-      it(`should show "${expected}" when "${keys}" are pressed`, async () => {
+      const withModifierMsg = pressModifier ? "with modifier key" : "";
+      const testName = `should show "${expected}" when "${keys}" are pressed ${withModifierMsg}`;
+      it(testName, async () => {
         await finputElement().clear();
         await finputElement().click();
-        await finputElement().sendKeys(mapKeys(keys));
+        if (pressModifier) {
+          const mac = await isMac();
+          const chrome = await isChrome();
+          if (mac && chrome) {
+            console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
+            return;
+          }
+
+          const modifierKey = await getModifierKey();
+          await finputElement().sendKeys(Key.chord(modifierKey, mapKeys(keys)));
+        } else {
+          await finputElement().sendKeys(mapKeys(keys));
+        }
         if (unfocusAfter) {
           await nativeText().click();
         }
@@ -34,11 +54,12 @@ export default (finputElement) => {
     const chainFunctions = {};
 
     chainFunctions.shouldShow = (expected) => {
-      it(`should show "${expected}" when "${text}" is copied and pasted`, async () => {
+      const testName = `should show "${expected}" when "${text}" is copied and pasted`; 
+      it(testName, async () => {
         const mac = await isMac();
         const chrome = await isChrome();
         if (mac && chrome) {
-          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.')
+          console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
           return;
         }
         const modifierKey = await getModifierKey();
@@ -80,11 +101,12 @@ export default (finputElement) => {
     }
 
     chainFunctions.shouldShow = (expected) => {
-      it(`should show "${expected}" when "${text}" has chars cut`, async () => {
+      const testName = `should show "${expected}" when "${text}" has chars cut`;
+      it(testName, async () => {
         const mac = await isMac();
         const chrome = await isChrome();
         if (mac && chrome) {
-          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.')
+          console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
           return;
         }
         const modifierKey = await getModifierKey();
