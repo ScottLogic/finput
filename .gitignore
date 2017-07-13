@@ -1,13 +1,9 @@
-build/
 node_modules/
 .idea/
 .git
 npm-debug.log
 selenium-debug.log
-tests/nightwatch/report
 config.json
 dist/
 lib/
-
-# macOS
 .DS_Store
