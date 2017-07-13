@@ -300,7 +300,9 @@ class Finput {
    * @param {e} Clipboard event
    */
   onPaste(e) {
-    const val = helpers.parseString(e.clipboardData.getData('text'), this.options);
+    // paste uses a DragEvent on IE and clipboard data is stored on the window
+    const clipboardData = e.clipboardData || window.clipboardData;
+    const val = helpers.parseString(clipboardData.getData('text'), this.options);
     this.setValue(val, true);
     e.preventDefault();
   }
