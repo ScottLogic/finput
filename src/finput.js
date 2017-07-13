@@ -103,11 +103,11 @@ class Finput {
       },
       {
         type: ACTION_TYPES.DECIMAL,
-        names: [this.options.decimal]
+        names: [this.options.decimal, 'decimal']
       },
       {
         type: ACTION_TYPES.THOUSANDS,
-        names: [this.options.thousands]
+        names: [this.options.thousands, 'separator']
       },
       {
         type: ACTION_TYPES.SHORTCUT,
