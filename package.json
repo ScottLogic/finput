@@ -42,7 +42,6 @@
     "build": "npm run clean && npm run build:dist && npm run build:lib",
     "start": "budo -l -o -p 3000 src/finput.js:dist/finput.js -- -s finput -t babelify",
     "webdriver": "webdriver-manager",
-    "postinstall": "webdriver-manager update",
     "ci": "npm run test:ci && npm run build",
     "test:ci": "echo 'placeholder for test:ci'",
     "test": "jest --config ./test/jestConfig.json --runInBand",
