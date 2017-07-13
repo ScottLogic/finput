@@ -1,7 +1,8 @@
 import keyHandlers from './keyHandlers';
 import helpers from './helpers';
+import { getActionType, getHandlerForAction } from './actions';
 import ValueHistory from './valueHistory';
-import {ACTION_TYPES, DRAG_STATES, RANGE} from './constants';
+import { ACTION_TYPES, DRAG_STATES, RANGE } from './constants';
 
 /**
  * CONSTANTS
@@ -48,7 +49,6 @@ class Finput {
       ...options
     };
 
-    this._actionTypes = this.createActionTypes();
     this._history = new ValueHistory();
 
     this._listeners = {
@@ -85,97 +85,6 @@ class Finput {
       ...this._options,
       ...options
     };
-  }
-
-  /**
-   * Creates the correct action type to char/key codes array with the
-   * correct decimal and thousand separator characters (depending on language)
-   */
-  createActionTypes() {
-    return [
-      {
-        type: ACTION_TYPES.NUMBER,
-        names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.MINUS,
-        names: ['-'],
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.DECIMAL,
-        names: [this.options.decimal, 'decimal'],
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.THOUSANDS,
-        names: [this.options.thousands, 'separator'],
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.SHORTCUT,
-        names: Object.keys(this.options.shortcuts),
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.BACKSPACE,
-        names: ['backspace'],
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.DELETE,
-        names: [
-          'delete', // Chrome & Firefox
-          'del' // Edge & IE
-        ],
-        modifierKey: false
-      },
-      {
-        type: ACTION_TYPES.UNDO,
-        names: ['z'],
-        modifierKey: true
-      },
-      {
-        type: ACTION_TYPES.REDO,
-        names: ['y'],
-        modifierKey: true
-      }
-    ]
-  }
-  
-  /**
-   * Determines what type of action needs to be dealt with from the current
-   * key information. E.g. vertical arrow pressed, number pressed etc...
-   * @param {keyInfo} Information about the pressed key
-   */
-  getActionType(keyInfo) {
-    for (let actionType of this._actionTypes) {
-      const index = actionType.names.indexOf(keyInfo.keyName);
-      const typeMatch = index > -1;
-
-      if (typeMatch && (actionType.modifierKey === keyInfo.modifierKey)) {
-        return actionType.type;
-      }
-    }
-    return ACTION_TYPES.UNKNOWN;
-  }
-
-  getHandlerForAction(action) {
-    const handlerForAction = {
-      [ACTION_TYPES.NUMBER]: keyHandlers.onNumber,
-      [ACTION_TYPES.DECIMAL]: keyHandlers.onDecimal,
-      [ACTION_TYPES.THOUSANDS]: keyHandlers.onThousands,
-      [ACTION_TYPES.MINUS]: keyHandlers.onMinus,
-      [ACTION_TYPES.SHORTCUT]: keyHandlers.onShortcut,
-      [ACTION_TYPES.BACKSPACE]: keyHandlers.onBackspace,
-      [ACTION_TYPES.DELETE]: keyHandlers.onDelete,
-      [ACTION_TYPES.UNDO]: keyHandlers.onUndo,
-      [ACTION_TYPES.REDO]: keyHandlers.onRedo,
-      [ACTION_TYPES.UNKNOWN]: keyHandlers.onUnknown
-    };
-
-    return handlerForAction[action];
   }
 
   /**
@@ -330,8 +239,8 @@ class Finput {
       modifierKey: this.isModifierKeyPressed(e)
     };
 
-    const actionType = this.getActionType(keyInfo);
-    const handler = this.getHandlerForAction(actionType);
+    const actionType = getActionType(keyInfo, this.options);
+    const handler = getHandlerForAction(actionType);
     const newState = handler(currentState, keyInfo, this.options, this._history);
 
     if (!newState.valid) {
