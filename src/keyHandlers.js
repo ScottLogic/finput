@@ -7,6 +7,14 @@
 import { RANGE } from './constants';
 import helpers from './helpers';
 
+// Older browsers use these for the 'key' element of KeyboardEvents for the numpad.
+const numpadKeys = [
+  'add',
+  'subtract',
+  'multiply',
+  'divide'
+];
+
 module.exports = {
 
   /**
@@ -244,9 +252,13 @@ module.exports = {
    * @param {keyInfo} Information about the pressed key
    */
   onUnknown: function (currentState, keyInfo) {
-    // all printable characters have a key with length of 1 
-    // if a character has got this far it is an invalid character
-    const isInvalid = keyInfo.keyName.length === 1 && !keyInfo.modifierKey;
+    // most printable characters have a key with length of 1,
+    // the numpad characters may have textual keys on older browsers
+    const isPrintableCharacter = keyInfo.keyName.length === 1
+      || numpadKeys.indexOf(keyInfo.keyName) > -1;
+
+    // all printable characters are invalid, unless it is a command/shortcut
+    const isInvalid = isPrintableCharacter && !keyInfo.modifierKey;
     const newState = { ...currentState };
     newState.valid = !isInvalid;
 
