@@ -1,6 +1,6 @@
 {
   "name": "finput",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "A vanilla-JS financial amount input control",
   "license": "MIT",
   "homepage": "http://scottlogic.github.io/finput/",
@@ -32,7 +32,8 @@
     "rimraf": "^2.6.1",
     "selenium-webdriver": "^3.4.0",
     "uglify-js": "^3.0.24",
-    "webdriver-manager": "^12.0.6"
+    "webdriver-manager": "^12.0.6",
+    "semantic-release": "^6.3.6"
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf ./lib && mkdirp ./dist/ && mkdirp ./lib/",
@@ -44,6 +45,7 @@
     "postinstall": "webdriver-manager update",
     "ci": "npm run test:ci && npm run build",
     "test:ci": "echo 'placeholder for test:ci'",
-    "test": "jest --config ./test/jestConfig.json --runInBand"
+    "test": "jest --config ./test/jestConfig.json --runInBand",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   }
 }
