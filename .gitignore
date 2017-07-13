@@ -1,7 +1,6 @@
 build/
 node_modules/
 .idea/
-build/
 .git
 npm-debug.log
 selenium-debug.log
