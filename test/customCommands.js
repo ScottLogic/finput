@@ -38,7 +38,7 @@ export default (finputElement) => {
         const mac = await isMac();
         const chrome = await isChrome();
         if (mac && chrome) {
-          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.')
+          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.');
           return;
         }
         const modifierKey = await getModifierKey();
@@ -77,14 +77,14 @@ export default (finputElement) => {
     chainFunctions.startingFrom = (start) => {
       startPos = start;
       return chainFunctions;
-    }
+    };
 
     chainFunctions.shouldShow = (expected) => {
       it(`should show "${expected}" when "${text}" has chars cut`, async () => {
         const mac = await isMac();
         const chrome = await isChrome();
         if (mac && chrome) {
-          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.')
+          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.');
           return;
         }
         const modifierKey = await getModifierKey();
@@ -105,6 +105,7 @@ export default (finputElement) => {
     };
 
     return chainFunctions;
-  }
+  };
+
   return { typing, copyingAndPasting, cutting };
 };
