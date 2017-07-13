@@ -1,6 +1,6 @@
 import { Key } from 'selenium-webdriver';
 import { nativeText } from './pageObjects/index';
-import { driver, isMac, isChrome, getModifierKey } from './helpers';
+import { isMac, isChrome, getModifierKey } from './helpers';
 import { mapKeys } from './keys';
 
 export default (finputElement) => {
