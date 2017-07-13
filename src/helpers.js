@@ -1,5 +1,3 @@
-
-import {ACTION_TYPES, DRAG_STATES} from './constants';
 import is from 'is_js';
 
 function getDecimalIndex(val, decimal) {
