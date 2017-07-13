@@ -264,4 +264,4 @@ module.exports = {
 
     return newState;
   }
-}
+};

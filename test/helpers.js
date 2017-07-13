@@ -15,12 +15,12 @@ export const isChrome = async () => {
     const capabilities = await driver.getCapabilities();
     const browser = capabilities.get('browserName');
     return browser.toUpperCase().indexOf('CHROME') >= 0;
-}
+};
 
 export const getModifierKey = async () => {
   const mac = await isMac();
   return mac ? Key.COMMAND : Key.CONTROL;
-}
+};
 
 afterAll(async () => {
   // Cleanup `process.on('exit')` event handlers to prevent a memory leak caused by the combination of `jest` & `tmp`.

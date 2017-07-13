@@ -4,7 +4,7 @@ function getDecimalIndex(val, decimal) {
   return val.indexOf(decimal) > -1
     ? val.indexOf(decimal)
     : val.length;
-};
+}
 
 /**
  * Edit a string with a new string to add.
@@ -15,7 +15,7 @@ exports.editString = function(str, toAdd, caretStart, caretEnd = caretStart) {
   const firstHalf = str.slice(0, caretStart);
   const secondHalf = str.slice(caretEnd, str.length);
   return `${firstHalf}${toAdd}${secondHalf}`;
-}
+};
 
 exports.formatThousands = function(val, options) {
   const startIndex = val.indexOf(options.decimal) > -1
@@ -34,7 +34,7 @@ exports.formatThousands = function(val, options) {
   }
 
   return val;
-}
+};
 
 /**
  * Partially format the value, only adding commas as needed (Done on keypress/keyup)
@@ -46,7 +46,7 @@ exports.partialFormat = function(val, options) {
   val = this.formatThousands(val, options);
 
   return val;
-}
+};
 
 /**
  * Fully format the value
@@ -83,7 +83,7 @@ exports.fullFormat = function(val, options) {
   } else {
     return val;
   }
-}
+};
 
 /**
  * Remove any surplus zeros from the beginning of the integer part of the number
@@ -107,7 +107,7 @@ exports.removeleadingZeros = function(val, options) {
   }
 
   return `${sign}${integerPart}${decimalPart}`;
-}
+};
 
 exports.removeExtraDecimals = function(val, options) {
   const decimalIndex = getDecimalIndex(val, options.decimal);
@@ -116,7 +116,7 @@ exports.removeExtraDecimals = function(val, options) {
     .slice(0, options.scale);
 
   return `${integerPart}${decimalPart}`;
-}
+};
 
 /**
  * Check if the number of decimals is allowed.
@@ -127,7 +127,7 @@ exports.allowedDecimal = function (val, options) {
   let decimalPart = val.slice(getDecimalIndex(val, options.decimal) + 1);
 
   return decimalPart.length <= options.scale;
-}
+};
 
 /**
  * Calculate how many characters have been added (or removed) before the given
@@ -147,7 +147,7 @@ exports.calculateOffset = function(prev, curr, pos, options) {
     }
   }
   return currentSymbols - prevSymbols;
-}
+};
 
 /**
  * Check (if the char is a zero) whether or not a zero can be placed at this
@@ -175,7 +175,7 @@ exports.allowedZero = function(val, char, caretPos, options) {
   } else {
     return true;
   }
-}
+};
 
 /**
  * Convert a string value to its number equivalent
@@ -195,7 +195,7 @@ exports.formattedToRaw = function(formattedValue, options) {
   // Ok to replace as thousands delimiter removed above
   formattedValue = formattedValue.replace(new RegExp(`[${options.decimal}]`, 'g'), '.');
   return Number(formattedValue);
-}
+};
 
 exports.rawToFormatted = function (rawValue, options) {
   if (is.not.number(rawValue) || is.not.finite(rawValue)) return '';
@@ -211,7 +211,7 @@ exports.rawToFormatted = function (rawValue, options) {
   stringValue = stringValue.replace(new RegExp(`[${rawDecimal}]`, 'g'), options.decimal);
 
   return stringValue;
-}
+};
 
 exports.parseString = function(str, options) {
   let multiplier = 1;
@@ -251,4 +251,4 @@ exports.parseString = function(str, options) {
   } else {
     return adjusted;
   }
-}
+};
