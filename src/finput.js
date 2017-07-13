@@ -18,7 +18,7 @@ const DEFAULTS = {
     'b': 1000000000
   },
   invalidKeyCallback: () => {}
-}
+};
 
 /**
  * FINPUT COMPONENT CLASS
@@ -61,7 +61,7 @@ class Finput {
 
       dragstart:    { element: document, handler: this.onDragstart.bind(this) },
       dragend:    { element: document, handler: this.onDragend.bind(this) }
-    }
+    };
 
     // Setup listeners
     this.removeListeners();
@@ -240,6 +240,7 @@ class Finput {
   onFocusout(e) {
     this.setValue(this.element.value);
   }
+
   /**
    * On focusing IN of the input
    * DEFAULT:  Select all text
@@ -258,6 +259,7 @@ class Finput {
       this.element.selectionEnd = this.element.value.length;
     }
   }
+
   /**
    * On dropping something into the input - replace the WHOLE value
    * with this new value
@@ -288,6 +290,7 @@ class Finput {
       ? DRAG_STATES.INTERNAL
       : DRAG_STATES.EXTERNAL;
   }
+
   /**
    * On end of ANY drag on page
    * @param {e} Drag event
@@ -295,6 +298,7 @@ class Finput {
   onDragend(e) {
     this._dragState = DRAG_STATES.NONE;
   }
+
   /**
    * On pasting something into the input
    * @param {e} Clipboard event
@@ -359,7 +363,8 @@ class Finput {
     if (shouldRecord) {
       this._history.addValue(valueWithThousandsDelimiter);
     }
-  }  
+  }
+
   /**
    * Backup event if input changes for any other reason, just format value
    * @param {e} Event
@@ -367,6 +372,7 @@ class Finput {
   onInput(e) {
     this.setValue(this.element.value);
   }
+
   /**
    * Removes all listeners from the input
    */

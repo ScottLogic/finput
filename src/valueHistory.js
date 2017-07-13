@@ -1,4 +1,3 @@
-
 const MAX_BUFFER_SIZE = 50;
 
 /**
@@ -12,13 +11,14 @@ export default class ValueHistory {
     this._currentIndex = 0;
   }
 
-  // GETTERS
   get history() {
     return this._history;
   }
+
   get currentIndex() {
     return this._currentIndex;
   }
+
   get currentValue() {
     return this.history[this.currentIndex];
   }
@@ -26,6 +26,7 @@ export default class ValueHistory {
   set currentIndex(i) {
     this._currentIndex = i;
   }
+
   set history(history) {
     this._history = history;
   }
@@ -39,6 +40,7 @@ export default class ValueHistory {
     }
     return this.currentValue;
   }
+
   /**
    * Redo change, so return to next value in history array
    */
@@ -48,6 +50,7 @@ export default class ValueHistory {
     }
     return this.currentValue;
   }
+
   /**
    * Add new value to history array. Any possible 'redo's' are removed from array
    * as a new 'branch' of history is created when a new value is added
