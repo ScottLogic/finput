@@ -23,7 +23,6 @@ const numpadKeys = [
  */
 const isPrintable = (keyInfo) => {
   let isOneChar = keyInfo.keyName.length === 1;
-  // TODO: remove duplication
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   let hasBrowserShortcutKey;
   if (isMac) {

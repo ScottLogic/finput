@@ -132,20 +132,6 @@ class Finput {
     this.setValue(newValue, false);
   }
 
-  /**
-   * Returns whether a modifier key has been pressed
-   * 
-   * On macOS the Command (meta) key is the modifier key.
-   * On Windows the Control (ctrl) key is the modifier key.
-   * Note that on Windows the meta key is the Windows key.
-   * 
-   * @param {e} Key event 
-   */
-  isModifierKeyPressed(e) {
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-    return isMac ? e.metaKey : e.ctrlKey;
-  }
-
   //
   // EVENT HANDLERS
   //
