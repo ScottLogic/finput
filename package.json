@@ -40,7 +40,7 @@
     "clean": "rimraf ./dist && rimraf ./lib && mkdirp ./dist/ && mkdirp ./lib/",
     "build:dist": "browserify -d ./src/finput.js -s finput -o ./dist/finput.js -t babelify && uglifyjs ./dist/finput.js -o ./dist/finput.min.js",
     "build:lib": "babel ./src -d ./lib",
-    "build": "npm run clean && npm run build:dist && npm run build:lib",
+    "build": "run-s clean build:dist build:lib",
     "start": "budo -l -o -p 3000 src/finput.js:dist/finput.js -- -s finput -t babelify",
     "start:silent": "budo --no-stream -p 3000 src/finput.js:dist/finput.js -- -s finput -t babelify",
     "webdriver": "webdriver-manager",
