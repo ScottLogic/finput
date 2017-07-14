@@ -19,17 +19,17 @@ const createActionTypes = (options) => [
   },
   {
     type: ACTION_TYPES.DECIMAL,
-    names: [this.options.decimal, 'decimal'],
+    names: [options.decimal, 'decimal'],
     modifierKeys: []
   },
   {
     type: ACTION_TYPES.THOUSANDS,
-    names: [this.options.thousands, 'separator'],
+    names: [options.thousands, 'separator'],
     modifierKeys: []
   },
   {
     type: ACTION_TYPES.SHORTCUT,
-    names: Object.keys(this.options.shortcuts),
+    names: Object.keys(options.shortcuts),
     modifierKeys: []
   },
   {
