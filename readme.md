@@ -174,3 +174,10 @@ Install and run an instance of webdriver:
 Execute the tests:
 
 - `npm test`
+
+Releasing
+---------
+
+[semantic-release](https://github.com/semantic-release/semantic-release) is used with Travis CI to perform releases on merged PRs to `master` branch.
+
+Commit messages must follow [AngularJS Commit Message Conventions](https://github.com/semantic-release/semantic-release#default-commit-message-format) for `semantic-release` to correctly choose the next version.
