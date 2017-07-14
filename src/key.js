@@ -1,10 +1,6 @@
-// Older browsers use these for the 'key' element of KeyboardEvents for the numpad.
-const numpadKeys = [
-  'add',
-  'subtract',
-  'multiply',
-  'divide'
-];
+import { KEYS } from './constants';
+
+const isMac = () => navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 /**
  * Return if the key combined with the modifier key(s) is printable.
@@ -23,16 +19,23 @@ const numpadKeys = [
  */
 const isPrintable = (keyInfo) => {
   let isOneChar = keyInfo.keyName.length === 1;
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   let hasBrowserShortcutKey;
-  if (isMac) {
-    const meta = keyInfo.modifierKeys.indexOf('metaKey') > -1;
+  if (isMac()) {
+    const meta = keyInfo.modifierKeys.indexOf(KEYS.meta) > -1;
     hasBrowserShortcutKey = meta;
   } else {
-    const alt = keyInfo.modifierKeys.indexOf('altKey') > -1;
-    const ctrl = keyInfo.modifierKeys.indexOf('ctrlKey') > -1;
+    const alt = keyInfo.modifierKeys.indexOf(KEYS.alt) > -1;
+    const ctrl = keyInfo.modifierKeys.indexOf(KEYS.ctrl) > -1;
     hasBrowserShortcutKey = alt || ctrl;
   }
+
+  // Older browsers use these for the 'key' element of KeyboardEvents for the numpad.
+  const numpadKeys = [
+    KEYS.numpadAdd,
+    KEYS.numpadSubtract,
+    KEYS.numpadMultiply,
+    KEYS.numpadDivide
+  ];
 
   const isNumpad = numpadKeys.indexOf(keyInfo.keyName) > -1;
   isOneChar = isOneChar || isNumpad;
@@ -51,13 +54,17 @@ const isPrintable = (keyInfo) => {
  */
 const getPressedModifiers = (nativeEvent) => {
   const modifierKeys = [
-    'metaKey',
-    'ctrlKey',
-    'shiftKey',
-    'altKey'
+    KEYS.meta,
+    KEYS.ctrl,
+    KEYS.shift,
+    KEYS.alt
   ];
   const pressedModifierKeys = modifierKeys.filter(key => nativeEvent[key]);
   return pressedModifierKeys;
-}
+};
 
-export default { isPrintable, getPressedModifiers };
+const getHistoryKey = () => {
+  return isMac() ? KEYS.meta : KEYS.ctrl; 
+};
+
+export default { isPrintable, getPressedModifiers, getHistoryKey };

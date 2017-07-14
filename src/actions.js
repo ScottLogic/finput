@@ -1,5 +1,6 @@
 import { ACTION_TYPES } from './constants';
 import keyHandlers from './keyHandlers';
+import key from './key';
 import isEqual from 'lodash/isEqual';
 
 /**
@@ -48,12 +49,12 @@ const createActionTypes = (options) => [
   {
     type: ACTION_TYPES.UNDO,
     names: ['z'],
-    modifierKeys: ['metaKey'] //TODO: switch on platform
+    modifierKeys: [key.getHistoryKey()]
   },
   {
     type: ACTION_TYPES.REDO,
     names: ['y'],
-    modifierKeys: ['metaKey'] //TODO: switch on platform
+    modifierKeys: [key.getHistoryKey()]
   }
 ];
 
