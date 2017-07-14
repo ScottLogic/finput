@@ -1,15 +1,12 @@
 import { Builder, Key, Capability, Browser } from 'selenium-webdriver';
+import getCapabilities from './capabilities';
 
 const Platform = {
   MAC: 'MAC'
 };
 
 export const driver = new Builder()
-  .forBrowser(Browser.CHROME)
-  .withCapabilities({
-    'browserstack.local': true,
-    'browserstack.localIdentifier': process.env.BROWSERSTACK_LOCAL_IDENTIFIER || process.env.TRAVIS_JOB_NUMBER
-  })
+  .withCapabilities(getCapabilities())
   .usingServer('http://localhost:4444/wd/hub')
   .build();
   
