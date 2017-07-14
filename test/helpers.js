@@ -2,6 +2,10 @@ import { Builder, Key } from 'selenium-webdriver';
 
 export const driver = new Builder()
   .forBrowser('chrome')
+  .withCapabilities({
+    'browserstack.local': true,
+    'browserstack.localIdentifier': process.env.BROWSERSTACK_LOCAL_IDENTIFIER || process.env.TRAVIS_JOB_NUMBER
+  })
   .usingServer('http://localhost:4444/wd/hub')
     .build();
   
