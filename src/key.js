@@ -41,4 +41,24 @@ const isPrintable = (keyInfo) => {
   return (isOneChar && !hasBrowserShortcutKey);
 };
 
-export default { isPrintable };
+/**
+ * Returns an array of pressed modifier keys.
+ *
+ * The elements of the array are strings used by KeyboardEvent.key to represent
+ * modifier keys:
+ * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
+ *
+ * @param {KeyboardEvent} The native event to inspect for modifier keys 
+ */
+const getPressedModifiers = (nativeEvent) => {
+  const modifierKeys = [
+    'metaKey',
+    'ctrlKey',
+    'shiftKey',
+    'altKey'
+  ];
+  const pressedModifierKeys = modifierKeys.filter(key => nativeEvent[key]);
+  return pressedModifierKeys;
+}
+
+export default { isPrintable, getPressedModifiers };

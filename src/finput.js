@@ -1,4 +1,5 @@
 import keyHandlers from './keyHandlers';
+import key from './key';
 import helpers from './helpers';
 import { getActionType, getHandlerForAction } from './actions';
 import ValueHistory from './valueHistory';
@@ -223,17 +224,6 @@ class Finput {
     e.preventDefault();
   }
 
-  getPressedModifierKeys(event) {
-    const modifierKeys = [
-      'metaKey',
-      'ctrlKey',
-      'shiftKey',
-      'altKey'
-    ];
-    const pressedModifierKeys = modifierKeys.filter(key => event[key]);
-    return pressedModifierKeys;
-  }
-
   /**
    * On pressing any key inside the input
    * @param {e} Keyboard event
@@ -247,7 +237,7 @@ class Finput {
     };
     const keyInfo = {
       keyName: e.key.toLowerCase(),
-      modifierKeys: this.getPressedModifierKeys(e)
+      modifierKeys: key.getPressedModifiers(e)
     };
 
     const actionType = getActionType(keyInfo, this.options);
