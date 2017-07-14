@@ -8,7 +8,10 @@ notifications:
 before_script:
 - npm prune
 script:
-- npm run ci
+- npm run build
+# Only run tests when not a PR
+# https://docs.travis-ci.com/user/pull-requests/#Pull-Requests-and-Security-Restrictions
+- 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi'
 after_success:
 - npm run semantic-release
 branches:
