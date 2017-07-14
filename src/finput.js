@@ -223,6 +223,17 @@ class Finput {
     e.preventDefault();
   }
 
+  getPressedModifierKeys(event) {
+    const modifierKeys = [
+      'metaKey',
+      'ctrlKey',
+      'shiftKey',
+      'altKey'
+    ];
+    const pressedModifierKeys = modifierKeys.filter(key => event[key]);
+    return pressedModifierKeys;
+  }
+
   /**
    * On pressing any key inside the input
    * @param {e} Keyboard event
@@ -236,7 +247,7 @@ class Finput {
     };
     const keyInfo = {
       keyName: e.key.toLowerCase(),
-      modifierKey: this.isModifierKeyPressed(e)
+      modifierKeys: this.getPressedModifierKeys(e)
     };
 
     const actionType = getActionType(keyInfo, this.options);

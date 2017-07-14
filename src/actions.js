@@ -1,5 +1,6 @@
 import { ACTION_TYPES } from './constants';
 import keyHandlers from './keyHandlers';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Create an array of action types with key names that map to these types and
@@ -9,32 +10,32 @@ const createActionTypes = (options) => [
   {
     type: ACTION_TYPES.NUMBER,
     names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.MINUS,
     names: ['-'],
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.DECIMAL,
     names: [this.options.decimal, 'decimal'],
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.THOUSANDS,
     names: [this.options.thousands, 'separator'],
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.SHORTCUT,
     names: Object.keys(this.options.shortcuts),
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.BACKSPACE,
     names: ['backspace'],
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.DELETE,
@@ -42,17 +43,17 @@ const createActionTypes = (options) => [
       'delete', // Chrome & Firefox
       'del' // Edge & IE
     ],
-    modifierKey: false
+    modifierKeys: []
   },
   {
     type: ACTION_TYPES.UNDO,
     names: ['z'],
-    modifierKey: true
+    modifierKeys: ['metaKey'] //TODO: switch on platform
   },
   {
     type: ACTION_TYPES.REDO,
     names: ['y'],
-    modifierKey: true
+    modifierKeys: ['metaKey'] //TODO: switch on platform
   }
 ];
 
@@ -63,10 +64,10 @@ const createActionTypes = (options) => [
  */
 export const getActionType = (keyInfo, options) => {
   for (let actionType of createActionTypes(options)) {
-    const index = actionType.names.indexOf(keyInfo.keyName);
-    const typeMatch = index > -1;
+    const typeMatch = actionType.names.indexOf(keyInfo.keyName) > -1
+    let modifierMatch = isEqual(actionType.modifierKeys, keyInfo.modifierKeys);
 
-    if (typeMatch && (actionType.modifierKey === keyInfo.modifierKey)) {
+    if (typeMatch && modifierMatch) {
       return actionType.type;
     }
   }
