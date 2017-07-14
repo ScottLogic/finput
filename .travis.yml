@@ -2,15 +2,21 @@ sudo: false
 language: node_js
 cache:
   directories:
-    - node_modules
+  - node_modules
 notifications:
   email: false
 before_script:
-  - npm prune
+- npm prune
 script:
-  - npm run ci
+- npm run ci
 after_success:
-  - npm run semantic-release
+- npm run semantic-release
 branches:
   except:
-    - /^v\d+\.\d+\.\d+$/
+  - "/^v\\d+\\.\\d+\\.\\d+$/"
+addons:
+  browserstack:
+    username:
+      secure: "iiZoRF4iM5mmF0nGf4BC7c/Gi04zXLTD6jghwinUsl7VnIIloyrZvsONKuuWej7CsqV8W8fgWDWAzFLT2m+bknZzdLNl7YhwdDu+sTTktmk0HzhIW8FWbt5Lb7n1tnyn386nHCRW4fND7nrcMqCHe6FpUo5nbEXM0qNb4Tr5mkd0yUmStlzGzxjHIfEWQWtJ3iVzQagEdlVPNa0NSZQFaTlSrQrfj75sKqS4X+iLlxFWnjZRuRgko9XjIUyEGt0Qcgzw3YIS6GWxMsnxO70gwP58sK0WlJePQ6+kCrFAGQ2iyekXVc4PjDzQ7hzKpglblPNabVQq9iwHFy3Qe/Jemuf6r6x4yV9m8EPTaz6URpBfQ/r6xHxoYCtJzlFfpdSN87lfSXVxoutFXYvhfhLlfx+9APXMXSWoz20d1kcGNnPrNkakNEX3fayoKL3LnWv+Rn1xvvbQkiFr4MFoSsX4lxNyVJYUbUV5a/6y1vQO+LiIXFLDAHN77f4uEQ61rN4gKIdf+BjFwOPBD6mPIxJ80XMSrT2386QGMXY83fLeqkKRz0MJOycJfHid/X/G6+4YzYnzctkII0XOrAIWS93tv4KJMeVKqOHBTTYiFhhgRA34xXeFu2gJWtekfn8LelGVpW/xVQHKVMyfQJ596KsT8OBa5BbbjviEuUiT1fwvw9A="
+    access_key:
+      secure: "FT1wqNwaSaGcguvI5E/VCS/MDAwis/TJtzD0lAPraNtuP02EGKPKUYkDzuu4vT8qhIKNdFaz7eCHIsP18Xk6l/aqm18EjQQzmji0FZGv4awZLGALPa8Zfsyeh/HJU7emfTzHmstc97KvHWnXaLchqNwGAzKtWQ4nqubmgDEFzVYd9h8mSFkzS6r+NFcu4UFCMLciSUsXBt7N4Z/0OcE3XoNBupRUsv8oAoK13dyTP6oIw1C+Ib1zHUOZetA/8ceKsc74pSOgp53TXGbkUwQ0rjDGFF5be2oHvxAU2WqIpm1oc7MGNnu6XJo2p+50XbJ3JQ1m6OPcbyAZ61etsiWLOJHLPAI0WcB2Q2qkiy/BfJqiKCT2P5faS7d9TMmhFWCrx7VnoESVqSww50Zm7pMoHI1Ka28vvCc2MEzdnJr1osBkDRHnR4HJ7G2YU687Rqc0s1fb/aPvlOGhii6zarmWWC2/2/nHICrgNmkG9Ok4MG9re67KZqNQVws0j97WoXXusDUlZVScjfjW35rn1Pkl1smfm8NnLJhNq+eWRD7Rhj025NBDrfQMU3NSj8iG9gIGlVtE6Y4TdQwyA1Myd73ad3IykKuYhr7c/Crp/7Bc5FaJ4kWk6LDjRXV0mv84D3ARpaAPHEd3I+cqxS6ODk1KbTVZV5s/huLJYYrcZ/V/GBg="
