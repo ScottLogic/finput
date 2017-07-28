@@ -162,18 +162,21 @@ Building Library
 Running tests
 -------------
 
-Build and run the server:
-
-- `npm start`
-
-Install and run an instance of webdriver:
-
-- `npm run webdriver update`
-- `npm run webdriver start`
-
-Execute the tests:
+Execute the tests locally:
 
 - `npm test`
+
+This takes care of doing the following:
+- Updating webdriver server
+- Starting background webdriver server
+- Starting background web server
+- Starting tests
+- Shutting down webdriver server, webserver and tests
+
+The tests can be run for CI using:
+- `npm run test:ci`
+
+This is the same as `npm test` but it does not update or start webdriver. We assume that CI/Browserstack takes care of webdriver for us.
 
 Releasing
 ---------

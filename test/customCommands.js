@@ -3,6 +3,12 @@ import { nativeText } from './pageObjects/index';
 import { isMac, isChrome, getModifierKey } from './helpers';
 import { mapKeys } from './keys';
 
+const shouldSkipModifierKeyTest = async () => {
+  const mac = await isMac();
+  const chrome = await isChrome();
+  return mac && chrome;
+};
+
 export default (finputElement) => {
   const typing = (keys) => {
     let unfocusAfter = false;
@@ -35,10 +41,8 @@ export default (finputElement) => {
 
     chainFunctions.shouldShow = (expected) => {
       it(`should show "${expected}" when "${text}" is copied and pasted`, async () => {
-        const mac = await isMac();
-        const chrome = await isChrome();
-        if (mac && chrome) {
-          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.');
+        if (await shouldSkipModifierKeyTest()) {
+          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.')
           return;
         }
         const modifierKey = await getModifierKey();
@@ -81,10 +85,8 @@ export default (finputElement) => {
 
     chainFunctions.shouldShow = (expected) => {
       it(`should show "${expected}" when "${text}" has chars cut`, async () => {
-        const mac = await isMac();
-        const chrome = await isChrome();
-        if (mac && chrome) {
-          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.');
+        if (await shouldSkipModifierKeyTest()) {
+          console.warn('Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test.')
           return;
         }
         const modifierKey = await getModifierKey();

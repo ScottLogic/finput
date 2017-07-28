@@ -1,21 +1,28 @@
-import { Builder, Key } from 'selenium-webdriver';
+import { Builder, Key, Capability, Browser } from 'selenium-webdriver';
+import getCapabilities from './capabilities';
+
+const Platform = {
+  MAC: 'MAC'
+};
 
 export const driver = new Builder()
-  .forBrowser('chrome')
+  .withCapabilities(getCapabilities())
   .usingServer('http://localhost:4444/wd/hub')
-    .build();
+  .build();
   
 export const isMac = async () => {
-    const capabilities = await driver.getCapabilities();
-    const os = capabilities.get('platform');
-    return os.toUpperCase().indexOf('MAC') >= 0;
+  const capabilities = await driver.getCapabilities();
+  const os = capabilities.get(Capability.PLATFORM);
+  return os.toUpperCase().indexOf(Platform.MAC) >= 0;
 };
 
-export const isChrome = async () => {
-    const capabilities = await driver.getCapabilities();
-    const browser = capabilities.get('browserName');
-    return browser.toUpperCase().indexOf('CHROME') >= 0;
+export const isBrowser = async (browserName) => {
+  const capabilities = await driver.getCapabilities();
+  const browser = capabilities.get(Capability.BROWSER_NAME);
+  return browser.indexOf(browserName) >= 0;
 };
+
+export const isChrome = async () => isBrowser(Browser.CHROME);
 
 export const getModifierKey = async () => {
   const mac = await isMac();
