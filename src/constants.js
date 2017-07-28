@@ -20,15 +20,15 @@ exports.ACTION_TYPES = {
   DELETE: 'DELETE',
   UNDO: 'UNDO',
   REDO: 'REDO',
-}
+};
 
 exports.DRAG_STATES = {
   NONE: 'NONE',
   INTERNAL: 'INTERNAL',
   EXTERNAL: 'EXTERNAL'
-}
+};
 
 exports.RANGE = {
   ALL: 'ALL',
   POSITIVE: 'POSITIVE'
-}
+};

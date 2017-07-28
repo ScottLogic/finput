@@ -1,7 +1,13 @@
 import { Key } from 'selenium-webdriver';
 import { nativeText } from './pageObjects/index';
-import { driver, isMac, isChrome, getModifierKey } from './helpers';
+import { isMac, isChrome, getModifierKey } from './helpers';
 import { mapKeys } from './keys';
+
+const shouldSkipModifierKeyTest = async () => {
+  const mac = await isMac();
+  const chrome = await isChrome();
+  return mac && chrome;
+};
 
 export default (finputElement) => {
   const typing = (keys) => {
@@ -56,9 +62,7 @@ export default (finputElement) => {
     chainFunctions.shouldShow = (expected) => {
       const testName = `should show "${expected}" when "${text}" is copied and pasted`; 
       it(testName, async () => {
-        const mac = await isMac();
-        const chrome = await isChrome();
-        if (mac && chrome) {
+        if (await shouldSkipModifierKeyTest()) {
           console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
           return;
         }
@@ -98,14 +102,12 @@ export default (finputElement) => {
     chainFunctions.startingFrom = (start) => {
       startPos = start;
       return chainFunctions;
-    }
+    };
 
     chainFunctions.shouldShow = (expected) => {
       const testName = `should show "${expected}" when "${text}" has chars cut`;
       it(testName, async () => {
-        const mac = await isMac();
-        const chrome = await isChrome();
-        if (mac && chrome) {
+        if (await shouldSkipModifierKeyTest()) {
           console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
           return;
         }
@@ -127,6 +129,7 @@ export default (finputElement) => {
     };
 
     return chainFunctions;
-  }
+  };
+
   return { typing, copyingAndPasting, cutting };
 };

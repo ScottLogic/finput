@@ -20,4 +20,3 @@ const keyMap = {
 };
 
 export const mapKeys = (keys) => keys.replace(/./g, (c) => keyMap[c] || c);
-
