@@ -198,7 +198,7 @@ exports.formattedToRaw = function(formattedValue, options) {
 };
 
 exports.rawToFormatted = function (rawValue, options) {
-  if (is.not.number(rawValue)) return '';
+  if (is.not.number(rawValue) || is.not.finite(rawValue)) return '';
 
   let stringValue = String(rawValue);
 
