@@ -177,3 +177,10 @@ The tests can be run for CI using:
 - `npm run test:ci`
 
 This is the same as `npm test` but it does not update or start webdriver. We assume that CI/Browserstack takes care of webdriver for us.
+
+Releasing
+---------
+
+[semantic-release](https://github.com/semantic-release/semantic-release) is used with Travis CI to perform releases on merged PRs to `master` branch.
+
+Commit messages must follow [AngularJS Commit Message Conventions](https://github.com/semantic-release/semantic-release#default-commit-message-format) for `semantic-release` to correctly choose the next version.

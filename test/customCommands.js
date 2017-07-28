@@ -1,6 +1,6 @@
 import { Key } from 'selenium-webdriver';
 import { nativeText } from './pageObjects/index';
-import { driver, isMac, isChrome, getModifierKey } from './helpers';
+import { isMac, isChrome, getModifierKey } from './helpers';
 import { mapKeys } from './keys';
 
 const shouldSkipModifierKeyTest = async () => {
@@ -81,7 +81,7 @@ export default (finputElement) => {
     chainFunctions.startingFrom = (start) => {
       startPos = start;
       return chainFunctions;
-    }
+    };
 
     chainFunctions.shouldShow = (expected) => {
       it(`should show "${expected}" when "${text}" has chars cut`, async () => {
@@ -107,6 +107,7 @@ export default (finputElement) => {
     };
 
     return chainFunctions;
-  }
+  };
+
   return { typing, copyingAndPasting, cutting };
 };

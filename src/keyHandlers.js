@@ -231,6 +231,7 @@ module.exports = {
 
     return newState;
   },
+
   /**
    * REDO HANDLER
    * @param {currentState} Information about current finput state
@@ -264,4 +265,4 @@ module.exports = {
 
     return newState;
   }
-}
+};
