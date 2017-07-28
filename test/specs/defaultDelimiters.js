@@ -10,6 +10,14 @@ describe('Default options (standard delimiters)', () => {
     await load();
   });
 
+  // Modifier key 
+  typing('k').whileModifierPressed().shouldShow('');
+  typing('m').whileModifierPressed().shouldShow('');
+  typing('b').whileModifierPressed().shouldShow('');
+  typing('-').whileModifierPressed().shouldShow('');
+  typing('.').whileModifierPressed().shouldShow('');
+  typing(',').whileModifierPressed().shouldShow('');
+
   // Number with shortcuts
   typing('k').shouldShow('1,000');
   typing('m').shouldShow('1,000,000');

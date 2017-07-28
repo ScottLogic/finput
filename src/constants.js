@@ -1,3 +1,14 @@
+exports.KEYS = {
+  numpadAdd: 'add',
+  numpadSubtract: 'subtract',
+  numpadMultiply: 'multiply',
+  numpadDivide: 'divide',
+  meta: 'metaKey',
+  ctrl: 'ctrlKey',
+  shift: 'shiftKey',
+  alt: 'altKey'
+}
+
 exports.ACTION_TYPES = {
   NUMBER: 'NUMBER',
   SHORTCUT: 'SHORTCUT',

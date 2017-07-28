@@ -149,8 +149,12 @@ Sets and formats the value for the input
 Developing
 ----------
 
-Install dependencies: 
+Install dependencies:
 - `npm install`
+
+Adding dependencies:
+- Do not commit `yarn.lock`
+- Do commit `package-lock.json`
 
 Run dev server:
 - `npm start`
