@@ -44,7 +44,7 @@
     "webdriver": "webdriver-manager",
     "e2e": "jest --config ./test/jestConfig.json",
     "test:ci": "run-p -r start:silent e2e",
-    "test": "npm-run-all 'webdriver -- update' --parallel -r 'webdriver -- start --quiet' 'test:ci'",
+    "test": "npm-run-all \"webdriver -- update\" --parallel -r \"webdriver -- start --quiet\" test:ci",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   }
 }
