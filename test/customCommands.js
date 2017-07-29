@@ -1,6 +1,6 @@
-import { Key } from 'selenium-webdriver';
+import { Key, WebElement } from 'selenium-webdriver';
 import { nativeText } from './pageObjects/index';
-import { isMac, isChrome, getModifierKey } from './helpers';
+import { isMac, isChrome, getModifierKey, driver } from './helpers';
 import { mapKeys } from './keys';
 
 const shouldSkipModifierKeyTest = async () => {
@@ -51,6 +51,17 @@ export default (finputElement) => {
         expect(observed).toBe(expected);
       });
       return chainFunctions;
+    };
+
+    chainFunctions.shouldHaveFocus = (expected) => {
+        it(`should have focus: ` + expected, async () => {
+            const element = await finputElement();
+            const activeElement = await driver.switchTo().activeElement();
+            const observed = await WebElement.equals(element, activeElement);
+            expect(observed).toBe(expected);
+        });
+
+        return chainFunctions;
     };
 
     return chainFunctions;
