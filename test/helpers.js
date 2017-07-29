@@ -6,6 +6,7 @@ const Platform = {
 };
 
 export const driver = new Builder()
+  .forBrowser(Browser.CHROME)
   .withCapabilities(getCapabilities())
   .usingServer('http://localhost:4444/wd/hub')
   .build();
