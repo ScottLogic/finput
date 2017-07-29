@@ -8,7 +8,7 @@ const finputSwitchOptionsSelector = { css: '#finput-switch-options' };
 const finputSwitchOptionsButtonSelector = { css: '#finput-switch-options-button' }; 
 const nativeTextSelector = { css: '#native-text' };
 
-export const finputDefault = () => driver.findElement(finputDefaultSelector);
+export const finputDefaultDelimiters = () => driver.findElement(finputDefaultSelector);
 export const finputReversedDelimiters = () => driver.findElement(finputReversedDelimitersSelector);
 export const finputSwitchOptions = () => driver.findElement(finputSwitchOptionsSelector);
 export const finputSwitchOptionsButton = () => driver.findElement(finputSwitchOptionsButtonSelector);
