@@ -1,4 +1,4 @@
-import { Builder, Key, Capability, Browser } from 'selenium-webdriver';
+import {Builder, Key, Capability, Browser} from 'selenium-webdriver';
 import getCapabilities from './capabilities';
 
 const Platform = {
@@ -10,7 +10,7 @@ export const driver = new Builder()
   .withCapabilities(getCapabilities())
   .usingServer('http://localhost:4444/wd/hub')
   .build();
-  
+
 export const isMac = async () => {
   const capabilities = await driver.getCapabilities();
   const os = capabilities.get(Capability.PLATFORM);
