@@ -4,7 +4,7 @@ import customCommandsFactory from '../customCommands';
 const {typing} = customCommandsFactory(finputDefaultDelimiters);
 
 describe('traversals', () => {
-  beforeAll(async () => await load());
+  beforeAll(load);
 
   describe('supports HOME and END keys sending caret to start / end of field', () => {
     typing(`12⇤3`).shouldShow(`312`).shouldHaveFocus(true).shouldHaveCaretAt(1);
