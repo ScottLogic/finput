@@ -28,7 +28,7 @@ export default (finputElement) => {
 
     chainFunctions.shouldShow = (expected) => {
       const withModifierMsg = pressModifier ? "with modifier key" : "";
-      const testName = `should show "${expected}" when "${keys}" are pressed ${withModifierMsg}`;
+      const testName = `should show "${expected}" when "${keys}" ${keys.length === 1 ? 'is' : 'are' } pressed ${withModifierMsg}`;
 
       it(testName, async () => {
         await finputElement().clear();
