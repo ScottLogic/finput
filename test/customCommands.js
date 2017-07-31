@@ -115,6 +115,7 @@ export default (finputElement) => {
         await nativeText().sendKeys(text);
         await nativeText().sendKeys(Key.chord(modifierKey, 'a'));
         await nativeText().sendKeys(Key.chord(modifierKey, 'c'));
+        await nativeText().clear();
 
         await finputElement().clear();
         await finputElement().click();
