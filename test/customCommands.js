@@ -1,5 +1,5 @@
 import {Key, WebElement} from 'selenium-webdriver';
-import {nativeText} from './pageObjects/index';
+import {nativeText, finputSwitchOptionsButton} from './pageObjects/index';
 import {isMac, isChrome, getModifierKey, driver} from './helpers';
 import {mapKeys} from './keys';
 
@@ -13,8 +13,15 @@ export default (finputElement) => {
   const typing = (keys) => {
     let unfocusAfter = false;
     let pressModifier = false;
+    let switchDelimiter = false;
 
     const chainFunctions = {};
+
+
+    chainFunctions.thenSwitchingDelimiters = () => {
+      switchDelimiter = true;
+      return chainFunctions;
+    };
 
     chainFunctions.thenFocusingOut = () => {
       unfocusAfter = true;
@@ -47,6 +54,10 @@ export default (finputElement) => {
           await finputElement().sendKeys(Key.chord(modifierKey, mapKeys(keys)));
         } else {
           await finputElement().sendKeys(mapKeys(keys));
+        }
+
+        if (switchDelimiter) {
+          await finputSwitchOptionsButton().click();
         }
 
         if (unfocusAfter) {
