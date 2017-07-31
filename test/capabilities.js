@@ -1,8 +1,8 @@
-import { Capability, Browser } from 'selenium-webdriver';
+import {Capability, Browser} from 'selenium-webdriver';
 
 export default () => {
   let capabilities = {
-      [Capability.BROWSER_NAME]: Browser.CHROME,
+    [Capability.BROWSER_NAME]: Browser.CHROME,
   };
 
   if (process.env.CI) {

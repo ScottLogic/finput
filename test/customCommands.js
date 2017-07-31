@@ -11,7 +11,7 @@ const shouldSkipModifierKeyTest = async () => {
 
 export default (finputElement) => {
   const typing = (keys) => {
-    let unfocusAfter = false;
+    let blurAfter = false;
     let pressModifier = false;
     let switchDelimiter = false;
 
@@ -23,8 +23,8 @@ export default (finputElement) => {
       return chainFunctions;
     };
 
-    chainFunctions.thenFocusingOut = () => {
-      unfocusAfter = true;
+    chainFunctions.thenBlurring = () => {
+      blurAfter = true;
       return chainFunctions;
     };
 
@@ -60,7 +60,7 @@ export default (finputElement) => {
           await finputSwitchOptionsButton().click();
         }
 
-        if (unfocusAfter) {
+        if (blurAfter) {
           await nativeText().click();
         }
 

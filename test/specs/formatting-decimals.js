@@ -28,9 +28,9 @@ describe('formatting decimals', () => {
     });
 
     describe('on blur', () => {
-      typing(`0.8`).thenFocusingOut().shouldShow(`0.80`);
-      typing(`.8`).thenFocusingOut().shouldShow(`0.80`);
-      typing(`8.88`).thenFocusingOut().shouldShow(`8.88`);
+      typing(`0.8`).thenBlurring().shouldShow(`0.80`);
+      typing(`.8`).thenBlurring().shouldShow(`0.80`);
+      typing(`8.88`).thenBlurring().shouldShow(`8.88`);
     });
   });
 
@@ -57,9 +57,9 @@ describe('formatting decimals', () => {
     });
 
     describe('on blur', () => {
-      typing(`0,8`).thenFocusingOut().shouldShow(`0,80`);
-      typing(`,8`).thenFocusingOut().shouldShow(`0,80`);
-      typing(`8,88`).thenFocusingOut().shouldShow(`8,88`);
+      typing(`0,8`).thenBlurring().shouldShow(`0,80`);
+      typing(`,8`).thenBlurring().shouldShow(`0,80`);
+      typing(`8,88`).thenBlurring().shouldShow(`8,88`);
     })
   });
 

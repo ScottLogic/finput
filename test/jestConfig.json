@@ -1,8 +1,8 @@
 {
-    "testMatch": [
-        "**/specs/**/*.js"
-    ],
-    "globals": {
-        "__baseUrl__": "http://localhost:3000"
-    }
+  "testMatch": [
+    "**/specs/**/*.js"
+  ],
+  "globals": {
+    "__baseUrl__": "http://localhost:3000"
+  }
 }

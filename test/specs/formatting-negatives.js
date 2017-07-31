@@ -20,12 +20,12 @@ describe('formatting negatives', () => {
     });
 
     describe('on blur', () => {
-      typing(`-.`).thenFocusingOut().shouldShow(`-0.00`);
-      typing(`-`).thenFocusingOut().shouldShow(`-0.00`);
-      typing(`-0`).thenFocusingOut().shouldShow(`-0.00`);
-      typing(`-0.`).thenFocusingOut().shouldShow(`-0.00`);
-      typing(`-.66`).thenFocusingOut().shouldShow(`-0.66`);
-      typing(`-1000`).thenFocusingOut().shouldShow(`-1,000.00`);
+      typing(`-.`).thenBlurring().shouldShow(`-0.00`);
+      typing(`-`).thenBlurring().shouldShow(`-0.00`);
+      typing(`-0`).thenBlurring().shouldShow(`-0.00`);
+      typing(`-0.`).thenBlurring().shouldShow(`-0.00`);
+      typing(`-.66`).thenBlurring().shouldShow(`-0.66`);
+      typing(`-1000`).thenBlurring().shouldShow(`-1,000.00`);
     });
   });
 
@@ -44,12 +44,12 @@ describe('formatting negatives', () => {
     });
 
     describe('on blur', () => {
-      typing(`-,`).thenFocusingOut().shouldShow(`-0,00`);
-      typing(`-`).thenFocusingOut().shouldShow(`-0,00`);
-      typing(`-0`).thenFocusingOut().shouldShow(`-0,00`);
-      typing(`-0,`).thenFocusingOut().shouldShow(`-0,00`);
-      typing(`-,66`).thenFocusingOut().shouldShow(`-0,66`);
-      typing(`-1000`).thenFocusingOut().shouldShow(`-1.000,00`);
+      typing(`-,`).thenBlurring().shouldShow(`-0,00`);
+      typing(`-`).thenBlurring().shouldShow(`-0,00`);
+      typing(`-0`).thenBlurring().shouldShow(`-0,00`);
+      typing(`-0,`).thenBlurring().shouldShow(`-0,00`);
+      typing(`-,66`).thenBlurring().shouldShow(`-0,66`);
+      typing(`-1000`).thenBlurring().shouldShow(`-1.000,00`);
     });
   });
 
