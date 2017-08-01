@@ -1,4 +1,5 @@
 {
+  "setupTestFrameworkScriptFile": "./setupTests.js",
   "testMatch": [
     "**/specs/**/*.js"
   ],
