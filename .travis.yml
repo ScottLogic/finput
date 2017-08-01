@@ -7,9 +7,11 @@ notifications:
   email: false
 before_script:
 - npm prune
+- npm run start:silent
+- sleep 5 # give budo some time to start
 script:
 - npm run build
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run e2e; fi
 after_success:
 - npm run semantic-release
 branches:

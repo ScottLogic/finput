@@ -1,12 +1,12 @@
 import {Builder, Key, Capability, Browser} from 'selenium-webdriver';
-import getCapabilities from './capabilities';
+import capabilities from './capabilities';
 
 const Platform = {
   MAC: 'MAC'
 };
 
 export const driver = new Builder()
-  .withCapabilities(getCapabilities())
+  .withCapabilities(capabilities)
   .usingServer('http://deankerr3:67XKsvRzEwRyzVvydgyx@hub-cloud.browserstack.com/wd/hub')
   .build();
 
