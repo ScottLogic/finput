@@ -9,6 +9,7 @@ const capabilities = {
 if (process.env.CI) {
   capabilities['browserstack.local'] = true;
   capabilities['browserstack.localIdentifier'] = process.env.BROWSERSTACK_LOCAL_IDENTIFIER || process.env.TRAVIS_JOB_NUMBER;
+  capabilities['browserstack.networkLogs'] = true;
 }
 
 export default capabilities;
