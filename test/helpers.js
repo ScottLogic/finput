@@ -5,9 +5,20 @@ const Platform = {
   MAC: 'MAC'
 };
 
+const getSeleniumURL = () => {
+  if(process.env.BROWSERSTACK_USERNAME && process.env.BROWSERSTACK_ACCESS_KEY) {
+    return `http://${process.env.BROWSERSTACK_USERNAME}:${process.env.BROWSERSTACK_ACCESS_KEY}` +
+      `@hub-cloud.browserstack.com/wd/hub`;
+  }
+
+  return 'http://localhost:4444/wd/hub'
+};
+
+
+
 export const driver = new Builder()
   .withCapabilities(capabilities)
-  .usingServer('http://deankerr3:67XKsvRzEwRyzVvydgyx@hub-cloud.browserstack.com/wd/hub')
+  .usingServer(getSeleniumURL())
   .build();
 
 export const isMac = async () => {
