@@ -232,6 +232,21 @@ a {
 .site-footer-credits {
   color: #819198; }
 
+a.browserstack {
+  background: url('../images/browserstack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  color: transparent;
+  display: inline-block;
+  border-radius: 3px;
+}
+
+a.browserstack:hover {
+  background-color: lightgray;
+  color: transparent;
+}
+
 @media screen and (min-width: 64em) {
   .site-footer {
     font-size: 1rem; } }
