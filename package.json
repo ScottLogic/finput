@@ -40,11 +40,11 @@
     "build:lib": "babel ./src -d ./lib",
     "build": "run-s clean build:dist build:lib",
     "start": "budo -l -o -p 3000 src/finput.js:dist/finput.js -- -s finput -t babelify",
-    "start:silent": "budo --no-stream -p 3000 src/finput.js:dist/finput.js -- -s finput -t babelify",
+    "start:silent": "budo -p 3000 src/finput.js:dist/finput.js -- -s finput -t babelify",
     "webdriver": "webdriver-manager",
     "e2e": "jest --config ./test/jestConfig.json",
+    "test": "npm-run-all \"webdriver -- update\" --parallel -r \"webdriver -- start --quiet\" test:ci",
     "test:ci": "run-p -r start:silent e2e",
-    "test": "npm-run-all 'webdriver -- update' --parallel -r 'webdriver -- start --quiet' 'test:ci'",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   }
 }

@@ -1,15 +1,26 @@
-import { Builder, Key, Capability, Browser } from 'selenium-webdriver';
-import getCapabilities from './capabilities';
+import {Builder, Key, Capability, Browser} from 'selenium-webdriver';
+import capabilities from './capabilities';
 
 const Platform = {
   MAC: 'MAC'
 };
 
+const getSeleniumURL = () => {
+  if(process.env.BROWSERSTACK_USERNAME && process.env.BROWSERSTACK_ACCESS_KEY) {
+    return `http://${process.env.BROWSERSTACK_USERNAME}:${process.env.BROWSERSTACK_ACCESS_KEY}` +
+      `@hub-cloud.browserstack.com/wd/hub`;
+  }
+
+  return 'http://localhost:4444/wd/hub'
+};
+
+
+
 export const driver = new Builder()
-  .withCapabilities(getCapabilities())
-  .usingServer('http://localhost:4444/wd/hub')
+  .withCapabilities(capabilities)
+  .usingServer(getSeleniumURL())
   .build();
-  
+
 export const isMac = async () => {
   const capabilities = await driver.getCapabilities();
   const os = capabilities.get(Capability.PLATFORM);
