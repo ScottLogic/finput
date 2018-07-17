@@ -4,7 +4,9 @@ cache:
   directories:
   - node_modules
 notifications:
-  email: false
+  email:
+    on_success: change
+    on_failure: always
 before_script:
 - npm prune
 script:
