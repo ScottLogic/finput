@@ -6,6 +6,8 @@ const Platform = {
 };
 
 const getSeleniumURL = () => {
+  console.log('******');
+  console.log(process.env.BROWSERSTACK_USERNAME, process.env.BROWSERSTACK_ACCESS_KEY);
   if(process.env.BROWSERSTACK_USERNAME && process.env.BROWSERSTACK_ACCESS_KEY) {
     return `http://${process.env.BROWSERSTACK_USERNAME}:${process.env.BROWSERSTACK_ACCESS_KEY}` +
       `@hub-cloud.browserstack.com/wd/hub`;
