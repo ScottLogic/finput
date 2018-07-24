@@ -1,28 +1,41 @@
-import {load, finputDefaultDelimiters} from '../pageObjects/index';
-import customCommandsFactory from '../customCommands';
-
-const {typing} = customCommandsFactory(finputDefaultDelimiters);
+import { load, unload } from '../pageObjects/index';
+import { getDriver } from '../helpers';
+import { typing, itTyping } from '../customCommands';
 
 describe('modifiers', () => {
-  beforeAll(load);
+
+  let driver;
+  let finputDefaultDelimiters;
+
+  beforeAll(async () => {
+    driver = getDriver();
+    ({ finputDefaultDelimiters } = await load(driver));
+    
+    itTyping.expectTyping = typing({
+      driver,
+      finputElement: finputDefaultDelimiters
+    });
+  });
+
+  afterAll(async () => await unload(driver));
 
   describe('are not blocked from activating keyboard shortcuts', () => {
     // TODO: find a way to test browser shortcuts blur the input (not currently working with chromedriver)
-    typing('k').whileModifierPressed().shouldShow('');
-    typing('m').whileModifierPressed().shouldShow('');
-    typing('b').whileModifierPressed().shouldShow('');
-    typing('l').whileModifierPressed().shouldShow('');
-    typing('h').whileModifierPressed().shouldShow('');
+    itTyping({ tested: 'k', pressModifier: true, expected: '' });
+    itTyping({ tested: 'm', pressModifier: true, expected: '' });
+    itTyping({ tested: 'b', pressModifier: true, expected: '' });
+    itTyping({ tested: 'l', pressModifier: true, expected: '' });
+    itTyping({ tested: 'h', pressModifier: true, expected: '' });
 
-    typing('0').whileModifierPressed().shouldShow('');
-    typing('1').whileModifierPressed().shouldShow('');
-    typing('2').whileModifierPressed().shouldShow('');
-    typing('3').whileModifierPressed().shouldShow('');
+    itTyping({ tested: '0', pressModifier: true, expected: '' });
+    itTyping({ tested: '1', pressModifier: true, expected: '' });
+    itTyping({ tested: '2', pressModifier: true, expected: '' });
+    itTyping({ tested: '3', pressModifier: true, expected: '' });
 
-    typing('-').whileModifierPressed().shouldShow('');
-    typing('+').whileModifierPressed().shouldShow('');
-    typing('.').whileModifierPressed().shouldShow('');
-    typing(',').whileModifierPressed().shouldShow('');
+    itTyping({ tested: '-', pressModifier: true, expected: '' });
+    itTyping({ tested: '+', pressModifier: true, expected: '' });
+    itTyping({ tested: '.', pressModifier: true, expected: '' });
+    itTyping({ tested: ',', pressModifier: true, expected: '' });
   });
 });
 ;

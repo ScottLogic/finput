@@ -1,5 +1,5 @@
-import {until} from 'selenium-webdriver';
-import {driver, defaultTimeout} from '../helpers';
+import {Builder, until} from 'selenium-webdriver';
+import {defaultTimeout} from '../helpers';
 
 const rootSelector = {css: '#root'};
 const finputDefaultSelector = {css: '#finput-default'};
@@ -8,14 +8,21 @@ const finputSwitchOptionsSelector = {css: '#finput-switch-options'};
 const finputSwitchOptionsButtonSelector = {css: '#finput-switch-options-button'};
 const nativeTextSelector = {css: '#native-text'};
 
-export const finputDefaultDelimiters = () => driver.findElement(finputDefaultSelector);
-export const finputReversedDelimiters = () => driver.findElement(finputReversedDelimitersSelector);
-export const finputSwitchOptions = () => driver.findElement(finputSwitchOptionsSelector);
-export const finputSwitchOptionsButton = () => driver.findElement(finputSwitchOptionsButtonSelector);
-export const nativeText = () => driver.findElement(nativeTextSelector);
+export const load = async (driver) => { 
 
-const root = () => driver.findElement(rootSelector);
-export const load = async () => {
   await driver.get(`${__baseUrl__}/`);
+
+  const root = () => driver.findElement(rootSelector);
   await driver.wait(until.elementLocated(root), defaultTimeout);
+
+  return {
+    driver,
+    finputDefaultDelimiters: () => driver.findElement(finputDefaultSelector),
+    finputReversedDelimiters: () => driver.findElement(finputReversedDelimitersSelector),
+    finputSwitchOptions: () => driver.findElement(finputSwitchOptionsSelector),
+    finputSwitchOptionsButton: () => driver.findElement(finputSwitchOptionsButtonSelector),
+    nativeText: () => driver.findElement(nativeTextSelector)
+  }
 };
+
+export const unload = (driver) => async () => await driver.quit();
