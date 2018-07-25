@@ -1,4 +1,6 @@
-finput
+finput  
+![Travis build status](https://travis-ci.org/ScottLogic/finput.svg?branch=master)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 ======
 
 A vanilla-JS financial amount input control. Supports the following features:
@@ -188,3 +190,8 @@ Releasing
 [semantic-release](https://github.com/semantic-release/semantic-release) is used with Travis CI to perform releases on merged PRs to `master` branch.
 
 Commit messages must follow [AngularJS Commit Message Conventions](https://github.com/semantic-release/semantic-release#default-commit-message-format) for `semantic-release` to correctly choose the next version.
+
+If the Travis CI build for a new release is successful, it is published to npm.
+`./lib/finput.js` is used by npm installs, and `./dist/finput.min.js` is 
+automatically served by [UNPKG](https://unpkg.com/) CDN at `https://unpkg.com/finput@latest/dist/finput.min.js` to directly load finput 
+in a browser environment.
