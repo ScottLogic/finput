@@ -1,30 +1,55 @@
-import {load, finputReversedDelimiters, finputDefaultDelimiters} from '../pageObjects/index';
-import customCommandsFactory from '../customCommands';
+import { load, unload } from '../pageObjects/index';
+import { getDriver } from '../helpers';
+import { cutting, itCutting } from '../customCommands';
 
 describe('cutting', () => {
-  beforeAll(load);
+
+  let driver;
+  let finputDefaultDelimiters;
+  let finputReversedDelimiters;
+
+  beforeAll(async () => {
+    driver = getDriver();
+    ({ 
+      finputDefaultDelimiters, 
+      finputReversedDelimiters 
+    } = await load(driver));
+  });
+
+  afterAll(async () => await unload(driver));
 
   describe('default delimiters', () => {
-    const {cutting} = customCommandsFactory(finputDefaultDelimiters);
+
+    beforeAll(() => {
+      itCutting.expectCutting = cutting({
+        driver,
+        finputElement: finputDefaultDelimiters
+      });
+    });
 
     // Cutting from input (should fully format unless no characters selected)
     // None selected
-    cutting(0).characters().from(`123456`).startingFrom(0).shouldShow(`123,456`);
-    cutting(2).characters().from(`12`).startingFrom(2).shouldShow(`12`);
-
-    cutting(4).characters().from(`123456`).startingFrom(1).shouldShow(`156.00`);
-    cutting(5).characters().from(`1234`).startingFrom(0).shouldShow(``);
+    itCutting({ cut: 0, startingFrom: 0, tested: `123456`, expected: `123,456` });
+    itCutting({ cut: 2, startingFrom: 2, tested: `12`, expected: `12` });
+    itCutting({ cut: 4, startingFrom: 1, tested: `123456`, expected: `156.00` });
+    itCutting({ cut: 5, startingFrom: 0, tested: `1234`, expected: `` });
   });
 
   describe('reversed delimiters', () => {
-    const {cutting} = customCommandsFactory(finputReversedDelimiters);
+
+    beforeAll(() => {
+      itCutting.expectCutting = cutting({
+        driver,
+        finputElement: finputReversedDelimiters
+      });
+    });
 
     // Cutting from input (should fully format unless no characters selected)
     // None selected
-    cutting(0).characters().from(`123456`).startingFrom(0).shouldShow(`123.456`);
-    cutting(2).characters().from(`12`).startingFrom(2).shouldShow(`12`);
-
-    cutting(4).characters().from(`123456`).startingFrom(1).shouldShow(`156,00`);
-    cutting(5).characters().from(`1234`).startingFrom(0).shouldShow(``);
+    itCutting({ cut: 0, startingFrom: 0, tested: `123456`, expected: `123.456` });
+    itCutting({ cut: 2, startingFrom: 2, tested: `12`, expected: `12` });
+    itCutting({ cut: 4, startingFrom: 1, tested: `123456`, expected: `156,00` });
+    itCutting({ cut: 5, startingFrom: 0, tested: `1234`,expected: `` });    
   });
+  
 });
