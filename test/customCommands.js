@@ -1,67 +1,194 @@
 import {Key, WebElement} from 'selenium-webdriver';
-import {nativeText, finputSwitchOptionsButton} from './pageObjects/index';
-import {isMac, isChrome, getModifierKey, driver} from './helpers';
+import {isMac, isChrome, getModifierKey} from './helpers';
 import {mapKeys} from './keys';
 
-const shouldSkipModifierKeyTest = async () => {
-  const mac = await isMac();
-  const chrome = await isChrome();
+const shouldSkipModifierKeyTest = async (driver) => {
+  const mac = await isMac(driver);
+  const chrome = await isChrome(driver);
   return mac && chrome;
 };
 
-export default (finputElement) => {
-  const typing = (keys) => {
+export default () => {
+
+  let driver;
+  let finputElement;
+  let finputSwitchOptionsButton;
+  let nativeText;
+
+  const test = () => {
+    const chainFunctions = {};
+    const commands = [];
+    let testMessage = '';
+
+    let startPos;
+    let textCut;
     let blurAfter = false;
     let pressModifier = false;
     let switchDelimiter = false;
 
-    const chainFunctions = {};
+    chainFunctions.copyingAndPasting = (text) => {
+      commands.push({
+        action: async () => {
+          const modifierKey = await getModifierKey(driver);
+          
+          await nativeText().clear();
+          await nativeText().click();
+          await nativeText().sendKeys(text);
+          await nativeText().sendKeys(Key.chord(modifierKey, 'a'));
+          await nativeText().sendKeys(Key.chord(modifierKey, 'c'));
+          await nativeText().clear();
+          
+          await finputElement().clear();
+          await finputElement().click();
+          await finputElement().sendKeys(Key.chord(modifierKey, 'v'));
+        },
+        message: `copying and pasting "${text}" `
+      });
 
+      return chainFunctions;
+    };
+
+    chainFunctions.cutting = (count) => {
+      commands.push({
+        action: async () => {
+          const modifierKey = await getModifierKey(driver);
+
+          await finputElement().clear();
+          await finputElement().click();
+          await finputElement().sendKeys(textCut);
+          await finputElement().sendKeys(Key.chord(modifierKey, 'a'));
+          await finputElement().sendKeys(mapKeys('←'));
+          await finputElement().sendKeys(Array(startPos + 1).join(mapKeys('→')));
+          await finputElement().sendKeys(Key.chord(Key.SHIFT, Array(count + 1).join(mapKeys('→'))));
+          await finputElement().sendKeys(Key.chord(modifierKey, 'x'));
+        },
+        message: `cutting "${count}" `
+      });
+
+      return chainFunctions;
+    };
+
+    chainFunctions.characters = () => {
+      commands.push({
+        action: () => {},
+        message: `characters `,
+        setup: true
+      });
+
+      return chainFunctions;
+    };
+
+    chainFunctions.from = (text) => {
+      commands.push({
+        action: () => (textCut = text),
+        message: `from "${text}" `,
+        setup: true
+      });
+
+      return chainFunctions;
+    };
+
+    chainFunctions.startingFrom = (start) => {
+      commands.push({
+        action: () => (startPos = start),
+        message: `starting from "${start}" `,
+        setup: true
+      });
+
+      return chainFunctions;
+    };
+
+    chainFunctions.typing = (keys) => {
+      commands.push({
+        action: async () => {
+          await finputElement().clear();
+          await finputElement().click();
+
+          if (pressModifier) {
+            const mac = await isMac(driver);
+            const chrome = await isChrome(driver);
+
+            if (mac && chrome) {
+              console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`);
+              return false;
+            }
+
+            const modifierKey = await getModifierKey(driver);
+            await finputElement().sendKeys(Key.chord(modifierKey, mapKeys(keys)));
+          } else {
+            await finputElement().sendKeys(mapKeys(keys));
+          }
+
+          if (switchDelimiter) {
+            await finputSwitchOptionsButton().click();
+          }
+
+          if (blurAfter) {
+            await nativeText().click();
+          }
+        },
+        message: `typing "${keys}" `
+      });
+
+      return chainFunctions;
+    };
 
     chainFunctions.thenSwitchingDelimiters = () => {
-      switchDelimiter = true;
+      commands.push({
+        action: () => (switchDelimiter = true),
+        message: `then switching delimiters `,
+        setup: true
+      });
+
       return chainFunctions;
     };
 
     chainFunctions.thenBlurring = () => {
-      blurAfter = true;
+      commands.push({
+        action: () => (blurAfter = true),
+        message: `then blurring `,
+        setup: true
+      });
+
       return chainFunctions;
     };
 
     chainFunctions.whileModifierPressed = () => {
-      pressModifier = true;
+      commands.push({
+        action: () => (pressModifier = true),
+        message: `with modifier key `,
+        setup: true
+      });
+
       return chainFunctions;
     };
 
     chainFunctions.shouldShow = (expected) => {
-      const withModifierMsg = pressModifier ? "with modifier key" : "";
-      const testName = `should show "${expected}" when "${keys}" ${keys.length === 1 ? 'is' : 'are' } pressed ${withModifierMsg}`;
+      const testMessage = 
+        commands
+          .map(command => command.message)
+          .join('')
+          .concat(`should show "${expected}" `);
 
-      it(testName, async () => {
-        await finputElement().clear();
-        await finputElement().click();
+      it(testMessage, async () => {
+        if (await shouldSkipModifierKeyTest(driver)) {
+          console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
+          return;
+        }
 
-        if (pressModifier) {
-          const mac = await isMac();
-          const chrome = await isChrome();
+        const execCommands = [];
 
-          if (mac && chrome) {
-            console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`);
+        for (let command of commands)
+          if (command.setup === true)
+            await command.action();
+          else 
+            execCommands.push(command);
+
+        let result;
+        for (let command of execCommands) {
+          result = await command.action();
+          if (result === false)
             return;
-          }
-
-          const modifierKey = await getModifierKey();
-          await finputElement().sendKeys(Key.chord(modifierKey, mapKeys(keys)));
-        } else {
-          await finputElement().sendKeys(mapKeys(keys));
-        }
-
-        if (switchDelimiter) {
-          await finputSwitchOptionsButton().click();
-        }
-
-        if (blurAfter) {
-          await nativeText().click();
         }
 
         const observed = await finputElement().getAttribute('value');
@@ -98,81 +225,14 @@ export default (finputElement) => {
     return chainFunctions;
   };
 
-  const copyingAndPasting = (text) => {
-    const chainFunctions = {};
-
-    chainFunctions.shouldShow = (expected) => {
-      const testName = `should show "${expected}" when "${text}" is copied and pasted`;
-      it(testName, async () => {
-        if (await shouldSkipModifierKeyTest()) {
-          console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
-          return;
-        }
-        const modifierKey = await getModifierKey();
-
-        await nativeText().clear();
-        await nativeText().click();
-        await nativeText().sendKeys(text);
-        await nativeText().sendKeys(Key.chord(modifierKey, 'a'));
-        await nativeText().sendKeys(Key.chord(modifierKey, 'c'));
-        await nativeText().clear();
-
-        await finputElement().clear();
-        await finputElement().click();
-        await finputElement().sendKeys(Key.chord(modifierKey, 'v'));
-
-        const observed = await finputElement().getAttribute('value');
-        expect(observed).toBe(expected);
-      });
-
-      return chainFunctions;
-    };
-
-    return chainFunctions;
+  test.withEnvironment = (env) => {
+    ({
+      driver,
+      finputElement,
+      finputSwitchOptionsButton,
+      nativeText
+    } = env);
   };
 
-  const cutting = (count) => {
-    let text, startPos;
-    const chainFunctions = {};
-
-    chainFunctions.characters = () => chainFunctions;
-
-    chainFunctions.from = (t) => {
-      text = t;
-      return chainFunctions;
-    };
-
-    chainFunctions.startingFrom = (start) => {
-      startPos = start;
-      return chainFunctions;
-    };
-
-    chainFunctions.shouldShow = (expected) => {
-      const testName = `should show "${expected}" when "${text}" has chars cut`;
-      it(testName, async () => {
-        if (await shouldSkipModifierKeyTest()) {
-          console.warn(`Skipping test as Command key fails on Chrome/Mac. Note that this will show as a passing test. Test: '${testName}'`)
-          return;
-        }
-        const modifierKey = await getModifierKey();
-
-        await finputElement().clear();
-        await finputElement().click();
-        await finputElement().sendKeys(text);
-        await finputElement().sendKeys(Key.chord(modifierKey, 'a'));
-        await finputElement().sendKeys(mapKeys('←'));
-        await finputElement().sendKeys(Array(startPos + 1).join(mapKeys('→')));
-        await finputElement().sendKeys(Key.chord(Key.SHIFT, Array(count + 1).join(mapKeys('→'))));
-        await finputElement().sendKeys(Key.chord(modifierKey, 'x'));
-
-        const observed = await finputElement().getAttribute('value');
-        expect(observed).toBe(expected);
-      });
-      return chainFunctions;
-    };
-
-    return chainFunctions;
-  };
-
-  return {typing, copyingAndPasting, cutting};
+  return test;
 };
