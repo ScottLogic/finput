@@ -111,10 +111,6 @@ as follows:
 **Formatted value** - `element.value` _(the normal input value)_  
 **Raw numeric value** - `element.rawValue`
 
-
-This function removes all the event listeners, making the input behaviour like the default browser
-input once again.
-
 API
 --------------------
 
