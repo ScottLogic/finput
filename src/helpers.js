@@ -184,6 +184,7 @@ exports.allowedZero = function(val, char, caretPos, options) {
  */
 exports.formattedToRaw = function(formattedValue, options) {
   if (is.not.string(formattedValue)) return NaN;
+  if (!formattedValue.length) return undefined;
 
   // Number(...) accepts thousands ',' or '' and decimal '.' so we must:
 

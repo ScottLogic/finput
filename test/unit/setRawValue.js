@@ -24,12 +24,12 @@ describe('setRawValue', () => {
         expect(element.rawValue).toBe(undefined);
     });
 
-    it('sets value to empty string and rawValue to 0 when entry is deleted', () => {
+    it('resets back to empty string and undefined when entry is deleted', () => {
         element.setRawValue(100);
         element.setRawValue('');
 
         expect(element.value).toBe('');
-        expect(element.rawValue).toBe(0);
+        expect(element.rawValue).toBe(undefined);
     });
 
 });
