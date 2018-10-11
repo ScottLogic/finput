@@ -14,29 +14,29 @@ const getSeleniumURL = () => {
   return 'http://localhost:4444/wd/hub'
 };
 
-
-
-export const driver = new Builder()
+const driver = new Builder()
   .withCapabilities(capabilities)
   .usingServer(getSeleniumURL())
   .build();
 
-export const isMac = async () => {
+export const getDriver = () => driver;
+
+export const isMac = async (driver) => {
   const capabilities = await driver.getCapabilities();
   const os = capabilities.get(Capability.PLATFORM);
   return os.toUpperCase().indexOf(Platform.MAC) >= 0;
 };
 
-export const isBrowser = async (browserName) => {
+const isBrowser = (driver) => async (browserName) => {
   const capabilities = await driver.getCapabilities();
   const browser = capabilities.get(Capability.BROWSER_NAME);
   return browser.indexOf(browserName) >= 0;
 };
 
-export const isChrome = async () => isBrowser(Browser.CHROME);
+export const isChrome = async (driver) => isBrowser(driver)(Browser.CHROME);
 
-export const getModifierKey = async () => {
-  const mac = await isMac();
+export const getModifierKey = async (driver) => {
+  const mac = await isMac(driver);
   return mac ? Key.COMMAND : Key.CONTROL;
 };
 
@@ -46,7 +46,6 @@ afterAll(async () => {
     listener();
     process.removeListener('exit', listener);
   }
-  await driver.quit();
 });
 
 export const defaultTimeout = 10e3;
