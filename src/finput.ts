@@ -1,16 +1,12 @@
-import keyHandlers from './keyHandlers';
 import key from './key';
-import helpers from './helpers';
+import * as helpers from './helpers';
 import { getActionType, getHandlerForAction } from './actions';
 import ValueHistory from './valueHistory';
-import { ACTION_TYPES, DRAG_STATES, RANGE } from './constants';
+import {ActionType, DragState, Range} from './constants';
 
-/**
- * CONSTANTS
- */
 const DEFAULTS = {
   scale: 2,
-  range: RANGE.ALL,
+  range: Range.ALL,
   fixed: true,
   thousands: ',',
   decimal: '.',
@@ -22,27 +18,15 @@ const DEFAULTS = {
   invalidKeyCallback: () => {}
 };
 
-/**
- * FINPUT COMPONENT CLASS
- * @class
- */
-class Finput {
+type FinputElement = HTMLInputElement & { rawValue: number };
 
-  /**
-   * Constructor
-   * @param {DOM Element} The number input
-   * @param {Options} Options for the number input's behaviour
-   *
-   * Detailed list of possible options:
-   * @param {Options.scale} maximum number of decimal digits
-   * @param {Options.range} Whether number can take any value or must be positive
-   * @param {Options.fixed} After focus is lost - value is formatted to *scale* number of decimal places
-   * @param {Options.thousands} Character to use for the thousands separator
-   * @param {Options.decimal} Character to use for the decimal point
-   * @param {Options.shortcuts} Object map of shortcut characters to multiplier (e.g. { k: 1000 })
-   * @param {Options.invalidKeyCallback} Function callback that will be called on an invalid keypress
-   * @param {Options.onFocusinCallback} Function callback that will be called via the onFocusin event
-   */
+class Finput {
+  private readonly _element: FinputElement;
+  private _options: any;
+  private readonly _history: ValueHistory;
+  private readonly _listeners: { [key: string]: { element: HTMLInputElement | Document, handler: EventListenerObject }};
+  private _dragState: DragState;
+
   constructor(element, options) {
     this._element = element;
     this._options = {
@@ -88,20 +72,10 @@ class Finput {
     };
   }
 
-  /**
-   * Get numerical value of the given value
-   * @param {value} Value to convert
-   */
   getRawValue(value) {
     return helpers.formattedToRaw(value, this.options);
   }
 
-
-  /**
-   * Sets the value, fully formatted, for the input
-   * @param {val} New value to set
-   * @param {notNull} When true, restricts setting the value if it is null.
-   */
   setValue(val, notNull) {
     const newValue = helpers.fullFormat(val, this.options);
 
@@ -112,12 +86,8 @@ class Finput {
     }
   }
 
-  /**
-   * Sets and formats the value for the input
-   * @param {val} New value to set
-   */
-  setRawValue(val) {
-    let value;
+  setRawValue(val: any) {
+    let value: string;
     if (!val) {
       value = '';
     } else if (typeof val === 'number' && !isNaN(val)) {
@@ -132,23 +102,10 @@ class Finput {
     this.setValue(newValue, false);
   }
 
-  //
-  // EVENT HANDLERS
-  //
-
-  /**
-   * On focusing OUT of the input - format fully
-   * @param {e} Focus event
-   */
-  onFocusout(e) {
-    this.setValue(this.element.value);
+  onFocusout() {
+    this.setValue(this.element.value, false);
   }
 
-  /**
-   * On focusing IN of the input
-   * DEFAULT:  Select all text
-   * @param {e} Focus event
-   */
   onFocusin(e) {
     if(this.options.onFocusinCallback){
       let selection = this.options.onFocusinCallback(e);
@@ -163,17 +120,12 @@ class Finput {
     }
   }
 
-  /**
-   * On dropping something into the input - replace the WHOLE value
-   * with this new value
-   * @param {e} Drag event
-   */
   onDrop(e) {
     switch (this._dragState) {
-      case DRAG_STATES.INTERNAL:
+      case DragState.INTERNAL:
         // This case is handled by the 'onInput' function
         break;
-      case DRAG_STATES.EXTERNAL:
+      case DragState.EXTERNAL:
         const val = helpers.parseString(e.dataTransfer.getData('text'), this.options);
         this.setValue(val, true);
         e.preventDefault();
@@ -184,41 +136,25 @@ class Finput {
     }
   }
 
-  /**
-   * On start of ANY drag on page
-   * @param {e} Drag event
-   */
   onDragstart(e) {
     this._dragState = (e.target === this.element)
-      ? DRAG_STATES.INTERNAL
-      : DRAG_STATES.EXTERNAL;
+      ? DragState.INTERNAL
+      : DragState.EXTERNAL;
   }
 
-  /**
-   * On end of ANY drag on page
-   * @param {e} Drag event
-   */
   onDragend(e) {
-    this._dragState = DRAG_STATES.NONE;
+    this._dragState = DragState.NONE;
   }
 
-  /**
-   * On pasting something into the input
-   * @param {e} Clipboard event
-   */
-  onPaste(e) {
+  onPaste(e: ClipboardEvent) {
     // paste uses a DragEvent on IE and clipboard data is stored on the window
-    const clipboardData = e.clipboardData || window.clipboardData;
+    const clipboardData = e.clipboardData || (window as any).clipboardData;
     const val = helpers.parseString(clipboardData.getData('text'), this.options);
     this.setValue(val, true);
     e.preventDefault();
   }
 
-  /**
-   * On pressing any key inside the input
-   * @param {e} Keyboard event
-   */
-  onKeydown(e) {
+  onKeydown(e: KeyboardEvent) {
     const currentState = {
       caretStart: this.element.selectionStart,
       caretEnd: this.element.selectionEnd,
@@ -230,17 +166,17 @@ class Finput {
       modifierKeys: key.getPressedModifiers(e)
     };
 
-    const actionType = getActionType(keyInfo, this.options);
+    const actionType = getActionType(keyInfo as any, this.options);
     const handler = getHandlerForAction(actionType);
     const newState = handler(currentState, keyInfo, this.options, this._history);
 
     if (!newState.valid) {
-      this.options.invalidKeyCallback(e);
+      this.options.invalidKeyCallback();
       e.preventDefault();
       return;
     }
 
-    const shouldHandleValue = actionType !== ACTION_TYPES.UNKNOWN;
+    const shouldHandleValue = actionType !== ActionType.UNKNOWN;
     if (!shouldHandleValue) {
       return;
     }
@@ -262,23 +198,16 @@ class Finput {
     const newCaretPos = newState.caretStart + offset;
     this.element.setSelectionRange(newCaretPos, newCaretPos);
     
-    const shouldRecord = actionType !== ACTION_TYPES.UNDO && actionType !== ACTION_TYPES.REDO;
+    const shouldRecord = actionType !== ActionType.UNDO && actionType !== ActionType.REDO;
     if (shouldRecord) {
       this._history.addValue(valueWithThousandsDelimiter);
     }
   }
 
-  /**
-   * Backup event if input changes for any other reason, just format value
-   * @param {e} Event
-   */
-  onInput(e) {
-    this.setValue(this.element.value);
+  onInput() {
+    this.setValue(this.element.value, false);
   }
 
-  /**
-   * Removes all listeners from the input
-   */
   removeListeners() {
     for (let e in this._listeners) {
       this._listeners[e].element.removeEventListener(e, this._listeners[e].handler);
@@ -286,7 +215,6 @@ class Finput {
   }
 }
 
-// Factory function
 export default function(element, options) {
 
   if (!element) {
@@ -295,7 +223,7 @@ export default function(element, options) {
 
   const input = new Finput(element, options || {});
   element.setRawValue = (v) => input.setRawValue(v);
-  element.setValue = (v) => input.setValue(v);
+  element.setValue = (v) => input.setValue(v, false);
   element.getOptions = () => input.options;
   element.setOptions = (o) => input.options = o;
 
