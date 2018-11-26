@@ -160,7 +160,7 @@ export const formattedToRaw = (formattedValue: string, options: IOptions): numbe
   return Number(formattedValue);
 };
 
-export const rawToFormatted = (rawValue: string, options: IOptions): string => {
+export const rawToFormatted = (rawValue: number, options: IOptions): string => {
   if (is.not.number(rawValue) || is.not.finite(rawValue)) return '';
 
   let stringValue = String(rawValue);
