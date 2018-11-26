@@ -1,4 +1,4 @@
-import { Key, Range } from './constants';
+import { Range } from './constants';
 import * as helpers from './helpers';
 import key from './key';
 import {IKeyInfo, IState} from "../index";
@@ -97,8 +97,7 @@ export const onShortcut = (currentState, keyInfo, options) => {
   return newState;
 };
 
-export const onBackspace = (currentState, keyInfo, options) => {
-  const thousands = options.thousands;
+export const onBackspace = (currentState, keyInfo) => {
   let firstHalf, lastHalf;
 
   const newState = { ...currentState };
