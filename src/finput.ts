@@ -142,7 +142,7 @@ class Finput {
       : DragState.EXTERNAL;
   }
 
-  onDragend(e) {
+  onDragend() {
     this._dragState = DragState.NONE;
   }
 
