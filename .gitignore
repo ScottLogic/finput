@@ -7,3 +7,4 @@ config.json
 dist/
 lib/
 .DS_Store
+.rpt2_cache
