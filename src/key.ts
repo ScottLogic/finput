@@ -22,7 +22,8 @@ const isPrintable = (keyInfo: IKeyInfo) => {
     Key.NUMPAD_DIVIDE
   ];
 
-  const isNumpad: boolean = numpadKeys.indexOf(keyInfo.keyName) > -1;
+  // TODO: remove any
+  const isNumpad: boolean = numpadKeys.indexOf(keyInfo.keyName as any) > -1;
   isOneChar = isOneChar || isNumpad;
 
   return (isOneChar && !hasBrowserShortcutKey);
