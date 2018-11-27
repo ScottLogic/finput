@@ -1,7 +1,7 @@
 import commonjs from 'rollup-plugin-commonjs';
-
 import resolve from 'rollup-plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2'
+import typescript from 'rollup-plugin-typescript2';
+import minify from 'rollup-plugin-babel-minify';
 
 import pkg from './package.json'
 
@@ -18,5 +18,8 @@ export default {
         typescript({
             typescript: require('typescript'),
         }),
+        minify({
+            comments: false
+        })
     ],
 }
