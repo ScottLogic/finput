@@ -1,4 +1,4 @@
-import {ActionType, Key} from "./src/constants";
+import {ActionType, Range, Key} from "./src/constants";
 
 interface IState {
     value: string;
@@ -17,7 +17,7 @@ interface IOptions {
     thousands: string;
     decimal: string;
     fixed: boolean;
-    range: number;
+    range: Range;
     scale: number;
     shortcuts: { [shortcut: string]: number }
 }

@@ -1,8 +1,9 @@
 import key from './key';
 import * as helpers from './helpers';
-import { getActionType, getHandlerForAction } from './actions';
+import {getActionType, getHandlerForAction} from './actions';
 import ValueHistory from './valueHistory';
 import {ActionType, DragState, Range} from './constants';
+import {IOptions} from "../index";
 
 const DEFAULTS = {
   scale: 2,
@@ -18,16 +19,22 @@ const DEFAULTS = {
   invalidKeyCallback: () => {}
 };
 
-type FinputElement = HTMLInputElement & { rawValue: number };
+type FinputElement = HTMLInputElement & {
+  rawValue: number
+  setRawValue: (v: any) => void;
+  setValue: (v: any) => void;
+  getOptions: () => IOptions;
+  setOptions: (options: IOptions) => void;
+};
 
 class Finput {
   private readonly _element: FinputElement;
   private _options: any;
   private readonly _history: ValueHistory;
   private readonly _listeners: { [key: string]: { element: HTMLInputElement | Document, handler: EventListenerObject }};
-  private _dragState: DragState;
+  private _dragState: DragState = DragState.NONE;
 
-  constructor(element, options) {
+  constructor(element: FinputElement, options: IOptions) {
     this._element = element;
     this._options = {
       ...DEFAULTS,
@@ -72,11 +79,11 @@ class Finput {
     };
   }
 
-  getRawValue(value) {
+  getRawValue(value: string) {
     return helpers.formattedToRaw(value, this.options);
   }
 
-  setValue(val, notNull) {
+  setValue(val: string, notNull: boolean) {
     const newValue = helpers.fullFormat(val, this.options);
 
     if (notNull ? val : true) {
@@ -106,7 +113,7 @@ class Finput {
     this.setValue(this.element.value, false);
   }
 
-  onFocusin(e) {
+  onFocusin(e: FocusEvent) {
     if(this.options.onFocusinCallback){
       let selection = this.options.onFocusinCallback(e);
       if(selection){
@@ -120,13 +127,13 @@ class Finput {
     }
   }
 
-  onDrop(e) {
+  onDrop(e: DragEvent) {
     switch (this._dragState) {
       case DragState.INTERNAL:
         // This case is handled by the 'onInput' function
         break;
       case DragState.EXTERNAL:
-        const val = helpers.parseString(e.dataTransfer.getData('text'), this.options);
+        const val = helpers.parseString(e.dataTransfer ? e.dataTransfer.getData('text') : "", this.options);
         this.setValue(val, true);
         e.preventDefault();
         break;
@@ -136,7 +143,7 @@ class Finput {
     }
   }
 
-  onDragstart(e) {
+  onDragstart(e: DragEvent) {
     this._dragState = (e.target === this.element)
       ? DragState.INTERNAL
       : DragState.EXTERNAL;
@@ -215,7 +222,7 @@ class Finput {
   }
 }
 
-export default function(element, options) {
+export default function(element: FinputElement, options: IOptions) {
 
   if (!element) {
     throw 'Input element must be supplied as first argument';
