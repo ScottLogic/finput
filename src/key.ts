@@ -30,13 +30,8 @@ const isPrintable = (keyInfo: IKeyInfo) => {
 };
 
 const getPressedModifiers = (nativeEvent: Event): string[] => {
-  const modifierKeys: Key[] = [
-    Key.META,
-    Key.CTRL,
-    Key.SHIFT,
-    Key.ALT
-  ];
-  return modifierKeys.filter(key => nativeEvent[key]);
+  const modifierKeys: Key[] = [Key.META, Key.CTRL, Key.SHIFT, Key.ALT];
+  return modifierKeys.filter(key => key in nativeEvent);
 };
 
 const getHistoryKey = (): Key => {
