@@ -19,11 +19,13 @@ export const formatThousands = (val: string, options: IOptions): string => {
   // i must be greater than zero because number cannot start with comma
   let i = startIndex;
   let j = 1;
-  for (i > endIndex; i--, j++;) {
+  while(i > endIndex) {
     // Every 3 characters, add a comma
     if (j % 3 === 0) {
       val = editString(val, options.thousands, i);
     }
+    i--;
+    j++;
   }
 
   return val;
