@@ -1,11 +1,11 @@
-import { ActionType } from './constants';
+import {ActionType} from './constants';
 import * as keyHandlers from './keyHandlers';
 import key from './key';
 import {IActionType, IKeyInfo, IOptions} from "../index";
 
 
 // Todo: This ActionType has an inner type of type with same name?
-const createActionType = (options: IOptions): IActionType[] => [
+const createActionTypes = (options: IOptions): IActionType[] => [
   {
     type: ActionType.NUMBER,
     names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
@@ -57,15 +57,14 @@ const createActionType = (options: IOptions): IActionType[] => [
 ];
 
 export const getActionType = (keyInfo: IKeyInfo, options: IOptions): ActionType => {
-  for (let actionType of createActionType(options)) {
-    const typeMatch = actionType.names.indexOf(keyInfo.keyName) > -1
-    let modifierMatch = JSON.stringify(actionType.modifierKeys) === JSON.stringify(keyInfo.modifierKeys);
+  const actionTypes = createActionTypes(options);
 
-    if (typeMatch && modifierMatch) {
-      return actionType.type;
-    }
-  }
-  return ActionType.UNKNOWN;
+  const foundType = actionTypes.find((actionType) =>
+      actionType.names.indexOf(keyInfo.keyName) > -1 &&
+      JSON.stringify(actionType.modifierKeys) === JSON.stringify(keyInfo.modifierKeys)
+  );
+
+  return foundType ? foundType.type : ActionType.UNKNOWN;
 };
 
 // TODO: consistent type for handler functions?

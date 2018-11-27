@@ -125,11 +125,10 @@ export const calculateOffset = (prev: string, curr: string, pos: number, options
   return currentSymbols - prevSymbols;
 };
 
-export const allowedZero = (val: string, char: Key, caretPos: number, options: IOptions): boolean => {
-  // TODO: This IF statement doesn't make any sense, Key is passed in to allowedZero
-  // if (char != 0) {
-  //   return true;
-  // }
+export const allowedZero = (val: string, char: string, caretPos: number, options: IOptions): boolean => {
+  if (char != "0") {
+    return true;
+  }
 
   const isNegative = val[0] === '-';
   let integerPart = val.slice((isNegative ? 1 : 0), getDecimalIndex(val, options.decimal));
