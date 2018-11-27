@@ -22,7 +22,7 @@ export const formatThousands = (val: string, options: IOptions): string => {
   for (i > endIndex; i--, j++;) {
     // Every 3 characters, add a comma
     if (j % 3 === 0) {
-      val = this.editString(val, options.thousands, i);
+      val = editString(val, options.thousands, i);
     }
   }
 
@@ -31,15 +31,15 @@ export const formatThousands = (val: string, options: IOptions): string => {
 
 export const partialFormat = (val: string, options: IOptions): string => {
   val = val.replace(new RegExp(`[${options.thousands}]`, 'g'), '');
-  val = this.removeleadingZeros(val, options);
-  val = this.removeExtraDecimals(val, options);
-  val = this.formatThousands(val, options);
+  val = removeleadingZeros(val, options);
+  val = removeExtraDecimals(val, options);
+  val = formatThousands(val, options);
 
   return val;
 };
 
 export const fullFormat = (val: string, options: IOptions): string => {
-  val = this.partialFormat(val, options);
+  val = partialFormat(val, options);
 
   if (val == null || val == '') {
     return '';
@@ -205,9 +205,9 @@ export const parseString = (str: string, options: IOptions): string => {
   if (!parsed.length) { return '' }
 
   // Need to ensure that delimiter is a '.' before parsing to number
-  const normalisedNumber = this.formattedToRaw(parsed, options);
+  const normalisedNumber = formattedToRaw(parsed, options);
   // Then swap it back in
-  const adjusted = this.rawToFormatted(normalisedNumber * multiplier, options);
+  const adjusted = rawToFormatted(normalisedNumber * multiplier, options);
   const tooLarge = adjusted.indexOf('e') !== -1;
 
   if (tooLarge) {
