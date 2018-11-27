@@ -162,7 +162,7 @@ class Finput {
       valid: true
     };
     const keyInfo = {
-      keyName: e.key.toUpperCase(),
+      keyName: e.key.toLowerCase(),
       modifierKeys: key.getPressedModifiers(e)
     };
 

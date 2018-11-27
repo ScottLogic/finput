@@ -1,5 +1,4 @@
 import is from 'is_js';
-import {Key} from "./constants";
 import {IOptions} from "../index";
 
 const getDecimalIndex = (val: string, decimal: string): number =>
