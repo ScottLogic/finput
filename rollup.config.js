@@ -18,7 +18,7 @@ export default {
         typescript({
             typescript: require('typescript'),
         }),
-        minify({
+        process.env.environment === "PRODUCTION" && minify({
             comments: false
         })
     ],
