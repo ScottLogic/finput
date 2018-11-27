@@ -5,6 +5,6 @@
     "**/unit/**/*.js"
   ],
   "globals": {
-    "__baseUrl__": "http://localhost:3000"
+    "__baseUrl__": "http://localhost:8080"
   }
 }
