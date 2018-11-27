@@ -15,6 +15,8 @@
   "main": "./lib/finput.js",
   "unpkg": "./dist/finput.js",
   "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "browserstacktunnel-wrapper": "2.0.4",
     "http-server": "0.11.1",
     "jasmine": "3.3.0",
