@@ -7,8 +7,9 @@ interface IState {
     valid: boolean;
 }
 
+// TODO: Key interface doesn't list all Keys
 interface IKeyInfo {
-    keyName: Key;
+    keyName: string;
     modifierKeys: string[];
 }
 

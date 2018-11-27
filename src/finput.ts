@@ -162,7 +162,7 @@ class Finput {
       valid: true
     };
     const keyInfo = {
-      keyName: e.key.toLowerCase(),
+      keyName: e.key.toUpperCase(),
       modifierKeys: key.getPressedModifiers(e)
     };
 
@@ -171,7 +171,7 @@ class Finput {
     const newState = handler(currentState, keyInfo, this.options, this._history);
 
     if (!newState.valid) {
-      this.options.invalidKeyCallback();
+      this.options.invalidKeyCallback(e);
       e.preventDefault();
       return;
     }
