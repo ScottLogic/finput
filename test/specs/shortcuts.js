@@ -69,7 +69,7 @@ describe('shortcuts', () => {
   describe('reversed delimiters', () => {
     const {typing} = customCommandsFactory(finputReversedDelimiters);
 
-    test('typed into empty field', () => {
+    describe('typed into empty field', () => {
       // TODO: fix bug which causes shortcuts to be capped to a limit
       for (let i = 1; i <= 2; i++) {
         typing(`k`.padEnd(i, `k`)).shouldShow(`1` + `.000`.padEnd(i * 4, `.000`));
