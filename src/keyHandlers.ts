@@ -108,7 +108,7 @@ export const onBackspace = (currentState: IState, keyInfo: IKeyInfo): IState => 
 
     const newState = { ...currentState };
     if (currentState.caretStart === currentState.caretEnd) {
-        if (keyInfo.modifierKeys) {
+        if (keyInfo.modifierKeys.length) {
             // If CTRL key is held down - delete everything BEFORE caret
             firstHalf = "";
             lastHalf = currentState.value.slice(currentState.caretStart, currentState.value.length);
@@ -142,7 +142,8 @@ export const onDelete = (currentState: IState, keyInfo: IKeyInfo, options: IOpti
     if (currentState.caretStart === currentState.caretEnd) {
         const nextChar = currentState.value[currentState.caretStart];
 
-        if (keyInfo.modifierKeys) {
+        // TODO: this was originally typed as "modifierKey", write tests for these cases
+        if (keyInfo.modifierKeys.length) {
             // If CTRL key is held down - delete everything AFTER caret
             firstHalf = currentState.value.slice(0, currentState.caretStart);
             lastHalf = "";

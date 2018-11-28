@@ -30,9 +30,9 @@ export const isPrintable = (keyInfo: IKeyInfo) => {
     return (isOneChar && !hasBrowserShortcutKey);
 };
 
-export const getPressedModifiers = (nativeEvent: Event): string[] => {
-    const modifierKeys: Key[] = [Key.META, Key.CTRL, Key.SHIFT, Key.ALT];
-    return modifierKeys.filter((key: Key) => key in nativeEvent);
+export const getPressedModifiers = (event: KeyboardEvent): string[] => {
+    const modifierKeys: Array<keyof KeyboardEvent> = [Key.META, Key.CTRL, Key.SHIFT, Key.ALT];
+    return modifierKeys.filter((key: keyof KeyboardEvent) => event[key]);
 };
 
 export const getHistoryKey = (): Key => {
