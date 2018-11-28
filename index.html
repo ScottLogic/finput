@@ -69,11 +69,11 @@
   finput(finputDefault, {});
 
   finput(finputCustomFocus, {
-    onFocusinCallback: function () { return { start: 0, end: 1 }; }
+    onFocusCallback: function () { return { start: 0, end: 1 }; }
   });
 
   finput(finputInvalidKeyCallback, {
-    invalidKeyCallback: function (info) { console.log('invalid keypress', info); }
+    onInvalidKeyCallback: function (info) { console.log('invalid keypress', info); }
   });
 
   finput(finputReversedDelimiters, {
@@ -81,17 +81,16 @@
     decimal: ','
   });
 
-  finput(finputSwitchOptions, {});
+  var finputSwitchOptionsInstance = finput(finputSwitchOptions, {});
 
   finputSwitchOptionsButton.onclick = function () {
-    var options = finputSwitchOptions.getOptions();
-    var tempThousands = options.thousands;
-    options.thousands = options.decimal;
-    options.decimal = tempThousands;
+    var tempThousands = finputSwitchOptionsInstance.options.thousands;
+    var tempRawValue = finputSwitchOptionsInstance.rawValue;
 
-    finputSwitchOptions.setOptions(options);
-    // redraw
-    finputSwitchOptions.setRawValue(finputSwitchOptions.rawValue);
+    finputSwitchOptionsInstance.options = Object.assign(finputSwitchOptionsInstance.options,
+        { thousands: finputSwitchOptionsInstance.options.decimal, decimal: tempThousands, }
+    );
+    finputSwitchOptionsInstance.setRawValue(tempRawValue);
   }
 </script>
 
