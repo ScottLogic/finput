@@ -27,30 +27,22 @@ const DEFAULTS: IOptions = {
     thousands: ",",
 };
 
-type FinputElement = HTMLInputElement & {
-    rawValue: number
-    setRawValue: (v: any) => void;
-    setValue: (v: any) => void;
-    getOptions: () => IOptions;
-    setOptions: (options: IOptions) => void;
-};
-
 class Finput {
-    public readonly options: IOptions;
-    private readonly element: FinputElement;
+    public options: IOptions;
+    private readonly element: HTMLInputElement;
 
     private readonly history: ValueHistory;
     private readonly listeners: IListenerMap;
     private dragState: DragState = DragState.NONE;
 
-    constructor(element: FinputElement, options: IOptions) {
+    constructor(element: HTMLInputElement, options: IOptions) {
         this.element = element;
         this.options = { ...DEFAULTS, ...options };
 
         this.history = new ValueHistory();
 
         this.listeners = {
-            blur: { element: this.element, handler: this.onFocusout.bind(this) },
+            blur: { element: this.element, handler: this.onBlur.bind(this) },
             dragend: { element: document, handler: this.onDragend.bind(this) },
             dragstart: { element: document, handler: this.onDragstart.bind(this) },
             drop: { element: this.element, handler: this.onDrop.bind(this) },
@@ -69,11 +61,14 @@ class Finput {
     public setValue(val: string, notNull: boolean) {
         const newValue = helpers.fullFormat(val, this.options);
 
-        if (notNull) {
+        if (notNull ? val : true) {
             this.element.value = newValue;
-            this.element.rawValue = this.getRawValue(this.element.value);
             this.history.addValue(newValue);
         }
+    }
+
+    public get rawValue() {
+        return helpers.formattedToRaw(this.element.value, this.options);
     }
 
     public setRawValue(val: any) {
@@ -92,11 +87,7 @@ class Finput {
         this.setValue(newValue, false);
     }
 
-    private getRawValue(value: string) {
-        return helpers.formattedToRaw(value, this.options);
-    }
-
-    private onFocusout() {
+    private onBlur() {
         this.setValue(this.element.value, false);
     }
 
@@ -175,7 +166,6 @@ class Finput {
         const valueWithoutThousandsDelimiter = newState.value;
 
         this.element.value = valueWithThousandsDelimiter;
-        this.element.rawValue = this.getRawValue(this.element.value);
 
         const offset = helpers.calculateOffset(
             valueWithoutThousandsDelimiter,
@@ -202,3 +192,5 @@ class Finput {
                 this.listeners[key].element.removeEventListener(key, this.listeners[key].handler));
     }
 }
+
+export default (element: HTMLInputElement, options: IOptions) => new Finput(element, options);
