@@ -6,21 +6,21 @@ export default class ValueHistory {
         return this.history[this.currentIndex];
     }
 
-    undo(): string {
+    public undo(): string {
         if (this.currentIndex > 0) {
             this.currentIndex--;
         }
         return this.currentValue;
     }
 
-    redo(): string {
+    public redo(): string {
         if (this.currentIndex < this.history.length - 1) {
             this.currentIndex++;
         }
         return this.currentValue;
     }
 
-    addValue(val: string): string {
+    public addValue(val: string): string {
         // Delete everything AFTER current value
         if (val !== this.currentValue) {
             this.history = [...this.history.slice(0, this.currentIndex), val];
