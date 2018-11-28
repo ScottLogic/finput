@@ -1,4 +1,4 @@
-import {ActionType, Range, Key} from "./src/constants";
+import { ActionType, Range, Key } from "./src/constants";
 
 interface IState {
     value: string;
@@ -19,7 +19,9 @@ interface IOptions {
     fixed: boolean;
     range: Range;
     scale: number;
-    shortcuts: { [shortcut: string]: number }
+    shortcuts: { [shortcut: string]: number };
+    onInvalidKeyCallback: (event: KeyboardEvent) => void;
+    onFocusCallback: (event: FocusEvent) => ISelection | void;
 }
 
 interface IActionType {
@@ -27,4 +29,10 @@ interface IActionType {
     names: string[];
     // TODO: does this need to be an array? seems like all options only have one
     modifierKeys: Key[];
+}
+
+// TODO: find corresponding DOM typing
+interface ISelection {
+    start: number;
+    end: number;
 }
