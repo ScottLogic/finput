@@ -59,7 +59,6 @@ export const getActionType = (keyInfo: IKeyInfo, options: IOptions): ActionType 
     return foundType ? foundType.type : ActionType.UNKNOWN;
 };
 
-// TODO: consistent type for handler functions?
 export const getHandlerForAction = (action: ActionType): ActionHandler => {
     const handlerForAction = {
         [ActionType.NUMBER]: keyHandlers.onNumber,
