@@ -32,7 +32,7 @@ export const formatThousands = (val: string, options: IOptions): string => {
 
 export const partialFormat = (val: string, options: IOptions): string => {
     val = val.replace(new RegExp(`[${options.thousands}]`, "g"), "");
-    val = removeleadingZeros(val, options);
+    val = removeLeadingZeros(val, options);
     val = removeExtraDecimals(val, options);
     val = formatThousands(val, options);
 
@@ -73,8 +73,7 @@ export const fullFormat = (val: string, options: IOptions): string => {
     }
 };
 
-// TODO: fix typoes
-export const removeleadingZeros = (val: string, options: IOptions): string => {
+const removeLeadingZeros = (val: string, options: IOptions): string => {
     const decimalIndex = getDecimalIndex(val, options.decimal);
     const sign = val[0] === "-" ? val[0] : "";
     let integerPart = val.slice(sign ? 1 : 0, decimalIndex + 1);
@@ -82,7 +81,6 @@ export const removeleadingZeros = (val: string, options: IOptions): string => {
 
     const i = 0;
 
-    // TODO: investigate compile error with == 0
     while (
         integerPart[i] === "0"
         && integerPart[i + 1] !== options.decimal
@@ -94,7 +92,7 @@ export const removeleadingZeros = (val: string, options: IOptions): string => {
     return `${sign}${integerPart}${decimalPart}`;
 };
 
-export const removeExtraDecimals = (val: string, options: IOptions): string => {
+const removeExtraDecimals = (val: string, options: IOptions): string => {
     const decimalIndex = getDecimalIndex(val, options.decimal);
     const integerPart = val.slice(0, decimalIndex + 1);
     const decimalPart = val.slice(decimalIndex + 1)
@@ -140,7 +138,6 @@ export const allowedZero = (val: string, char: string, caretPos: number, options
     if ((integerPart.length > 0) && (caretPos < integerPart.length + 1)) {
         // IF integer part is just a zero then no zeros can be added
         // ELSE the zero can not be added at the front of the value
-        // TODO: investigate compile error with == 0
         return integerPart === "0" ? false : caretPos > 0;
     } else {
         return true;
@@ -187,8 +184,7 @@ export const parseString = (str: string, options: IOptions): string => {
     let parsed = "";
 
     for (const c of str) {
-        // TODO: type c properly
-        if (!isNaN(c as any)) { // If a number
+        if (!isNaN(Number(c))) { // If a number
             parsed += c;
         } else if (c === options.decimal && parsed.indexOf(c) === -1) { // If a decimal (and no decimals exist so far)
             parsed += options.decimal;

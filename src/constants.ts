@@ -1,4 +1,3 @@
-// TODO: do these need to be string enum?
 export enum Key {
     NUMPAD_ADD = "add",
     NUMPAD_SUBTRACT = "subtract",
