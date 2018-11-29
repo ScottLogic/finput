@@ -87,9 +87,11 @@
     var tempThousands = finputSwitchOptionsInstance.options.thousands;
     var tempRawValue = finputSwitchOptionsInstance.rawValue;
 
-    finputSwitchOptionsInstance.options = Object.assign(finputSwitchOptionsInstance.options,
-        { thousands: finputSwitchOptionsInstance.options.decimal, decimal: tempThousands, }
-    );
+
+    finputSwitchOptionsInstance.setOptions({
+        thousands: finputSwitchOptionsInstance.options.decimal,
+        decimal: tempThousands
+    });
     finputSwitchOptionsInstance.setRawValue(tempRawValue);
   }
 </script>
