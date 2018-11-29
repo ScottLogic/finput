@@ -52,10 +52,13 @@ class Finput {
             paste: { element: this.element, handler: this.onPaste.bind(this) },
         };
 
-        // Setup listeners
         this.removeListeners();
         Object.keys(this.listeners)
             .forEach((key: string) => this.listeners[key].element.addEventListener(key, this.listeners[key].handler));
+    }
+
+    public setOptions(options: Partial<IOptions>) {
+        this.options = { ...this.options, ...options };
     }
 
     public setValue(val: string, notNull: boolean) {
@@ -85,6 +88,12 @@ class Finput {
 
         const newValue = helpers.parseString(value, this.options);
         this.setValue(newValue, false);
+    }
+
+    public removeListeners() {
+        Object.keys(this.listeners)
+        .forEach((key: string) =>
+            this.listeners[key].element.removeEventListener(key, this.listeners[key].handler));
     }
 
     private onBlur() {
@@ -184,12 +193,6 @@ class Finput {
 
     private onInput() {
         this.setValue(this.element.value, false);
-    }
-
-    private removeListeners() {
-        Object.keys(this.listeners)
-            .forEach((key: string) =>
-                this.listeners[key].element.removeEventListener(key, this.listeners[key].handler));
     }
 }
 
