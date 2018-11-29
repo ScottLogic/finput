@@ -47,7 +47,7 @@
     "serve:silent": "http-server --silent",
     "webdriver": "webdriver-manager",
     "e2e": "jest --runInBand --config ./test/jestConfig.json",
-    "test": "npm-run-all \"webdriver -- update\" --parallel -r \"webdriver -- start --quiet\" build:prod test:ci",
+    "test": "npm-run-all \"webdriver -- update\" build:prod --parallel -r \"webdriver -- start --quiet\" test:ci",
     "test:ci": "run-p -r serve:silent e2e",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
