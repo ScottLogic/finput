@@ -10,7 +10,7 @@ notifications:
 before_script:
 - npm prune
 script:
-- npm run build
+- npm run build:prod
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi
 after_success:
 - npm run semantic-release
