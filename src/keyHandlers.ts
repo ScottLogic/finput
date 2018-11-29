@@ -3,25 +3,25 @@ import * as helpers from "./helpers";
 import * as keyUtils from "./key";
 import ValueHistory from "./valueHistory";
 
-import { IKeyInfo, IOptions, IState } from "../index";
+import { ActionHandler, IKeyInfo, IOptions, IState } from "../index";
 
-export const onNumber = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
+export const onNumber: ActionHandler = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
     // Remove characters in current selection
     const tempCurrent = helpers.editString(currentState.value, "", currentState.caretStart,
         currentState.caretEnd);
-    const tempNew = helpers.editString(currentState.value, keyInfo.keyName, currentState.caretStart,
+    const tempNew = helpers.editString(currentState.value, keyInfo.name, currentState.caretStart,
         currentState.caretEnd);
 
     const allowedNumber =
         !(currentState.value[0] === "-"
             && currentState.caretStart === 0
             && currentState.caretEnd === 0)
-        && helpers.allowedZero(tempCurrent, keyInfo.keyName, currentState.caretStart, options)
+        && helpers.allowedZero(tempCurrent, keyInfo.name, currentState.caretStart, options)
         && helpers.allowedDecimal(tempNew, options);
 
     const newState = { ...currentState };
     if (allowedNumber) {
-        newState.value = helpers.editString(currentState.value, keyInfo.keyName, currentState.caretStart,
+        newState.value = helpers.editString(currentState.value, keyInfo.name, currentState.caretStart,
             currentState.caretEnd);
         newState.caretStart += 1;
     } else {
@@ -31,7 +31,7 @@ export const onNumber = (currentState: IState, keyInfo: IKeyInfo, options: IOpti
     return newState;
 };
 
-export const onMinus = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
+export const onMinus: ActionHandler = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
     const minusAllowed = currentState.caretStart === 0
         && (currentState.value[0] !== "-" || currentState.caretEnd > 0)
         && options.range !== Range.POSITIVE;
@@ -52,7 +52,7 @@ export const onMinus = (currentState: IState, keyInfo: IKeyInfo, options: IOptio
     return newState;
 };
 
-export const onDecimal = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
+export const onDecimal: ActionHandler = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
     const decimalIndex = currentState.value.indexOf(options.decimal);
 
     // If there is not already a decimal or the original would be replaced
@@ -79,14 +79,14 @@ export const onDecimal = (currentState: IState, keyInfo: IKeyInfo, options: IOpt
     return newState;
 };
 
-export const onThousands = (currentState: IState): IState => {
+export const onThousands: ActionHandler = (currentState: IState): IState => {
     const newState = { ...currentState };
     newState.valid = false;
     return newState;
 };
 
-export const onShortcut = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
-    const multiplier = options.shortcuts[keyInfo.keyName] || 1;
+export const onShortcut: ActionHandler = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
+    const multiplier = options.shortcuts[keyInfo.name] || 1;
     const adjustedVal = helpers.editString(currentState.value, "", currentState.caretStart, currentState.caretEnd);
     const rawValue = (helpers.formattedToRaw(adjustedVal, options) || 1) * multiplier;
 
@@ -102,13 +102,13 @@ export const onShortcut = (currentState: IState, keyInfo: IKeyInfo, options: IOp
     return newState;
 };
 
-export const onBackspace = (currentState: IState, keyInfo: IKeyInfo): IState => {
+export const onBackspace: ActionHandler = (currentState: IState, keyInfo: IKeyInfo): IState => {
     let firstHalf;
     let lastHalf;
 
     const newState = { ...currentState };
     if (currentState.caretStart === currentState.caretEnd) {
-        if (keyInfo.modifierKeys.length) {
+        if (keyInfo.modifiers.length) {
             // If CTRL key is held down - delete everything BEFORE caret
             firstHalf = "";
             lastHalf = currentState.value.slice(currentState.caretStart, currentState.value.length);
@@ -133,7 +133,7 @@ export const onBackspace = (currentState: IState, keyInfo: IKeyInfo): IState => 
     return newState;
 };
 
-export const onDelete = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
+export const onDelete: ActionHandler = (currentState: IState, keyInfo: IKeyInfo, options: IOptions): IState => {
     const thousands = options.thousands;
     let firstHalf;
     let lastHalf;
@@ -143,7 +143,7 @@ export const onDelete = (currentState: IState, keyInfo: IKeyInfo, options: IOpti
         const nextChar = currentState.value[currentState.caretStart];
 
         // TODO: this was originally typed as "modifierKey", write tests for these cases
-        if (keyInfo.modifierKeys.length) {
+        if (keyInfo.modifiers.length) {
             // If CTRL key is held down - delete everything AFTER caret
             firstHalf = currentState.value.slice(0, currentState.caretStart);
             lastHalf = "";
@@ -170,7 +170,8 @@ export const onDelete = (currentState: IState, keyInfo: IKeyInfo, options: IOpti
     return newState;
 };
 
-export const onUndo = (currentState: IState, keyInfo: IKeyInfo, options: IOptions, history: ValueHistory): IState => {
+export const onUndo: ActionHandler = (currentState: IState, keyInfo: IKeyInfo,
+                                      options: IOptions, history: ValueHistory): IState => {
     const newState = { ...currentState };
     newState.value = history.undo();
     newState.caretStart = newState.value.length;
@@ -178,7 +179,8 @@ export const onUndo = (currentState: IState, keyInfo: IKeyInfo, options: IOption
     return newState;
 };
 
-export const onRedo = (currentState: IState, keyInfo: IKeyInfo, options: IOptions, history: ValueHistory): IState => {
+export const onRedo: ActionHandler = (currentState: IState, keyInfo: IKeyInfo,
+                                      options: IOptions, history: ValueHistory): IState => {
     const newState = { ...currentState };
     newState.value = history.redo();
     newState.caretStart = newState.value.length;
@@ -186,7 +188,7 @@ export const onRedo = (currentState: IState, keyInfo: IKeyInfo, options: IOption
     return newState;
 };
 
-export const onUnknown = (currentState: IState, keyInfo: IKeyInfo) => {
+export const onUnknown: ActionHandler = (currentState: IState, keyInfo: IKeyInfo) => {
     const newState = { ...currentState };
     newState.valid = !keyUtils.isPrintable(keyInfo);
 

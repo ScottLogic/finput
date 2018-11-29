@@ -1,4 +1,5 @@
-import { ActionType, Range, Key } from "./src/constants";
+import { ActionType, Key, Range } from "./src/constants";
+import ValueHistory from "./src/valueHistory";
 
 interface IState {
     value: string;
@@ -7,10 +8,9 @@ interface IState {
     valid: boolean;
 }
 
-// TODO: Key interface doesn't list all Keys
 interface IKeyInfo {
-    keyName: string;
-    modifierKeys: string[];
+    name: string;
+    modifiers: string[];
 }
 
 interface IOptions {
@@ -24,15 +24,15 @@ interface IOptions {
     onFocusCallback: (event: FocusEvent) => ISelection | void;
 }
 
-interface IActionType {
+interface IAction {
     type: ActionType;
     names: string[];
-    // TODO: does this need to be an array? seems like all options only have one
-    modifierKeys: Key[];
+    modifiers?: Key[];
 }
 
-// TODO: find corresponding DOM typing
 interface ISelection {
     start: number;
     end: number;
 }
+
+type ActionHandler = (currentState: IState, keyInfo: IKeyInfo, options: IOptions, history: ValueHistory) => IState;
