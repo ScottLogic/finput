@@ -53,7 +53,7 @@ export const getActionType = (keyInfo: IKeyInfo, options: IOptions): ActionType 
 
     const foundType = actionTypes.find((actionType) =>
         actionType.names.indexOf(keyInfo.name) > -1 &&
-        actionType.modifiers === keyInfo.modifiers,
+        JSON.stringify(keyInfo.modifiers) === JSON.stringify(keyInfo.modifiers),
     );
 
     return foundType ? foundType.type : ActionType.UNKNOWN;
