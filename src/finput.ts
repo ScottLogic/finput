@@ -4,7 +4,7 @@ import * as helpers from "./helpers";
 import * as keyUtils from "./key";
 import ValueHistory from "./valueHistory";
 
-import { IOptions } from "../index";
+import { IKeyInfo, IOptions, IState } from "../index";
 
 interface IListenerMap {
     [key: string]: { element: HTMLInputElement | Document, handler: EventListenerObject };
@@ -134,18 +134,18 @@ class Finput {
     }
 
     private onKeydown(e: KeyboardEvent) {
-        const currentState = {
-            caretEnd: this.element.selectionEnd,
-            caretStart: this.element.selectionStart,
+        const currentState: IState = {
+            caretEnd: this.element.selectionEnd || 0,
+            caretStart: this.element.selectionStart || 0,
             valid: true,
             value: this.element.value,
         };
-        const keyInfo = {
-            keyName: e.key.toLowerCase(),
-            modifierKeys: keyUtils.getPressedModifiers(e),
+        const keyInfo: IKeyInfo = {
+            modifiers: keyUtils.getPressedModifiers(e),
+            name: e.key.toLowerCase(),
         };
 
-        const actionType = getActionType(keyInfo as any, this.options);
+        const actionType = getActionType(keyInfo, this.options);
         const handler = getHandlerForAction(actionType);
         const newState = handler(currentState, keyInfo, this.options, this.history);
 
