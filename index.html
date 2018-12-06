@@ -69,11 +69,11 @@
   finput(finputDefault, {});
 
   finput(finputCustomFocus, {
-    onFocusCallback: function () { return { start: 0, end: 1 }; }
+    onFocus: function () { return { start: 0, end: 1 }; }
   });
 
   finput(finputInvalidKeyCallback, {
-    onInvalidKeyCallback: function (info) { console.log('invalid keypress', info); }
+    onInvalidKey: function (info) { console.log('invalid keypress', info); }
   });
 
   finput(finputReversedDelimiters, {
