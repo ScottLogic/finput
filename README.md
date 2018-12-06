@@ -75,13 +75,13 @@ Default: `{
 An object mapping of shortcuts that the user can use to quickly enter common values.
 E.g. with the default shortcuts, typing `k` will multiply the number value by 1000
 
-##### onInvalidKeyCallback
+##### onInvalidKey
 Type: `Function(e)`  
 Default: `() => {}`  
 A callback function that is fired each time a invalid key is pressed.
 the callback is called with the [KeyboardEvent](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent) object that was raised on keydown.
 
-##### onFocusCallback
+##### onFocus
 Type: `Function(e)`  
 Default: `undefined`  
 A callback function that is fired each time the input is focussed.

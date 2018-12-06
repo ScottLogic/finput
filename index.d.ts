@@ -20,8 +20,8 @@ interface IOptions {
     range: Range;
     scale: number;
     shortcuts: { [shortcut: string]: number };
-    onInvalidKeyCallback: (event: KeyboardEvent) => void;
-    onFocusCallback: (event: FocusEvent) => ISelection | void;
+    onInvalidKey: (event: KeyboardEvent) => void;
+    onFocus: (event: FocusEvent) => ISelection | void;
 }
 
 interface IAction {

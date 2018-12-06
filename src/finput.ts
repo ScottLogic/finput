@@ -15,8 +15,8 @@ const noop = () => {/**/};
 const DEFAULTS: IOptions = {
     decimal: ".",
     fixed: true,
-    onFocusCallback: noop,
-    onInvalidKeyCallback: noop,
+    onFocus: noop,
+    onInvalidKey: noop,
     range: Range.ALL,
     scale: 2,
     shortcuts: {
@@ -101,7 +101,7 @@ class Finput {
     }
 
     private onFocus(e: FocusEvent) {
-        const selection = this.options.onFocusCallback(e);
+        const selection = this.options.onFocus(e);
         if (selection) {
             this.element.selectionStart = selection ? selection.start : 0;
             this.element.selectionEnd = selection ? selection.end : this.element.value.length;
@@ -159,7 +159,7 @@ class Finput {
         const newState = handler(currentState, keyInfo, this.options, this.history);
 
         if (!newState.valid) {
-            this.options.onInvalidKeyCallback(e);
+            this.options.onInvalidKey(e);
             e.preventDefault();
             return;
         }
