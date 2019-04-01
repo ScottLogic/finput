@@ -76,12 +76,12 @@ class Finput {
 
     public setRawValue(val: any) {
         let value: string;
-        if (!val) {
-            value = "";
-        } else if (typeof val === "number" && !isNaN(val)) {
+        if (typeof val === "number" && !isNaN(val)) {
             value = helpers.rawToFormatted(val, this.options);
         } else if (typeof val === "string") {
             value = val;
+        } else if (!val) {
+            value = "";
         } else {
             return;
         }
