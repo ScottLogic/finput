@@ -14,8 +14,6 @@ const getSeleniumURL = () => {
   return 'http://localhost:4444/wd/hub'
 };
 
-
-
 export const driver = new Builder()
   .withCapabilities(capabilities)
   .usingServer(getSeleniumURL())
