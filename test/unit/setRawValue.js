@@ -1,35 +1,35 @@
-import finput from '../../src/finput';
+import finput from '../../dist/finput';
 
 describe('setRawValue', () => {
 
     let element;
-    let destroy;
+    let api;
 
     beforeEach(() => {
         element = document.createElement('input');
-        destroy = finput(element);
+        api = finput(element);
     });
 
     afterEach(() => {
-        destroy();
+        api.destroy();
     });
 
     it('when passed 0 sets value 0', () => {
-        element.setRawValue(0);
+        api.setRawValue(0);
         expect(element.value).toBe('0.00');
     });
 
     it('has an initial value of empty string and rawValue of undefined', () => {
         expect(element.value).toBe('');
-        expect(element.rawValue).toBe(undefined);
+        expect(api.rawValue).toBe(undefined);
     });
 
     it('resets back to empty string and undefined when entry is deleted', () => {
-        element.setRawValue(100);
-        element.setRawValue('');
+        api.setRawValue(100);
+        api.setRawValue('');
 
         expect(element.value).toBe('');
-        expect(element.rawValue).toBe(undefined);
+        expect(api.rawValue).toBe(undefined);
     });
 
 });
