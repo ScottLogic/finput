@@ -9,7 +9,7 @@ export default {
     input: 'src/finput.ts',
     output: {
         file: pkg.unpkg,
-        format: 'iife',
+        format: 'umd',
         name: 'finput'
     },
     plugins: [
