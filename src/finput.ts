@@ -90,7 +90,11 @@ class Finput {
         this.setValue(newValue, false);
     }
 
-    public removeListeners() {
+    public destroy() {
+        this.removeListeners();
+    }
+
+    private removeListeners() {
         Object.keys(this.listeners)
         .forEach((key: string) =>
             this.listeners[key].element.removeEventListener(key, this.listeners[key].handler));
