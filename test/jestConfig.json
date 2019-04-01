@@ -1,9 +1,6 @@
 {
   "setupTestFrameworkScriptFile": "./setupTests.js",
-  "testMatch": [
-    "**/specs/**/*.js",
-    "**/unit/**/*.js"
-  ],
+  "testMatch": ["**/*.js"],
   "globals": {
     "__baseUrl__": "http://localhost:8080"
   }

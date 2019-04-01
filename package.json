@@ -46,9 +46,10 @@
     "serve": "http-server",
     "serve:silent": "http-server --silent",
     "webdriver": "webdriver-manager",
-    "e2e": "jest --runInBand --config ./test/jestConfig.json",
     "test": "npm-run-all \"webdriver -- update\" build:prod --parallel -r \"webdriver -- start --quiet\" test:ci",
-    "test:ci": "run-p -r serve:silent e2e",
+    "test:unit": "jest --config ./test/jestConfig.json test/unit",
+    "test:e2e": "jest --runInBand --config ./test/jestConfig.json test/specs",
+    "test:ci": "run-p -r serve:silent test:unit test:e2e",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "husky": {
