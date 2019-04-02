@@ -1,8 +1,5 @@
 sudo: false
 language: node_js
-cache:
-  directories:
-  - node_modules
 notifications:
   email:
     on_success: change
@@ -11,7 +8,7 @@ before_script:
 - npm prune
 script:
 - npm run build:prod
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi
 after_success:
 - npm run semantic-release
 branches:
