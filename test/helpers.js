@@ -20,6 +20,8 @@ export const driver = new Builder()
   .setChromeOptions(
       new chrome.Options()
         .addArguments('--disable-dev-shm-usage')
+        .addArguments('--disable-extensions')
+        .addArguments('--no-sandbox')
         .headless()
   )
   .usingServer(getSeleniumURL())
