@@ -6,8 +6,20 @@ import ValueHistory from "./valueHistory";
 
 import { IKeyInfo, IOptions, IState } from "../index";
 
+interface IEventHandler<E, EV> {
+    element: E;
+    handler: EventListener;
+}
+
 interface IListenerMap {
-    [key: string]: { element: HTMLInputElement | Document, handler: EventListenerObject };
+    blur: IEventHandler<HTMLInputElement, FocusEvent>;
+    dragend: IEventHandler<Document, FocusEvent>;
+    dragstart: IEventHandler<Document, DragEvent>;
+    drop: IEventHandler<HTMLInputElement, DragEvent>;
+    focus: IEventHandler<HTMLInputElement, FocusEvent>;
+    input: IEventHandler<HTMLInputElement, FocusEvent>;
+    keydown: IEventHandler<HTMLInputElement, KeyboardEvent>;
+    paste: IEventHandler<HTMLInputElement, ClipboardEvent>;
 }
 
 const noop = () => {/**/};
@@ -42,19 +54,19 @@ class Finput {
         this.history = new ValueHistory();
 
         this.listeners = {
-            blur: { element: this.element, handler: this.onBlur.bind(this) },
-            dragend: { element: document, handler: this.onDragend.bind(this) },
-            dragstart: { element: document, handler: this.onDragstart.bind(this) },
-            drop: { element: this.element, handler: this.onDrop.bind(this) },
-            focus: { element: this.element, handler: this.onFocus.bind(this) },
-            input: { element: this.element, handler: this.onInput.bind(this) },
-            keydown: { element: this.element, handler: this.onKeydown.bind(this) },
-            paste: { element: this.element, handler: this.onPaste.bind(this) },
+            blur: { element: this.element, handler: () => this.onBlur() },
+            dragend: { element: document, handler: () => this.onDragend() },
+            dragstart: { element: document, handler: (e) => this.onDragstart(e as DragEvent) },
+            drop: { element: this.element, handler: (e) => this.onDrop(e as DragEvent) },
+            focus: { element: this.element, handler: (e) => this.onFocus(e as FocusEvent) },
+            input: { element: this.element, handler: () => this.onInput() },
+            keydown: { element: this.element, handler: (e) => this.onKeydown(e as KeyboardEvent) },
+            paste: { element: this.element, handler: (e) => this.onPaste(e as ClipboardEvent) },
         };
 
         this.removeListeners();
-        Object.keys(this.listeners)
-            .forEach((key: string) => this.listeners[key].element.addEventListener(key, this.listeners[key].handler));
+        (Object.keys(this.listeners) as Array<keyof IListenerMap>)
+            .forEach((key) => this.listeners[key].element.addEventListener(key , this.listeners[key].handler));
     }
 
     public setOptions(options: Partial<IOptions>) {
@@ -95,9 +107,9 @@ class Finput {
     }
 
     private removeListeners() {
-        Object.keys(this.listeners)
-        .forEach((key: string) =>
-            this.listeners[key].element.removeEventListener(key, this.listeners[key].handler));
+        (Object.keys(this.listeners) as Array<keyof IListenerMap>)
+            .forEach((key) =>
+                this.listeners[key].element.removeEventListener(key, this.listeners[key].handler));
     }
 
     private onBlur() {
