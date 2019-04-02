@@ -45,12 +45,12 @@
     "watch": "cross-env environment=DEVELOPMENT rollup -cw",
     "serve": "http-server",
     "serve:silent": "http-server --silent",
-    "webdriver": "webdriver-manager",
     "webdriver:update": "webdriver-manager update --versions.chrome 73.0.3683.68",
-    "test": "npm-run-all \"webdriver-update\" build:prod --parallel -r \"webdriver -- start --quiet\" test:ci",
-    "test:unit": "jest --config ./test/jestConfig.json test/unit",
+    "webdriver:start": "webdriver-manager start --quiet",
+    "test": "npm-run-all webdriver:update build:prod --parallel --race webdriver:start serve:silent test:ci",
+    "test:unit": "jest --runInBand --config ./test/jestConfig.json test/unit",
     "test:e2e": "jest --runInBand --config ./test/jestConfig.json test/specs",
-    "test:ci": "run-p -r serve:silent test:unit test:e2e",
+    "test:ci": "npm-run-all --parallel test:unit test:e2e",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "husky": {
