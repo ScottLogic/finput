@@ -27,14 +27,8 @@ See an example finput [here](http://scottlogic.github.io/finput)
 `npm install finput`
 
 #### Initialise input
-To initialise the finput, simply pass the element and any options into the finput constructor.  
-The function returned is the cleanup function which removes all the added finput listeners from the input,
-making it act like the default browser input once again.
-
-```javascript
-var destroy = finput(element, options);
-destroy();  // Stops finput behaviour
-```
+To initialise the finput, simply pass the element and any options into the finput constructor.
+An object is returned which allows you to interact with the finput API.
 
 Options
 -----
@@ -81,16 +75,16 @@ Default: `{
 An object mapping of shortcuts that the user can use to quickly enter common values.
 E.g. with the default shortcuts, typing `k` will multiply the number value by 1000
 
-##### invalidKeyCallback
+##### onInvalidKey
 Type: `Function(e)`  
 Default: `() => {}`  
-A callback function that is fired everytime a invalid key is pressed.
+A callback function that is fired each time a invalid key is pressed.
 the callback is called with the [KeyboardEvent](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent) object that was raised on keydown.
 
-##### onFocusinCallback
+##### onFocus
 Type: `Function(e)`  
 Default: `undefined`  
-A callback function that is fired everytime the input is brought into focus.
+A callback function that is fired each time the input is focussed.
 the callback is called with the `Event` object.
 
 the function used needs to return an object with a start and end value, a numerical
@@ -103,21 +97,21 @@ representation of the postions to select.
 
 setting both values to 0 or failing to return both values will disable selecting functionality
 
-Accessing input value
----------------------
-
-The formatted value (the inputs value) and raw numeric value can be access directly on the dom element
-as follows:  
-**Formatted value** - `element.value` _(the normal input value)_  
-**Raw numeric value** - `element.rawValue`
-
 API
 --------------------
 
-The following functions are exposed on the `element`:
+The following properties are exposed on the returned finput instance:
 
-##### getOptions
-Gets a copy of the options from the input
+##### options
+Retrieves the options on the input
+
+##### rawValue
+Retrieves the raw value of the input (numerical)
+
+#### value
+Retrieves the formatted value of the input (string)
+
+The following functions are exposed on the returned finput instance:
 
 ##### setOptions
 Sets the options on the input
@@ -143,6 +137,9 @@ Sets the value, fully formatted, for the input
 ##### setRawValue
 Sets and formats the value for the input
  * `val` New value to set
+ 
+##### removeListeners
+Removes finputs listeners from the provided element, returning it to a standard native control
 
 Developing
 ----------
@@ -159,7 +156,9 @@ Run dev server:
 
 Building Library
 ----------------
-- `npm run build`
+- `npm run build:dev` - Builds a development friendly version of the application
+- `npm run build:prod` - Builds a minified version of the application
+- `npm run compile` - Compiles typescript dependency-free version of library
 
 Running tests
 -------------

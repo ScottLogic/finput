@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "es2015",
+    "moduleResolution": "node",
+    "target": "es2015",
+    "outDir": "lib",
+    "strict": true,
+    "typeRoots": ["types"]
+  },
+  "include": [
+    "src"
+  ],
+}

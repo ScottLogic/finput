@@ -1,9 +1,8 @@
 import {Capability, Browser} from 'selenium-webdriver';
 
-
 const capabilities = {
   [Capability.PLATFORM]: 'WINDOWS',
-  [Capability.BROWSER_NAME]: Browser.CHROME
+  [Capability.BROWSER_NAME]: Browser.CHROME,
 };
 
 // browserstack specific capabilities - https://www.browserstack.com/automate/capabilities
@@ -14,7 +13,7 @@ if (process.env.CI) {
   capabilities.os = 'WINDOWS';
   capabilities.os_version = '10';
   capabilities.browser = Browser.CHROME;
-  capabilities.browser_verison = '60';
+  capabilities.browser_version = '73';
 }
 
 export default capabilities;

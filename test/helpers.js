@@ -1,3 +1,4 @@
+import chrome from 'selenium-webdriver/chrome';
 import {Builder, Key, Capability, Browser} from 'selenium-webdriver';
 import capabilities from './capabilities';
 
@@ -6,18 +7,23 @@ const Platform = {
 };
 
 const getSeleniumURL = () => {
-  if(process.env.BROWSERSTACK_USERNAME && process.env.BROWSERSTACK_ACCESS_KEY) {
+  if (process.env.BROWSERSTACK_USERNAME && process.env.BROWSERSTACK_ACCESS_KEY) {
     return `http://${process.env.BROWSERSTACK_USERNAME}:${process.env.BROWSERSTACK_ACCESS_KEY}` +
       `@hub-cloud.browserstack.com/wd/hub`;
   }
 
-  return 'http://localhost:4444/wd/hub'
+  return 'http://localhost:4444/wd/hub';
 };
-
-
 
 export const driver = new Builder()
   .withCapabilities(capabilities)
+  .setChromeOptions(
+      new chrome.Options()
+        .addArguments('--disable-dev-shm-usage')
+        .addArguments('--disable-extensions')
+        .addArguments('--no-sandbox')
+        .headless()
+  )
   .usingServer(getSeleniumURL())
   .build();
 

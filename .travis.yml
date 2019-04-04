@@ -1,8 +1,5 @@
 sudo: false
 language: node_js
-cache:
-  directories:
-  - node_modules
 notifications:
   email:
     on_success: change
@@ -10,10 +7,8 @@ notifications:
 before_script:
 - npm prune
 script:
-- npm run build
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test:ci; fi
-after_success:
-- npm run semantic-release
+- npm run build:prod
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
@@ -23,6 +18,7 @@ addons:
       secure: f/lU4lF3HeFJei8KVsVsN92BXHf9BvKwA2tBqIN/PqdtpunVrETlmpf9gFbxfqe3Vwtig0l7X4eCYU0Qp0cG9cMEpO4TMiKMaSLyoGE2rheyYVeYGAZ7nIdxXKa9MzpvhyYNu16z6oNAtOCt1kxLjVtfGr4xrANUiFKs+/uyQqRBm8eajom5lsLeQkNTvh2hI17tVfBa0oWseKSkKp6yTn9c/CyeW9O6GHFLjBFFYWdqNCnEWFPOR4dR3dyajjqltC4MwHI8ysnX6+4OjbETxfCCiudtd3WCoUus5WlXdRI13SMNzRPntoJvZxowSVEiormH3Sbk3OJImEkYNKAr0eMGiF6PZitJ183fxxKyQro0dPgzR/sIWpk1/nB5HbOXFApH2dm1vnEWyGW5B5WiAE0r8rp8fhXvVhaZ4mvK2v/U+aZfSlvurvUnE8h4iJ6x+GZN883s/3m1f/Z/hJDBepkmYIA6TIpNz8pkdKjtwW7UXCDDxzAFSlXcgYVa+KDPmlhPrpL5EnKc3WDh4AgGm+NRnX8JV3OZyWK7mXCLaBBgXaph38FT+CX2NavYnm35sexYsWaZ2UqPjpvefpfBWfvoAb0RlA2dFtBpliTHLyFKfut6UtuzT6jH2ccMPKk2mlbaHF16zMgskUUYSCD6Fh4oWCMsVqJU2hUsLDiq7NI=
     access_key:
       secure: W7ICrd8F1D4AO/Movdrj5GCGhw/ScJ0jjdAdFcOzucGdNzeKITtQbhGKiNiZ6UWiQ+z3c2fwm0v6YPtZB2Gkjtez/IiReeMZ8e1OOU9NmjcgoOmd5zj6Nj0LaUq2uIo9mqQ9uUKNCCrNd8Muo9l87VKjxg2gfUbZ633eJdfO16psKvMkoiCxREwZ4dVoNBwahEuPV6o3GcAQwJ4GbAPfe0+6PzmmInjdj6BC5rsXlG1uQUVpMyfzDaA5wev44pInZvWEBLhZ4B5lcX6ZIQcUOc2ROEznNJ3Oq6FovdffCVCo36xoRPnUZB+j5tWosyVDvebWV+0Xp6Ppv41h3DWmlu/EwT0RaIra3zjfZ7+5KP9CKSO4kmw8P/4jLiZBIRY5INGWSBAlnCypdJk3bPvAckEz8ABoV5wChDyL+oPwJn9yogpQmlw3MEO40G4nMIJ41nkpmcazh+Hi40FFPuKHSxVEMj992SuCJ4CxKjTWg8eqCdLdgcaz3TRIGBzcWU3MHMIaX8Xm33prYtEOPkQhoyMJNcuwYh4sT/9w/CPu4MlVGv/iFnZ+Rt4c7Xe8jBma3YG8AVEyu0IYYzgW8PzjXr6He3pWHgIkIaB5b5jW2KPWUAOkEDB6vmDx6KHRWNCYW/6L0TfO3+AxiS3bfIIL7WOLCkc+WtUMSjvd01gQJMw=
+  chrome: stable
 env:
   global:
     - secure: gZkLEExtLiDXbkZ6a2kKl6BdFYzTztpnF/TMse0dVPZgC46dOZ3i0KClGo6Q5OhAVu2+97qbW8ye9iWmShF23nyJUqItqfi5wqn5ytzEoN10eEE/jcxn2BwBtpAB4VuiIh2RtPjWK4q4ji7r18O8jub3H64pofTr6tX1b069a/N4huw9xebGjcAcb8CP9hv184QDKEVT/ksr8F9f1/3n2uB7dofeERZTw6fmxTsHcGJ9y1irI/A9xp4HVXOshQWE6A/h5kJHuRdjyd6y/yNts2hC6vpbcWDr1eWKwYUALkQoYciB7RZaJOHKLMKWeDqfMEm5gx92Q1hLENfu4HQBWZglR7qhpZVWhk6Tfaj3p2OfM1IolQNG8mhk7GUslqsGo5YX6gQttls4OieXFPft0qMZnFReTcasXgIlBmhYQn7CqgxTtSqhP8vmIB90zHwb8Ou8FnsF1oae5vl93+UuhUjJsT62Zlw5f8VmUQODu7wkQYtb39tfzgX7KKtuTI5D+RmI73CpZaTrQMeQVl22Dpp0N1+7MKBxj4unCpi3J1xPoNWfXlgP+uld9L6bYUgfxXustPTSfZ6RuJpI4wahzBY6SksLwBtGLo47xrKi3W22BhP0oi+jPQmqacOH627HD62mD8PFfLB00TlqwtLP/vjAgPGOR8af7vYVzkN0lRA=
