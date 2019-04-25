@@ -144,9 +144,13 @@ export const allowedZero = (val: string, char: string, caretPos: number, options
     }
 };
 
-export const formattedToRaw = (formattedValue: string, options: IOptions): number => {
+export const formattedToRaw = (formattedValue: string, options: IOptions): number | undefined => {
     if (is.not.string(formattedValue)) {
         return NaN;
+    }
+
+    if (!formattedValue.length) {
+        return undefined;
     }
 
     // Number(...) accepts thousands ',' or '' and decimal '.' so we must:
@@ -202,7 +206,7 @@ export const parseString = (str: string, options: IOptions): string => {
     // Need to ensure that delimiter is a '.' before parsing to number
     const normalisedNumber = formattedToRaw(parsed, options);
     // Then swap it back in
-    const adjusted = rawToFormatted(normalisedNumber * multiplier, options);
+    const adjusted = rawToFormatted((normalisedNumber || 0) * multiplier, options);
     const tooLarge = adjusted.indexOf("e") !== -1;
 
     if (tooLarge) {

@@ -107,7 +107,6 @@ Retrieves the options on the input
 
 ##### rawValue
 Retrieves the raw value of the input (numerical)
->>>>>>> 16f3800... feat: update README to reflect various changes to API and development workflows
 
 #### value
 Retrieves the formatted value of the input (string)
