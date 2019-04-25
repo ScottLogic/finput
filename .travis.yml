@@ -18,7 +18,7 @@ jobs:
         provider: script
         skip_cleanup: true
         script:
-          npx semantic-release
+          if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run build:prod; npm run compile; npx semantic-release; fi
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
