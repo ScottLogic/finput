@@ -5,10 +5,7 @@ notifications:
     on_success: change
     on_failure: always
 before_script:
-- npm prune
-script:
-- npm run build:prod
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi
+  - npm prune
 jobs:
   include:
     - stage: build
