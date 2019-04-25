@@ -13,13 +13,14 @@ jobs:
         - npm run test
     - stage: deploy
       script: skip # skip re-running tests
+      if: branch = master AND "$TRAVIS_PULL_REQUEST" = "false"
       deploy:
         on:
           branch: master
         provider: script
         skip_cleanup: true
         script:
-          if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run build:prod; npm run compile; npx semantic-release; fi
+          npm run build:prod; npm run compile; npx semantic-release; fi
 addons:
   browserstack:
     username:
