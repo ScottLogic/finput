@@ -44,7 +44,7 @@
     "lint": "tslint src/**/*.ts",
     "watch": "cross-env environment=DEVELOPMENT rollup -cw",
     "serve": "http-server",
-    "webdriver:update": "webdriver-manager update --versions.chrome 73.0.3683.68",
+    "webdriver:update": "webdriver-manager update",
     "webdriver:start": "webdriver-manager start --quiet",
     "test": "npm-run-all webdriver:update build:prod --parallel --race serve webdriver:start test:ci",
     "test:unit": "jest --runInBand --config ./test/jestConfig.json test/unit",
