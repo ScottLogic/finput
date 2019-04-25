@@ -10,7 +10,7 @@ jobs:
   include:
     - stage: build
       script:
-        - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi
+        - npm run test
     - stage: deploy
       deploy:
         on:
