@@ -5,29 +5,22 @@ notifications:
     on_success: change
     on_failure: always
 before_script:
-- npm prune
-script:
-- npm run build:prod
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi
+  - npm prune
 jobs:
   include:
     - stage: build
       script:
-        - npm run build:prod
-    - stage: test
-      script:
-        - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run test; fi
+        - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm run lint; npm run compile; npm run build:prod; npm run test:unit; fi
+        - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run lint; npm run test; fi
     - stage: deploy
+      script: skip # skip re-running tests
       deploy:
         on:
           branch: master
         provider: script
         skip_cleanup: true
         script:
-          npx semantic-release
-branches:
-  except:
-  - "/^v\\d+\\.\\d+\\.\\d+$/"
+          if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run build:prod; npm run compile; npx semantic-release; fi
 addons:
   browserstack:
     username:
