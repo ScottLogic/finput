@@ -12,6 +12,7 @@ jobs:
       script:
         - npm run test
     - stage: deploy
+      script: skip # skip re-running tests
       deploy:
         on:
           branch: master
@@ -19,9 +20,6 @@ jobs:
         skip_cleanup: true
         script:
           if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run build:prod; npm run compile; npx semantic-release; fi
-branches:
-  except:
-  - "/^v\\d+\\.\\d+\\.\\d+$/"
 addons:
   browserstack:
     username:
